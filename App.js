@@ -17,11 +17,11 @@ export default function App() {
     <NavigationContainer>
       <Provider store={store}>
         <Stack.Navigator>
-          <Stack.Screen
+          {/* <Stack.Screen
             name="Home"
             component={HomeScreen}
             options={{ headerShown: false }}
-          />
+          /> */}
           <Stack.Screen
             name="Map"
             component={MapScreen}

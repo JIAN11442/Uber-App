@@ -1,58 +1,50 @@
-import { StatusBar, Text, View } from "react-native";
-import { GoogleMap, LoadScript, useJsApiLoader } from "@react-google-maps/api";
-import { GOOGLE_MAPS_APIKEYS } from "@env";
-import { Platform } from "react-native";
+import { View } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import { useSelector } from "react-redux";
 import { selectOrigin } from "../feature/navSlice";
+import styles from "../style";
+import tw from "twrnc";
+import { useState } from "react";
+import MapTypeButton from "../components/MapTypeButton";
 
 const MapScreen = () => {
-  // const { isLoaded } = useJsApiLoader({
-  //   id: "google-map-script",
-  //   googleMapsApiKey: { GOOGLE_MAPS_APIKEYS },
-  //   libraries: ["places"],
-  //   language: "en",
-  // });
-
-  // const origin = useSelector(selectOrigin);
+  const origin = useSelector(selectOrigin);
+  const mapTypes = ["terrain", "satellite", "hybrid"];
+  const [mapTypeIndex, setMapTypeIndex] = useState(0);
 
   return (
-    <View>
-      <View>
-        {/* <LoadScript
-          googleMapsApiKey={GOOGLE_MAPS_APIKEYS}
-          libraries={["places"]}
-          language="en"
-        >
-          <GoogleMap
-            mapContainerStyle={{
-              height: "400px",
-              width: StatusBar.currentWidth,
+    <View style={styles.AndroidSafeAreaStyle}>
+      <View style={tw`relative flex-1`}>
+        <MapView
+          style={tw`flex-1`}
+          mapType={mapTypes[mapTypeIndex]}
+          initialRegion={{
+            // latitude: origin.location.lat,
+            // longitude: origin.location.lng,
+            latitude: 1.918339,
+            longitude: 103.1799611,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          }}>
+          <Marker
+            coordinate={{
+              // latitude: origin.location.lat,
+              // longitude: origin.location.lng,
+              latitude: 1.918339,
+              longitude: 103.1799611,
             }}
-            zoom={10}
-            center={{
-              lat: 1.918339,
-              lng: 103.1799611,
-            }}
-            options={{}}
+            description={origin.description}
           />
-        </LoadScript> */}
-
-        {/* {Platform.OS === "web" && isLoaded && (
-          <GoogleMap
-            mapContainerStyle={{
-              height: "400px",
-              width: StatusBar.currentWidth,
-            }}
-            zoom={10}
-            center={{
-              // lat: origin.lat,
-              // lng: origin.lng,
-              lat: 1.918339,
-              lng: 103.1799611,
-            }}
+        </MapView>
+        <View style={tw`absolute right-[20%] top-5`}>
+          <MapTypeButton
+            mapTypeIndex={mapTypeIndex}
+            setMapTypeIndex={setMapTypeIndex}
+            mapTypes={mapTypes}
           />
-        )} */}
+        </View>
       </View>
+      <View style={tw`flex-1`}></View>
     </View>
   );
 };

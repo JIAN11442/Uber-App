@@ -57,8 +57,8 @@ const HomeScreen = () => {
   }
 
   return (
-    <View style={(styles.AndroidSafeAreaStyle, tw`flex-1 bg-white`)}>
-      <View style={tw`p-5`}>
+    <View style={styles.AndroidSafeAreaStyle}>
+      <View style={tw`flex-1 bg-white px-5 pt-2 pb-5`}>
         {/* Uber Logo */}
         {UberLogo && (
           <Image
@@ -113,6 +113,7 @@ const HomeScreen = () => {
             enablePoweredByContainer={false}
             fetchDetails={true}
             onPress={(data, details = null) => {
+              // console.log(data);
               dispatch(
                 setOrigin({
                   location: details.geometry.location,
