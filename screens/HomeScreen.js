@@ -14,6 +14,7 @@ import { selectOrigin, setOrigin } from "../feature/navSlice";
 import tw from "twrnc";
 import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
+import client from "../sanity";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -44,6 +45,16 @@ const HomeScreen = () => {
         dispatch(addData(data));
       });
   }, []);
+
+  useEffect(() => {
+    if (addFavourites) {
+      client.create({
+        _type: "favouriteTypes",
+        favouriteTypesName: "WORK",
+        heroiconsName: "briefcase",
+      });
+    }
+  }, [addFavourites]);
 
   const inputRef = useRef();
   const handlePlaceChanged = () => {

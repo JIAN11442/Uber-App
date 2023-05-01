@@ -1,9 +1,11 @@
 import { createClient } from "@sanity/client";
 import imgUrlBuilder from "@sanity/image-url";
+import { SANITY_EDIT_TOKENS_API } from "@env";
 
 const client = createClient({
   projectId: "7zfh39j4",
   dataset: "production",
+  token: `${SANITY_EDIT_TOKENS_API}`,
   useCdn: true,
   apiVersion: "2021-10-21",
 });
