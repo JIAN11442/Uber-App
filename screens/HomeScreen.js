@@ -1,7 +1,7 @@
 import { View, Text, Image, ScrollView } from "react-native";
 import styles from "../style";
 import sanityClient, { urlFor } from "../sanity";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addData, selectData, selectDataWithName } from "../feature/DataSclice";
 import NavOptions from "../components/NavOptions";
@@ -12,6 +12,8 @@ import { TextInput } from "react-native";
 import { Platform } from "react-native";
 import { selectOrigin, setOrigin } from "../feature/navSlice";
 import tw from "twrnc";
+import { StarIcon } from "react-native-heroicons/outline";
+import { TouchableOpacity } from "react-native";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -20,6 +22,10 @@ const HomeScreen = () => {
   const UberLogo = selectDataWithName("HomeScreen UberLogo")?.image[0]?.image;
   const NavOptionsData = selectDataWithName("NavOption")?.image;
   // const requestUrl = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_APIKEYS}&libraries=places`;
+  const [addFavourites, setAddFavourites] = useState(false);
+  const switchAddFavourites = () => {
+    setAddFavourites(!addFavourites);
+  };
 
   useEffect(() => {
     sanityClient
@@ -74,58 +80,65 @@ const HomeScreen = () => {
         )}
 
         {/* GooglePlacesAutoComplete */}
-        {Platform.OS == "web" ? (
-          <LoadScript
-            googleMapsApiKey={GOOGLE_MAPS_APIKEYS}
-            libraries={["places"]}
-            language="en"
-            // minLength="2"
-          >
-            <StandaloneSearchBox
-              onLoad={(ref) => {
-                inputRef.current = ref;
-              }}
-              onPlacesChanged={handlePlaceChanged}>
-              <TextInput
-                style={tw`flex-1 p-2  w-full text-base text-gray-500`}
+        <View style={tw`flex-row justify-between items-center`}>
+          <View style={tw`flex-1`}>
+            {Platform.OS == "web" ? (
+              <LoadScript
+                googleMapsApiKey={GOOGLE_MAPS_APIKEYS}
+                libraries={["places"]}
+                language="en"
+                // minLength="2"
+              >
+                <StandaloneSearchBox
+                  onLoad={(ref) => {
+                    inputRef.current = ref;
+                  }}
+                  onPlacesChanged={handlePlaceChanged}>
+                  <TextInput
+                    style={tw`flex-1 p-2  w-full text-base text-gray-500`}
+                    placeholder="Where From?"
+                  />
+                </StandaloneSearchBox>
+              </LoadScript>
+            ) : (
+              <GooglePlacesAutocomplete
+                styles={styles.AutoCompletedStyleForForm}
                 placeholder="Where From?"
+                minLength={2}
+                debounce={400}
+                nearbyPlacesAPI="GooglePlacesSearch"
+                query={{
+                  key: GOOGLE_MAPS_APIKEYS,
+                  language: "en",
+                }}
+                enablePoweredByContainer={false}
+                fetchDetails={true}
+                onPress={(data, details = null) => {
+                  dispatch(
+                    setOrigin({
+                      location: details.geometry.location,
+                      description: data.description,
+                    })
+                  );
+                }}
+                GooglePlacesSearchQuery={{
+                  rankby: "distance",
+                }}
               />
-            </StandaloneSearchBox>
-          </LoadScript>
-        ) : (
-          <GooglePlacesAutocomplete
-            styles={{
-              container: {
-                flex: 0,
-              },
-              textInput: {
-                fontSize: 18,
-              },
-            }}
-            placeholder="Where From?"
-            minLength={2}
-            debounce={400}
-            nearbyPlacesAPI="GooglePlacesSearch"
-            query={{
-              key: GOOGLE_MAPS_APIKEYS,
-              language: "en",
-            }}
-            enablePoweredByContainer={false}
-            fetchDetails={true}
-            onPress={(data, details = null) => {
-              // console.log(data);
-              dispatch(
-                setOrigin({
-                  location: details.geometry.location,
-                  description: data.description,
-                })
-              );
-            }}
-            GooglePlacesSearchQuery={{
-              rankby: "distance",
-            }}
-          />
-        )}
+            )}
+          </View>
+          {/* Favourites Star Icon */}
+          {origin?.location && (
+            <TouchableOpacity onPress={switchAddFavourites}>
+              <StarIcon
+                size={25}
+                color="#ffc400"
+                fill={addFavourites ? "#ffc400" : "transparent"}
+                style={tw`bottom-0.5 right-1`}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
 
         {/* NavOptions */}
         <NavOptions data={NavOptionsData} />

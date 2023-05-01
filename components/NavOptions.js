@@ -27,7 +27,7 @@ const NavOptions = ({ data }) => {
               }}
             />
             <Text style={tw`mt-2 text-lg font-semibold`}>{dt.name}</Text>
-            <ArrowRightCircleIcon size={45} style={tw`mt-4`} />
+            <ArrowRightCircleIcon size={45} color="black" style={tw`mt-4`} />
           </View>
         </TouchableOpacity>
       ))}

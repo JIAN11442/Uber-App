@@ -15,7 +15,7 @@ const MapTypeButton = ({ mapTypeIndex, setMapTypeIndex, mapTypes }) => {
       <TouchableOpacity
         onPress={switchMapTypes}
         style={tw`absolute p-2 bg-[#00CCBB] rounded-full shadow-lg z-50`}>
-        <MapIcon color="white" size={30} />
+        <MapIcon color="white" size={15} />
       </TouchableOpacity>
     </View>
   );
