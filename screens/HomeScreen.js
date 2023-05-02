@@ -15,6 +15,7 @@ import tw from "twrnc";
 import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
 import client from "../sanity";
+import AddFavouritesModal from "../components/AddFavouritesModal";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -46,15 +47,15 @@ const HomeScreen = () => {
       });
   }, []);
 
-  useEffect(() => {
-    if (addFavourites) {
-      client.create({
-        _type: "favouriteTypes",
-        favouriteTypesName: "WORK",
-        heroiconsName: "briefcase",
-      });
-    }
-  }, [addFavourites]);
+  // useEffect(() => {
+  //   if (addFavourites) {
+  //     client.create({
+  //       _type: "favouriteTypes",
+  //       favouriteTypesName: "WORK",
+  //       heroiconsName: "briefcase",
+  //     });
+  //   }
+  // }, [addFavourites]);
 
   const inputRef = useRef();
   const handlePlaceChanged = () => {
@@ -140,7 +141,7 @@ const HomeScreen = () => {
             )}
           </View>
           {/* Favourites Star Icon */}
-          {origin?.location && (
+          <View>
             <TouchableOpacity onPress={switchAddFavourites}>
               <StarIcon
                 size={25}
@@ -149,16 +150,28 @@ const HomeScreen = () => {
                 style={tw`bottom-0.5 right-1`}
               />
             </TouchableOpacity>
-          )}
+            {switchAddFavourites && (
+              <AddFavouritesModal
+                addFavourites={addFavourites}
+                setAddFavourites={setAddFavourites}
+                visible={addFavourites}
+              />
+            )}
+          </View>
+          {/* {origin?.location && (
+            <TouchableOpacity onPress={switchAddFavourites}>
+              <StarIcon
+                size={25}
+                color="#ffc400"
+                fill={addFavourites ? "#ffc400" : "transparent"}
+                style={tw`bottom-0.5 right-1`}
+              />
+            </TouchableOpacity>
+          )} */}
         </View>
 
         {/* NavOptions */}
         <NavOptions data={NavOptionsData} />
-        {/* <ScrollView>
-          <View>
-            <Text>{pt_data}</Text>
-          </View>
-        </ScrollView> */}
       </View>
     </View>
   );

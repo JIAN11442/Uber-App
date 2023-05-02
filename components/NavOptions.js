@@ -18,7 +18,8 @@ const NavOptions = ({ data }) => {
           onPress={() => navigation.navigate(`${dt.screen[0].name}`)}
           key={dt._id}
           style={tw`p-2 pl-6 pb-4 pt-4 bg-gray-200 m-2 w-40 rounded-lg`}
-          disabled={!origin}>
+          disabled={!origin}
+        >
           <View style={tw`${origin == null ? `opacity-50` : ``}`}>
             <Image
               style={{ width: 120, height: 120, resizeMode: "contain" }}
