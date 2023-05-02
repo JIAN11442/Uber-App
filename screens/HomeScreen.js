@@ -104,7 +104,8 @@ const HomeScreen = () => {
                   onLoad={(ref) => {
                     inputRef.current = ref;
                   }}
-                  onPlacesChanged={handlePlaceChanged}>
+                  onPlacesChanged={handlePlaceChanged}
+                >
                   <TextInput
                     style={tw`flex-1 p-2  w-full text-base text-gray-500`}
                     placeholder="Where From?"
