@@ -141,7 +141,7 @@ const HomeScreen = () => {
             )}
           </View>
           {/* Favourites Star Icon */}
-          <View>
+          <View style={tw`z-50`}>
             <TouchableOpacity onPress={switchAddFavourites}>
               <StarIcon
                 size={25}
