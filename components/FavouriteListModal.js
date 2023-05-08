@@ -57,7 +57,7 @@ const FavouriteListModal = () => {
     return (
       <View
         style={tw`flex-1 my-2
-        ${index == 0 ? `border-r border-gray-300` : ``}`}
+        ${index != tabArr.length - 1 ? `border-r border-gray-300` : ``}`}
       >
         <TouchableOpacity
           style={tw`items-center justify-center flex-1`}
@@ -92,7 +92,7 @@ const FavouriteListModal = () => {
   return (
     <Animatable.View
       onLayout={onLayout}
-      style={tw`absolute w-80 h-80 bg-white rounded-lg shadow-lg p-2 pb-0
+      style={tw`absolute w-70 h-80 bg-white rounded-lg shadow-lg p-2 pb-0
       top-[${deviceHeightCenterPoint - componentHeightCenterPoint}px]
       left-[${deviceWidthCenterPoint - componentWidthCenterPoint}px]
       `}
@@ -111,6 +111,7 @@ const FavouriteListModal = () => {
       >
         {tabArr.map((item, index) => (
           <TabBarBottom.Screen
+            key={index}
             name={item.name}
             component={item.component}
             options={{
