@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
       // borderColor: "#DDDDDF",
     },
     textInputContainer: {
-      paddingRight: 10,
+      paddingRight: 35,
     },
   },
   AutoCompletedStyleForTo: {

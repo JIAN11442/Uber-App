@@ -13,12 +13,14 @@ import {
 import sanityClient from "../sanity";
 import { useEffect } from "react";
 import DynamicHeroIcons from "../DynamicHeroIcons";
+import { useNavigation } from "@react-navigation/native";
 
 const FavouriteTypeLists = () => {
   const dispatch = useDispatch();
   const maxModalHeight = useSelector(selectComponentHeight);
   const tabBarHeight = useSelector(selectTabBarHeight);
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
+  const navigation = useNavigation();
   useEffect(() => {
     sanityClient
       .fetch(
@@ -43,11 +45,10 @@ const FavouriteTypeLists = () => {
             favouriteTypeLists.map((item, index) => (
               <TouchableOpacity key={item._id}>
                 <View
-                  style={tw`flex-row py-2 items-center bg-white 
+                  style={tw`flex-row py-3 items-center bg-white 
                 ${
                   index == 0 ? `border-t border-b` : `border-b`
-                } border-gray-100`}
-                >
+                } border-gray-100`}>
                   <View style={tw`mx-4`}>
                     <DynamicHeroIcons
                       type="solid"
@@ -64,6 +65,24 @@ const FavouriteTypeLists = () => {
                 </View>
               </TouchableOpacity>
             ))}
+          <View style={tw`py-3 bg-white`}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("addFavouriteType")}>
+              <View style={tw`flex-row items-center`}>
+                <View style={tw`mx-4`}>
+                  <DynamicHeroIcons
+                    type="outlined"
+                    icon="PlusCircleIcon"
+                    size={25}
+                    color="rgb(209 213 219)"
+                  />
+                </View>
+                <View>
+                  <Text style={tw`text-gray-300 text-base`}>Add new list</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </View>
     </View>

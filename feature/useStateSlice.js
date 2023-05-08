@@ -8,6 +8,7 @@ const initialState = {
   deviceHeight: 0,
   tabBarHeight: 0,
   favouritesTypeList: null,
+  getWhereFromInputText: null,
 };
 
 export const useStateSlice = createSlice({
@@ -35,6 +36,9 @@ export const useStateSlice = createSlice({
     setFavouriteTypeLists: (state, action) => {
       state.favouritesTypeList = action.payload;
     },
+    setGetWhereFormInputText: (state, action) => {
+      state.getWhereFromInputText = action.payload;
+    },
   },
 });
 
@@ -47,6 +51,7 @@ export const {
   setDeviceHeight,
   setTabBarHeight,
   setFavouriteTypeLists,
+  setGetWhereFormInputText,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -57,5 +62,7 @@ export const selectDeviceHeight = (state) => state.useState.deviceHeight;
 export const selectTabBarHeight = (state) => state.useState.tabBarHeight;
 export const selectFavouriteTypeLists = (state) =>
   state.useState.favouritesTypeList;
+export const selectGetWhereFormInputText = (state) =>
+  state.useState.getWhereFromInputText;
 
 export default useStateSlice.reducer;

@@ -15,13 +15,16 @@ import tw from "twrnc";
 import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
 import client from "../sanity";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, validatePathConfig } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import FavouriteListModal from "../components/FavouriteListModal";
 import {
+  selectGetWhereFormInputText,
   selectIsAddFavourites,
+  setGetWhereFormInputText,
   setIsAddFavourites,
 } from "../feature/useStateSlice";
+import { Alert } from "react-native";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -31,8 +34,27 @@ const HomeScreen = () => {
   const NavOptionsData = selectDataWithName("NavOption")?.image;
   // const requestUrl = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_APIKEYS}&libraries=places`;
   const isAddFavourites = useSelector(selectIsAddFavourites);
+  const inputRef = useRef(null);
+  const getInputText = () => {
+    const InputText = inputRef.current.getAddressText();
+    dispatch(setGetWhereFormInputText(InputText));
+    console.log(InputText);
+  };
+  const whereFormInputText = useSelector(selectGetWhereFormInputText);
   const switchAddFavourites = () => {
     dispatch(setIsAddFavourites(!isAddFavourites));
+    getInputText();
+  };
+  const WarningAddFavourite = ({ type }) => {
+    if (type == "Null") {
+      Alert.alert(
+        "Warning",
+        "Have not any origin, can't add to Favourite List"
+      );
+    } else if (type == "Incompleted") {
+      Alert.alert("Warning", "Your origin is available place");
+    }
+    dispatch(setIsAddFavourites(false));
   };
 
   useEffect(() => {
@@ -63,22 +85,9 @@ const HomeScreen = () => {
   //   }
   // }, [selectAddFavouriteType]);
 
-  const inputRef = useRef();
-  const handlePlaceChanged = () => {
-    const [place] = inputRef.current.getPlaces();
-    if (place) {
-      dispatch(
-        setOrigin({
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        })
-      );
-    }
-  };
-
-  if (origin) {
-    console.log(origin);
-  }
+  // if (origin) {
+  //   console.log(origin);
+  // }
 
   return (
     <>
@@ -102,6 +111,7 @@ const HomeScreen = () => {
           <View style={tw`flex-row justify-between items-center`}>
             <View style={tw`flex-1`}>
               <GooglePlacesAutocomplete
+                ref={inputRef}
                 styles={styles.AutoCompletedStyleForForm}
                 placeholder="Where From?"
                 minLength={2}
@@ -125,37 +135,37 @@ const HomeScreen = () => {
                   rankby: "distance",
                 }}
               />
+              {/* Favourites Star Icon */}
+              {origin && (
+                <View style={tw`absolute right-0 top-3 z-50`}>
+                  <TouchableOpacity onPress={switchAddFavourites}>
+                    <StarIcon
+                      size={28}
+                      color="#ffc400"
+                      fill={isAddFavourites ? "#ffc400" : "transparent"}
+                      style={tw`bottom-0.5 right-1`}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
-
-            {/* Favourites Star Icon */}
-            <View style={tw`z-50`}>
-              <TouchableOpacity onPress={switchAddFavourites}>
-                <StarIcon
-                  size={25}
-                  color="#ffc400"
-                  fill={isAddFavourites ? "#ffc400" : "transparent"}
-                  style={tw`bottom-0.5 right-1`}
-                />
-              </TouchableOpacity>
-            </View>
-
-            {/* {origin?.location && (
-            <TouchableOpacity onPress={switchAddFavourites}>
-              <StarIcon
-                size={25}
-                color="#ffc400"
-                fill={selectAddFavouriteType ? "#ffc400" : "transparent"}
-                style={tw`bottom-0.5 right-1`}
-              />
-            </TouchableOpacity>
-          )} */}
           </View>
 
           {/* NavOptions */}
           <NavOptions data={NavOptionsData} />
         </View>
       </View>
-      {isAddFavourites && <FavouriteListModal />}
+      {isAddFavourites && !whereFormInputText && (
+        <WarningAddFavourite type="Null" />
+      )}
+      {isAddFavourites &&
+        whereFormInputText &&
+        whereFormInputText != origin.description && (
+          <WarningAddFavourite type="Incompleted" />
+        )}
+      {isAddFavourites &&
+        whereFormInputText &&
+        whereFormInputText == origin.description && <FavouriteListModal />}
     </>
   );
 };
