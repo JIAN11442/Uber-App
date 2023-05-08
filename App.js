@@ -4,7 +4,7 @@ import HomeScreen from "./screens/HomeScreen";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import MapScreen from "./screens/MapScreen";
-import { Platform } from "react-native";
+import { Modal, Platform, Text } from "react-native";
 // According Platform type,import the polyfill library
 if (Platform.OS != "web") {
   require("react-native-url-polyfill/auto");
