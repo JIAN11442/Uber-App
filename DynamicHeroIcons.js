@@ -1,17 +1,22 @@
-import { StyleSheet } from "react-native";
-import * as HIcons from "react-native-heroicons/solid";
-import tw from "twrnc";
+import * as SolidIcons from "react-native-heroicons/solid";
+import * as OutlinedIcons from "react-native-heroicons/outline";
 
-const { ...icons } = HIcons;
+const { ...solidIcons } = SolidIcons;
+const { ...outlinedIcons } = OutlinedIcons;
 
 const DynamicHeroIcons = (props) => {
-  const TheIcon = icons[props.icon];
+  let TheIcon;
+  if (props.type == "solid") {
+    TheIcon = solidIcons[props.icon];
+  } else if (props.type == "outlined") {
+    TheIcon = outlinedIcons[props.icon];
+  }
 
   return (
     <TheIcon
-      style={props.style}
-      color={props.color}
       size={props.size ? props.size : undefined}
+      color={props.color}
+      style={props.style}
     />
   );
 };

@@ -6,6 +6,7 @@ const initialState = {
   componentHeight: 0,
   deviceWidth: 0,
   deviceHeight: 0,
+  tabBarHeight: 0,
 };
 
 export const useStateSlice = createSlice({
@@ -27,6 +28,9 @@ export const useStateSlice = createSlice({
     setDeviceHeight: (state, action) => {
       state.deviceHeight = action.payload;
     },
+    setTabBarHeight: (state, action) => {
+      state.tabBarHeight = action.payload;
+    },
   },
 });
 
@@ -37,6 +41,7 @@ export const {
   setComponentHeight,
   setDeviceWidth,
   setDeviceHeight,
+  setTabBarHeight,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -44,5 +49,6 @@ export const selectComponentWidth = (state) => state.useState.componentWidth;
 export const selectComponentHeight = (state) => state.useState.componentHeight;
 export const selectDeviceWidth = (state) => state.useState.deviceWidth;
 export const selectDeviceHeight = (state) => state.useState.deviceHeight;
+export const selectTabBarHeight = (state) => state.useState.tabBarHeight;
 
 export default useStateSlice.reducer;
