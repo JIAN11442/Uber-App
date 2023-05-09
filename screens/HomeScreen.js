@@ -14,7 +14,6 @@ import { selectOrigin, setOrigin } from "../feature/navSlice";
 import tw from "twrnc";
 import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
-import client from "../sanity";
 import FavouriteListModal from "../components/FavouriteListModal";
 import {
   selectGetWhereFormInputText,

@@ -59,12 +59,10 @@ const FavouriteListModal = () => {
     return (
       <View
         style={tw`flex-1 my-2
-        ${index != tabArr.length - 1 ? `border-r border-gray-300` : ``}`}
-      >
+        ${index != tabArr.length - 1 ? `border-r border-gray-300` : ``}`}>
         <TouchableOpacity
           style={tw`items-center justify-center flex-1`}
-          onPress={onPress}
-        >
+          onPress={onPress}>
           <DynamicHeroIcons
             type={iconType}
             icon={item.icon}
@@ -96,19 +94,18 @@ const FavouriteListModal = () => {
       <View
         onStartShouldSetResponder={() => dispatch(setIsAddFavourites(false))}
         style={tw`absolute w-full h-full top-[${StatusBar.currentHeight}px]
-         bg-[#000000a1]`}
-      ></View>
+         bg-[#000000a1]`}></View>
       <Animatable.View
         onLayout={onLayout}
         style={tw`absolute w-80 h-90 bg-white rounded-lg shadow-lg shadow-black p-2 pb-0
+      right-[${deviceWidthCenterPoint - componentWidthCenterPoint}px]
+
       top-[${
         deviceHeightCenterPoint - componentHeightCenterPoint + tabBarHeight
       }px]
-      left-[${deviceWidthCenterPoint - componentWidthCenterPoint}px]
       `}
         animation={"bounceInUp"}
-        duration={1000}
-      >
+        duration={1000}>
         <TabBarBottom.Navigator
           screenOptions={{
             headerShown: false,
@@ -117,8 +114,7 @@ const FavouriteListModal = () => {
               shadowColor: "transparent",
             },
             tabBarShowLabel: false,
-          }}
-        >
+          }}>
           {tabArr.map((item, index) => (
             <TabBarBottom.Screen
               key={index}

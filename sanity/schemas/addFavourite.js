@@ -9,19 +9,25 @@ export default defineType({
       name: 'address',
       type: 'string',
       title: 'Address',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => {
+        Rule.required(), Rule.unique()
+      },
     }),
     defineField({
       name: 'lat',
       type: 'number',
       title: 'Latitude',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => {
+        Rule.required(), Rule.unique()
+      },
     }),
     defineField({
       name: 'lng',
       type: 'number',
       title: 'Longtitude',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => {
+        Rule.required(), Rule.unique()
+      },
     }),
 
     // defineField({
