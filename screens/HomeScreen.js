@@ -15,8 +15,6 @@ import tw from "twrnc";
 import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
 import client from "../sanity";
-import { useNavigation, validatePathConfig } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import FavouriteListModal from "../components/FavouriteListModal";
 import {
   selectGetWhereFormInputText,
@@ -38,23 +36,12 @@ const HomeScreen = () => {
   const getInputText = () => {
     const InputText = inputRef.current.getAddressText();
     dispatch(setGetWhereFormInputText(InputText));
-    console.log(InputText);
+    // console.log(InputText);
   };
   const whereFormInputText = useSelector(selectGetWhereFormInputText);
   const switchAddFavourites = () => {
     dispatch(setIsAddFavourites(!isAddFavourites));
     getInputText();
-  };
-  const WarningAddFavourite = ({ type }) => {
-    if (type == "Null") {
-      Alert.alert(
-        "Warning",
-        "Have not any origin, can't add to Favourite List"
-      );
-    } else if (type == "Incompleted") {
-      Alert.alert("Warning", "Your origin is available place");
-    }
-    dispatch(setIsAddFavourites(false));
   };
 
   useEffect(() => {
@@ -75,6 +62,20 @@ const HomeScreen = () => {
       });
   }, []);
 
+  const WarningAddFavourite = ({ type }) => {
+    useEffect(() => {
+      if (type == "Null") {
+        Alert.alert(
+          "Warning",
+          "Have not any origin, can't add to Favourite List"
+        );
+      } else if (type == "Incompleted") {
+        Alert.alert("Warning", "Your origin is available place");
+      }
+      dispatch(setIsAddFavourites(false));
+    }, []);
+  };
+
   // useEffect(() => {
   //   if (selectAddFavouriteType) {
   //     client.create({
@@ -85,9 +86,9 @@ const HomeScreen = () => {
   //   }
   // }, [selectAddFavouriteType]);
 
-  // if (origin) {
-  //   console.log(origin);
-  // }
+  if (origin) {
+    console.log(origin);
+  }
 
   return (
     <>

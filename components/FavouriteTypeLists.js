@@ -14,6 +14,8 @@ import sanityClient from "../sanity";
 import { useEffect } from "react";
 import DynamicHeroIcons from "../DynamicHeroIcons";
 import { useNavigation } from "@react-navigation/native";
+import client from "../sanity";
+import { selectOrigin } from "../feature/navSlice";
 
 const FavouriteTypeLists = () => {
   const dispatch = useDispatch();
@@ -21,6 +23,8 @@ const FavouriteTypeLists = () => {
   const tabBarHeight = useSelector(selectTabBarHeight);
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
   const navigation = useNavigation();
+  const origin = useSelector(selectOrigin);
+
   useEffect(() => {
     sanityClient
       .fetch(
@@ -31,7 +35,31 @@ const FavouriteTypeLists = () => {
       .then((data) => {
         dispatch(setFavouriteTypeLists(data));
       });
-  }, [favouriteTypeLists]);
+  }, []);
+
+  // if (favouriteTypeLists) {
+  //   console.log(favouriteTypeLists);
+  // }
+  // const UploadToSanity = (item) => {
+  //   const origin = useSelector(selectOrigin);
+  //   client.create({
+  //     _type: "addFavourites",
+  //     address: origin.description,
+  //     lat: origin.lat,
+  //     lng: origin.lng,
+  //     // favourite_type: item.favouriteTypesName,
+  //   });
+  // };
+  if (origin) {
+    client.create({
+      _type: "addFavourites",
+      address: origin.description,
+      lat: origin.lat,
+      lng: origin.lng,
+      // favourite_type: item.favouriteTypesName,
+    });
+  }
+
   return (
     <View>
       <View style={tw`pt-1 pb-2 bg-white`}>
@@ -43,12 +71,16 @@ const FavouriteTypeLists = () => {
         <ScrollView>
           {favouriteTypeLists &&
             favouriteTypeLists.map((item, index) => (
-              <TouchableOpacity key={item._id}>
+              <TouchableOpacity
+                key={item._id}
+                onPress={() => UploadToSanity(item)}
+              >
                 <View
                   style={tw`flex-row py-3 items-center bg-white 
                 ${
                   index == 0 ? `border-t border-b` : `border-b`
-                } border-gray-100`}>
+                } border-gray-100`}
+                >
                   <View style={tw`mx-4`}>
                     <DynamicHeroIcons
                       type="solid"
@@ -65,9 +97,11 @@ const FavouriteTypeLists = () => {
                 </View>
               </TouchableOpacity>
             ))}
+          {/* Add new lists */}
           <View style={tw`py-3 bg-white`}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("addFavouriteType")}>
+              onPress={() => navigation.navigate("addFavouriteType")}
+            >
               <View style={tw`flex-row items-center`}>
                 <View style={tw`mx-4`}>
                   <DynamicHeroIcons
