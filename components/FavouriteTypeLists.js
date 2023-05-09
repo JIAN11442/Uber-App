@@ -37,28 +37,18 @@ const FavouriteTypeLists = () => {
       });
   }, []);
 
-  // if (favouriteTypeLists) {
-  //   console.log(favouriteTypeLists);
-  // }
-  // const UploadToSanity = (item) => {
-  //   const origin = useSelector(selectOrigin);
-  //   client.create({
-  //     _type: "addFavourites",
-  //     address: origin.description,
-  //     lat: origin.lat,
-  //     lng: origin.lng,
-  //     // favourite_type: item.favouriteTypesName,
-  //   });
+  // const UploadDataToSanity = (item, origin) => {
+  //   client
+  //     .fetch(`*[_type == 'favouriteTypes'][1].favouriteLocation[]`)
+  //     .then((data) => {
+  //       const AddingFavouriteLocation = {
+
+  //       }
+  //       client.patch(`${item._id}`).set({
+  //         favouriteLocation: [...data],
+  //       });
+  //     });
   // };
-  if (origin) {
-    client.create({
-      _type: "addFavourites",
-      address: origin.description,
-      lat: origin.lat,
-      lng: origin.lng,
-      // favourite_type: item.favouriteTypesName,
-    });
-  }
 
   return (
     <View>
@@ -73,7 +63,7 @@ const FavouriteTypeLists = () => {
             favouriteTypeLists.map((item, index) => (
               <TouchableOpacity
                 key={item._id}
-                onPress={() => UploadToSanity(item)}
+                // onPress={() => UploadDataToSanity(item, origin)}
               >
                 <View
                   style={tw`flex-row py-3 items-center bg-white 

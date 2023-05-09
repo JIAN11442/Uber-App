@@ -16,12 +16,11 @@ export default defineType({
       type: 'string',
       title: 'Heroicons Name',
     }),
-    // defineField({
-    //   name: 'image',
-    //   type: 'array',
-    //   title: 'Icon Image',
-    //   validation: (Rule) => Rule.required(),
-    //   of: [{type: 'reference', to: [{type: 'icons'}]}],
-    // }),
+    defineField({
+      name: 'favouriteLocation',
+      type: 'array',
+      title: 'Favourite Location',
+      of: [{type: 'reference', to: [{type: 'favouriteLocation'}]}],
+    }),
   ],
 })

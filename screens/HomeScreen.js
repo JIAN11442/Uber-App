@@ -76,19 +76,9 @@ const HomeScreen = () => {
     }, []);
   };
 
-  // useEffect(() => {
-  //   if (selectAddFavouriteType) {
-  //     client.create({
-  //       _type: "favouriteTypes",
-  //       favouriteTypesName: "WORK",
-  //       heroiconsName: "briefcase",
-  //     });
-  //   }
-  // }, [selectAddFavouriteType]);
-
-  if (origin) {
-    console.log(origin);
-  }
+  // if (origin) {
+  //   console.log(origin);
+  // }
 
   return (
     <>

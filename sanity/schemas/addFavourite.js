@@ -1,7 +1,7 @@
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
-  name: 'addFavourites',
+  name: 'favouriteLocation',
   title: 'Favourites Location',
   type: 'document',
   fields: [
