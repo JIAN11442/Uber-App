@@ -30,11 +30,11 @@ export default defineType({
       },
     }),
 
-    // defineField({
-    //   name: 'favourite_type',
-    //   type: 'array',
-    //   title: 'Favourite Type',
-    //   of: [{type: 'reference', to: [{type: 'favouriteTypes'}]}],
-    // }),
+    defineField({
+      name: 'favourite_type',
+      type: 'array',
+      title: 'Favourite Type',
+      of: [{type: 'reference', to: [{type: 'favouriteTypes'}]}],
+    }),
   ],
 })

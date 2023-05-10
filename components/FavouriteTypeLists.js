@@ -16,6 +16,7 @@ import DynamicHeroIcons from "../DynamicHeroIcons";
 import { useNavigation } from "@react-navigation/native";
 import client from "../sanity";
 import { selectOrigin } from "../feature/navSlice";
+import uuid from "react-native-uuid";
 
 const FavouriteTypeLists = () => {
   const dispatch = useDispatch();
@@ -24,60 +25,33 @@ const FavouriteTypeLists = () => {
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
   const navigation = useNavigation();
   const origin = useSelector(selectOrigin);
-  let count = 0;
 
   useEffect(() => {
-    sanityClient
-      .fetch(
-        `*[_type == 'favouriteTypes']{
-      ...,
-    }`
-      )
-      .then((data) => {
-        dispatch(setFavouriteTypeLists(data));
-      });
+    sanityClient.fetch(`*[_type == 'favouriteTypes']{...,}`).then((data) => {
+      dispatch(setFavouriteTypeLists(data));
+    });
   }, []);
 
-  const UploadDataToSanity = (item, origin) => {
+  // console.log(favouriteTypeLists);
+
+  const UploadDataToSanity = async (item, origin) => {
     // console.log(item);
-    client.create({
+    const favouriteType = {
+      _type: "reference",
+      _ref: item._id,
+      _key: uuid.v4(),
+    };
+
+    console.log(favouriteType);
+    // console.log(favouriteType);
+    // console.log(`------------------`);
+    await client.create({
       _type: "favouriteLocation",
       address: origin.description,
       lat: origin.location.lat,
       lng: origin.location.lng,
+      favourite_type: [favouriteType],
     });
-    client
-      .fetch(
-        `*[_type == 'favouriteLocation']{
-      ...,
-    }`
-      )
-      .then((data) => {
-        // console.log(data);
-        const nData = data.filter(
-          (dt) =>
-            dt.address == origin.description &&
-            dt.lat == origin.location.lat &&
-            dt.lng == origin.location.lng
-        );
-        if (nData.length > 1) {
-          console.log(`-----------------`);
-          console.log(`${nData[0].address} : 有${nData.length}個`);
-          console.log(`分別是：`);
-          nData.map((ndt) => console.log(ndt._id));
-          console.log(`-----------------`);
-          nData.slice(1, nData.length + 1).map((nd) =>
-            client
-              .delete(nd._id)
-              .then(() => {
-                console.log(`deleted success _id : ${nd._id}`);
-              })
-              .catch((err) => {
-                console.error(`deleted failed _id: ${nd._id}`, err.message);
-              })
-          );
-        }
-      });
 
     // client.patch(item._id).append('favouriteLocation',[]);
   };
