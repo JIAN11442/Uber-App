@@ -22,6 +22,7 @@ import {
   setIsAddFavourites,
 } from "../feature/useStateSlice";
 import { Alert } from "react-native";
+import FavouriteCard from "../components/FavouriteCard";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -42,6 +43,19 @@ const HomeScreen = () => {
     dispatch(setIsAddFavourites(!isAddFavourites));
     getInputText();
   };
+  const WarningAddFavourite = ({ type }) => {
+    useEffect(() => {
+      if (type == "Null") {
+        Alert.alert(
+          "Warning",
+          "Have not any origin, can't add to Favourite List"
+        );
+      } else if (type == "Incompleted") {
+        Alert.alert("Warning", "Your origin is available place");
+      }
+      dispatch(setIsAddFavourites(false));
+    }, []);
+  };
 
   useEffect(() => {
     sanityClient
@@ -60,20 +74,6 @@ const HomeScreen = () => {
         dispatch(addData(data));
       });
   }, []);
-
-  const WarningAddFavourite = ({ type }) => {
-    useEffect(() => {
-      if (type == "Null") {
-        Alert.alert(
-          "Warning",
-          "Have not any origin, can't add to Favourite List"
-        );
-      } else if (type == "Incompleted") {
-        Alert.alert("Warning", "Your origin is available place");
-      }
-      dispatch(setIsAddFavourites(false));
-    }, []);
-  };
 
   // if (origin) {
   //   console.log(origin);
@@ -143,6 +143,9 @@ const HomeScreen = () => {
 
           {/* NavOptions */}
           <NavOptions data={NavOptionsData} />
+
+          {/* FavouritesCard */}
+          <FavouriteCard />
         </View>
       </View>
       {isAddFavourites && !whereFormInputText && (

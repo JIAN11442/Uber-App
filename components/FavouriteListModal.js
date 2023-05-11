@@ -5,37 +5,20 @@ import * as Animatable from "react-native-animatable";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import styles from "../style";
 import {
-  selectComponentHeight,
-  selectComponentWidth,
-  selectDeviceHeight,
-  selectDeviceWidth,
   selectTabBarHeight,
-  setComponentHeight,
-  setComponentWidth,
-  setDeviceHeight,
-  setDeviceWidth,
   setIsAddFavourites,
   setTabBarHeight,
 } from "../feature/useStateSlice";
 import { useEffect } from "react";
-import { Dimensions } from "react-native";
 import FavouriteTypeLists from "./FavouriteTypeLists";
 import AddFavouriteType from "./AddFavouriteType";
 import { TouchableOpacity } from "react-native";
 import DynamicHeroIcons from "../DynamicHeroIcons";
-import { useRef } from "react";
 
 const FavouriteListModal = () => {
   const dispatch = useDispatch();
-  const deviceWidth = useSelector(selectDeviceWidth);
-  const deviceHeight = useSelector(selectDeviceHeight);
-  const componentWidth = useSelector(selectComponentWidth);
-  const componentHeight = useSelector(selectComponentHeight);
-  const deviceWidthCenterPoint = deviceWidth / 2;
-  const deviceHeightCenterPoint = deviceHeight / 2;
-  const componentWidthCenterPoint = componentWidth / 2;
-  const componentHeightCenterPoint = componentHeight / 2;
   const tabBarHeight = useSelector(selectTabBarHeight);
+
   const tabArr = [
     {
       name: "favouriteTypeList",
@@ -75,60 +58,45 @@ const FavouriteListModal = () => {
   };
 
   useEffect(() => {
-    const { width, height } = Dimensions.get("window");
-    dispatch(setDeviceWidth(width));
-    dispatch(setDeviceHeight(height));
     dispatch(setTabBarHeight(50));
   }, []);
 
-  const onLayout = (event) => {
-    const { width, height } = event.nativeEvent.layout;
-    dispatch(setComponentWidth(width));
-    dispatch(setComponentHeight(height));
-  };
-
   const TabBarBottom = createBottomTabNavigator();
-
   return (
     <>
       <View
         onStartShouldSetResponder={() => dispatch(setIsAddFavourites(false))}
         style={tw`absolute w-full h-full top-[${StatusBar.currentHeight}px]
-         bg-[#000000a1]`}></View>
-      <Animatable.View
-        onLayout={onLayout}
-        style={tw`absolute w-80 h-90 bg-white rounded-lg shadow-lg shadow-black p-2 pb-0
-      right-[${deviceWidthCenterPoint - componentWidthCenterPoint}px]
-
-      top-[${
-        deviceHeightCenterPoint - componentHeightCenterPoint + tabBarHeight
-      }px]
+         bg-[#000000a1] items-center justify-center`}>
+        <Animatable.View
+          style={tw`absolute w-80 h-90 bg-white rounded-lg shadow-lg shadow-black p-2 pb-0
       `}
-        animation={"bounceInUp"}
-        duration={1000}>
-        <TabBarBottom.Navigator
-          screenOptions={{
-            headerShown: false,
-            tabBarStyle: {
-              height: tabBarHeight,
-              shadowColor: "transparent",
-            },
-            tabBarShowLabel: false,
-          }}>
-          {tabArr.map((item, index) => (
-            <TabBarBottom.Screen
-              key={index}
-              name={item.name}
-              component={item.component}
-              options={{
-                tabBarButton: (props) => (
-                  <TabBarButton {...props} item={item} index={index} />
-                ),
-              }}
-            />
-          ))}
-        </TabBarBottom.Navigator>
-      </Animatable.View>
+          animation={"bounceInUp"}
+          duration={1000}>
+          <TabBarBottom.Navigator
+            screenOptions={{
+              headerShown: false,
+              tabBarStyle: {
+                height: tabBarHeight,
+                shadowColor: "transparent",
+              },
+              tabBarShowLabel: false,
+            }}>
+            {tabArr.map((item, index) => (
+              <TabBarBottom.Screen
+                key={index}
+                name={item.name}
+                component={item.component}
+                options={{
+                  tabBarButton: (props) => (
+                    <TabBarButton {...props} item={item} index={index} />
+                  ),
+                }}
+              />
+            ))}
+          </TabBarBottom.Navigator>
+        </Animatable.View>
+      </View>
     </>
   );
 };

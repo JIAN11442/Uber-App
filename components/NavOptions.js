@@ -6,10 +6,12 @@ import { ArrowRightCircleIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { selectOrigin } from "../feature/navSlice";
+import { selectGetWhereFormInputText } from "../feature/useStateSlice";
 
 const NavOptions = ({ data }) => {
   const navigation = useNavigation();
   const origin = useSelector(selectOrigin);
+  const whereFormInputText = useSelector(selectGetWhereFormInputText);
 
   return (
     <View style={tw`flex-row`}>
@@ -18,8 +20,7 @@ const NavOptions = ({ data }) => {
           onPress={() => navigation.navigate(`${dt.screen[0].name}`)}
           key={dt._id}
           style={tw`p-2 pl-6 pb-4 pt-4 bg-gray-200 m-2 w-40 rounded-lg`}
-          disabled={!origin}
-        >
+          disabled={!origin}>
           <View style={tw`${origin == null ? `opacity-50` : ``}`}>
             <Image
               style={{ width: 120, height: 120, resizeMode: "contain" }}
