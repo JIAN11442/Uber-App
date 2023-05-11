@@ -35,24 +35,22 @@ const FavouriteTypeLists = () => {
   // console.log(favouriteTypeLists);
 
   const UploadDataToSanity = async (item, origin) => {
-    // console.log(item);
-    const favouriteType = {
-      _type: "reference",
-      _ref: item._id,
-      _key: uuid.v4(),
-    };
-
-    console.log(favouriteType);
+    // // console.log(item);
+    // const favouriteType = {
+    //   _type: "reference",
+    //   _ref: item._id,
+    //   _key: uuid.v4(),
+    // };
     // console.log(favouriteType);
-    // console.log(`------------------`);
-    await client.create({
-      _type: "favouriteLocation",
-      address: origin.description,
-      lat: origin.location.lat,
-      lng: origin.location.lng,
-      favourite_type: [favouriteType],
-    });
-
+    // // console.log(favouriteType);
+    // // console.log(`------------------`);
+    // await client.create({
+    //   _type: "favouriteLocation",
+    //   address: origin.description,
+    //   lat: origin.location.lat,
+    //   lng: origin.location.lng,
+    //   favourite_type: [favouriteType],
+    // });
     // client.patch(item._id).append('favouriteLocation',[]);
   };
 
@@ -69,12 +67,14 @@ const FavouriteTypeLists = () => {
             favouriteTypeLists.map((item, index) => (
               <TouchableOpacity
                 key={item._id}
-                onPress={() => UploadDataToSanity(item, origin)}>
+                onPress={() => UploadDataToSanity(item, origin)}
+              >
                 <View
                   style={tw`flex-row py-3 items-center bg-white 
                 ${
                   index == 0 ? `border-t border-b` : `border-b`
-                } border-gray-100`}>
+                } border-gray-100`}
+                >
                   <View style={tw`mx-4`}>
                     <DynamicHeroIcons
                       type="solid"
@@ -94,7 +94,8 @@ const FavouriteTypeLists = () => {
           {/* Add new lists */}
           <View style={tw`py-3 bg-white`}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("addFavouriteType")}>
+              onPress={() => navigation.navigate("addFavouriteType")}
+            >
               <View style={tw`flex-row items-center`}>
                 <View style={tw`mx-4`}>
                   <DynamicHeroIcons
