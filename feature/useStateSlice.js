@@ -9,6 +9,8 @@ const initialState = {
   tabBarHeight: 0,
   favouritesTypeList: null,
   getWhereFromInputText: null,
+  favouriteTypeCardOnPress: false,
+  // currentOnPressFavouriteTypeKey: null,
 };
 
 export const useStateSlice = createSlice({
@@ -39,6 +41,12 @@ export const useStateSlice = createSlice({
     setGetWhereFormInputText: (state, action) => {
       state.getWhereFromInputText = action.payload;
     },
+    setFavouriteTypeCardOnPress: (state, action) => {
+      state.favouriteTypeCardOnPress = action.payload;
+    },
+    // setCurrentOnPressFavouriteTypeKey: (state, action) => {
+    //   state.currentOnPressFavouriteTypeKey = action.payload;
+    // },
   },
 });
 
@@ -52,6 +60,8 @@ export const {
   setTabBarHeight,
   setFavouriteTypeLists,
   setGetWhereFormInputText,
+  setFavouriteTypeCardOnPress,
+  // setCurrentOnPressFavouriteTypeKey,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -64,5 +74,9 @@ export const selectFavouriteTypeLists = (state) =>
   state.useState.favouritesTypeList;
 export const selectGetWhereFormInputText = (state) =>
   state.useState.getWhereFromInputText;
+export const selectFavouriteTypeCardOnPress = (state) =>
+  state.useState.favouriteTypeCardOnPress;
+// export const selectCurrentOnPressFavouriteTypeKey = (state) =>
+//   state.useState.currentOnPressFavouriteTypeKey;
 
 export default useStateSlice.reducer;
