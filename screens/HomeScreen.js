@@ -1,7 +1,7 @@
-import { View, Text, Image, ScrollView } from "react-native";
+import { View, Image } from "react-native";
 import styles from "../style";
 import sanityClient, { urlFor } from "../sanity";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addData, selectData, selectDataWithName } from "../feature/DataSlice";
 import NavOptions from "../components/NavOptions";
@@ -13,10 +13,18 @@ import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
 import FavouriteListModal from "../components/FavouriteListModal";
 import {
-  selectGetWhereFormInputText,
+  selectCurrentLoactionIsAddToSanity,
+  selectFavouriteLocationList,
   selectIsAddFavourites,
-  setGetWhereFormInputText,
-  setIsAddFavourites,
+  selectModalVisible,
+  selectStarIconFillStyle,
+  selectWarningPopUpVisibleForDeleteFavourite,
+  selectWarningPopUpVisibleForNull,
+  setCurrentLocationIsAddToSanity,
+  setModalVisible,
+  setStarIconFillStyle,
+  setWarningPopUpVisibleForDeleteFavourite,
+  setWarningPopUpVisibleForNull,
 } from "../feature/useStateSlice";
 import { Alert } from "react-native";
 import FavouriteCard from "../components/FavouriteCard";
@@ -28,31 +36,108 @@ const HomeScreen = () => {
   const UberLogo = selectDataWithName("HomeScreen UberLogo")?.image[0]?.image;
   const NavOptionsData = selectDataWithName("NavOption")?.image;
   // const requestUrl = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_APIKEYS}&libraries=places`;
+
+  /* starIcon situation useState reducer */
   const isAddFavourites = useSelector(selectIsAddFavourites);
+
+  // Get AutoComplete Text When OnPress the StarIcon
   const inputRef = useRef(null);
-  const getInputText = () => {
+  const getInputText = async () => {
     const InputText = inputRef.current.getAddressText();
-    dispatch(setGetWhereFormInputText(InputText));
-    // console.log(InputText);
-  };
-  const whereFormInputText = useSelector(selectGetWhereFormInputText);
-  const switchAddFavourites = () => {
-    dispatch(setIsAddFavourites(!isAddFavourites));
-    getInputText();
+    return InputText;
   };
   const WarningAddFavourite = ({ type }) => {
     useEffect(() => {
-      if (type == "Null") {
+      if (type == "null") {
         Alert.alert(
           "Warning",
           "Have not any origin, can't add to Favourite List"
         );
       } else if (type == "Incompleted") {
         Alert.alert("Warning", "Your origin is available place");
+      } else if (type == "removeFavourite") {
+        Alert.alert("Warning", "Sure to remove from favourite list?", [
+          {
+            text: "Cancel",
+            onPress: () => {
+              console.log("Cancel Remove From Favourite");
+            },
+            style: "cancel",
+          },
+          {
+            text: "Sure",
+            onPress: () => {
+              removeFavouriteLocation();
+              dispatch(setStarIconFillStyle("transparent"));
+            },
+          },
+        ]);
       }
-      dispatch(setIsAddFavourites(false));
+      dispatch(setWarningPopUpVisibleForNull(false));
+      dispatch(setWarningPopUpVisibleForDeleteFavourite(false));
     }, []);
   };
+  const warningPopUpVisibleForNull = useSelector(
+    selectWarningPopUpVisibleForNull
+  );
+  const warningPopUpVisibleForDeleteFavourite = useSelector(
+    selectWarningPopUpVisibleForDeleteFavourite
+  );
+  const originIsDuplicated = async () => {
+    const inputText = getInputText()._j;
+    const originLocation = origin.description;
+    await sanityClient
+      .fetch(`*[_type == 'favouriteLocation']{...,}`)
+      .then((data) => {
+        for (let i = 0; i < data.length; i++) {
+          if (inputText === originLocation && inputText === data[i].address) {
+            // console.log(`true`);
+            dispatch(setStarIconFillStyle("#ffc400"));
+            return dispatch(setCurrentLocationIsAddToSanity(true));
+          }
+        }
+        // console.log(`originIsDuplicated: false`);
+        dispatch(setStarIconFillStyle("transparent"));
+        return dispatch(setCurrentLocationIsAddToSanity(false));
+      });
+  };
+  const currentLocationIsAddToSanity = useSelector(
+    selectCurrentLoactionIsAddToSanity
+  );
+  const starIconFillStyle = useSelector(selectStarIconFillStyle);
+  const modalVisible = useSelector(selectModalVisible);
+  const removeFavouriteLocation = () => {
+    const originLocation = origin.description;
+    sanityClient.fetch(`*[_type == 'favouriteLocation']{...,}`).then((data) => {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].address == originLocation) {
+          sanityClient.delete(`${data[i]._id}`).then(() => {
+            console.log(`already delete favourite location`);
+            console.log(`id : ${data[i]._id}`);
+            console.log(`location : ${data[i].address}`);
+          });
+        }
+      }
+    });
+  };
+  const switchAddFavourites = async () => {
+    const inputText = getInputText()._j;
+
+    if (starIconFillStyle == "transparent") {
+      if (inputText != origin.description) {
+        dispatch(setWarningPopUpVisibleForNull(true));
+      } else {
+        dispatch(setModalVisible(true));
+      }
+      if (currentLocationIsAddToSanity) {
+        dispatch(setStarIconFillStyle("#ffc400"));
+      }
+    } else {
+      dispatch(setWarningPopUpVisibleForDeleteFavourite(true));
+    }
+  };
+
+  // const favouriteLocationList = useSelector(selectFavouriteLocationList);
 
   useEffect(() => {
     sanityClient
@@ -72,9 +157,14 @@ const HomeScreen = () => {
       });
   }, []);
 
-  // if (origin) {
-  //   console.log(origin);
-  // }
+  useEffect(() => {
+    if (origin) {
+      getInputText();
+      originIsDuplicated();
+    }
+  }, [origin, modalVisible]);
+
+  // console.log(whereFromInputText);
 
   return (
     <>
@@ -98,6 +188,10 @@ const HomeScreen = () => {
           <View style={tw`flex-row justify-between items-center`}>
             <View style={tw`flex-1`}>
               <GooglePlacesAutocomplete
+                textInputProps={{
+                  onFocus: () => dispatch(setStarIconFillStyle("transparent")),
+                  onBlur: () => originIsDuplicated(),
+                }}
                 ref={inputRef}
                 styles={styles.AutoCompletedStyleForForm}
                 placeholder="Where From?"
@@ -122,6 +216,7 @@ const HomeScreen = () => {
                   rankby: "distance",
                 }}
               />
+              {/* {origin && originIsDuplicated()} */}
               {/* Favourites Star Icon */}
               {origin && (
                 <View style={tw`absolute right-0 top-3 z-50`}>
@@ -129,7 +224,7 @@ const HomeScreen = () => {
                     <StarIcon
                       size={28}
                       color="#ffc400"
-                      fill={isAddFavourites ? "#ffc400" : "transparent"}
+                      fill={starIconFillStyle}
                       style={tw`bottom-0.5 right-1`}
                     />
                   </TouchableOpacity>
@@ -145,17 +240,11 @@ const HomeScreen = () => {
           <FavouriteCard />
         </View>
       </View>
-      {isAddFavourites && !whereFormInputText && (
-        <WarningAddFavourite type="Null" />
+      {modalVisible && <FavouriteListModal />}
+      {warningPopUpVisibleForNull && <WarningAddFavourite type="Incompleted" />}
+      {warningPopUpVisibleForDeleteFavourite && (
+        <WarningAddFavourite type="removeFavourite" />
       )}
-      {isAddFavourites &&
-        whereFormInputText &&
-        whereFormInputText != origin.description && (
-          <WarningAddFavourite type="Incompleted" />
-        )}
-      {isAddFavourites &&
-        whereFormInputText &&
-        whereFormInputText == origin.description && <FavouriteListModal />}
     </>
   );
 };

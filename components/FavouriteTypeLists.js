@@ -11,6 +11,8 @@ import {
   selectTabBarHeight,
   setFavouriteTypeLists,
   setIsAddFavourites,
+  setModalVisible,
+  setStarIconFillStyle,
 } from "../feature/useStateSlice";
 import sanityClient from "../sanity";
 import { useEffect } from "react";
@@ -41,7 +43,7 @@ const FavouriteTypeLists = () => {
       _ref: item._id,
       _key: uuid.v4(),
     };
-    console.log(favouriteType);
+    // console.log(favouriteType);
     // console.log(favouriteType);
     // console.log(`------------------`);
     await client.create({
@@ -51,7 +53,17 @@ const FavouriteTypeLists = () => {
       lng: origin.location.lng,
       favourite_type: [favouriteType],
     });
-    dispatch(setIsAddFavourites(false));
+    dispatch(setModalVisible(false));
+    await sanityClient
+      .fetch(`*[_type == 'favouriteLocation']{...,}`)
+      .then((data) => {
+        data.map((dt) => {
+          if (dt.address == origin.description) {
+            console.log(`already create in sanity`);
+          }
+        });
+        dispatch(setStarIconFillStyle("#ffc400"));
+      });
   };
 
   return (

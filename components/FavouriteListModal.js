@@ -7,6 +7,8 @@ import styles from "../style";
 import {
   selectTabBarHeight,
   setIsAddFavourites,
+  setModalVisible,
+  setStarIconFillStyle,
   setTabBarHeight,
 } from "../feature/useStateSlice";
 import { useEffect } from "react";
@@ -65,7 +67,10 @@ const FavouriteListModal = () => {
   return (
     <>
       <View
-        onStartShouldSetResponder={() => dispatch(setIsAddFavourites(false))}
+        onStartShouldSetResponder={() => {
+          dispatch(setModalVisible(false));
+          dispatch(setStarIconFillStyle("transparent"));
+        }}
         style={tw`absolute w-full h-full top-[${StatusBar.currentHeight}px]
          bg-[#000000a1] items-center justify-center`}>
         <Animatable.View

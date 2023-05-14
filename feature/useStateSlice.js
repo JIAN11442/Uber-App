@@ -10,7 +10,13 @@ const initialState = {
   favouritesTypeList: null,
   getWhereFromInputText: null,
   favouriteTypeCardOnPress: false,
-  // currentOnPressFavouriteTypeKey: null,
+  currentOnPressFavouriteTypeKey: null,
+  favouriteLocationList: null,
+  currentLocationIsAddToSanity: null,
+  starIconFillStyle: null,
+  modalVisible: false,
+  warningPopUpVisibleForNull: false,
+  warningPopUpVisibleForDeleteFavourite: false,
 };
 
 export const useStateSlice = createSlice({
@@ -20,6 +26,7 @@ export const useStateSlice = createSlice({
     setIsAddFavourites: (state, action) => {
       state.isAddFavourites = action.payload;
     },
+
     setComponentWidth: (state, action) => {
       state.componentWidth = action.payload;
     },
@@ -38,15 +45,33 @@ export const useStateSlice = createSlice({
     setFavouriteTypeLists: (state, action) => {
       state.favouritesTypeList = action.payload;
     },
-    setGetWhereFormInputText: (state, action) => {
+    setGetWhereFromInputText: (state, action) => {
       state.getWhereFromInputText = action.payload;
     },
     setFavouriteTypeCardOnPress: (state, action) => {
       state.favouriteTypeCardOnPress = action.payload;
     },
-    // setCurrentOnPressFavouriteTypeKey: (state, action) => {
-    //   state.currentOnPressFavouriteTypeKey = action.payload;
-    // },
+    setCurrentOnPressFavouriteTypeKey: (state, action) => {
+      state.currentOnPressFavouriteTypeKey = action.payload;
+    },
+    setFavouriteLocationList: (state, action) => {
+      state.favouriteLocationList = action.payload;
+    },
+    setCurrentLocationIsAddToSanity: (state, action) => {
+      state.currentLocationIsAddToSanity = action.payload;
+    },
+    setStarIconFillStyle: (state, action) => {
+      state.starIconFillStyle = action.payload;
+    },
+    setModalVisible: (state, action) => {
+      state.modalVisible = action.payload;
+    },
+    setWarningPopUpVisibleForNull: (state, action) => {
+      state.warningPopUpVisibleForNull = action.payload;
+    },
+    setWarningPopUpVisibleForDeleteFavourite: (state, action) => {
+      state.warningPopUpVisibleForDeleteFavourite = action.payload;
+    },
   },
 });
 
@@ -59,9 +84,15 @@ export const {
   setDeviceHeight,
   setTabBarHeight,
   setFavouriteTypeLists,
-  setGetWhereFormInputText,
+  setGetWhereFromInputText,
   setFavouriteTypeCardOnPress,
-  // setCurrentOnPressFavouriteTypeKey,
+  setCurrentOnPressFavouriteTypeKey,
+  setFavouriteLocationList,
+  setCurrentLocationIsAddToSanity,
+  setStarIconFillStyle,
+  setModalVisible,
+  setWarningPopUpVisibleForNull,
+  setWarningPopUpVisibleForDeleteFavourite,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -72,11 +103,22 @@ export const selectDeviceHeight = (state) => state.useState.deviceHeight;
 export const selectTabBarHeight = (state) => state.useState.tabBarHeight;
 export const selectFavouriteTypeLists = (state) =>
   state.useState.favouritesTypeList;
-export const selectGetWhereFormInputText = (state) =>
+export const selectGetWhereFromInputText = (state) =>
   state.useState.getWhereFromInputText;
 export const selectFavouriteTypeCardOnPress = (state) =>
   state.useState.favouriteTypeCardOnPress;
-// export const selectCurrentOnPressFavouriteTypeKey = (state) =>
-//   state.useState.currentOnPressFavouriteTypeKey;
+export const selectCurrentOnPressFavouriteTypeKey = (state) =>
+  state.useState.currentOnPressFavouriteTypeKey;
+export const selectFavouriteLocationList = (state) =>
+  state.useState.favouriteLocationList;
+export const selectCurrentLoactionIsAddToSanity = (state) =>
+  state.useState.currentLocationIsAddToSanity;
+export const selectStarIconFillStyle = (state) =>
+  state.useState.starIconFillStyle;
+export const selectModalVisible = (state) => state.useState.modalVisible;
+export const selectWarningPopUpVisibleForNull = (state) =>
+  state.useState.warningPopUpVisibleForNull;
+export const selectWarningPopUpVisibleForDeleteFavourite = (state) =>
+  state.useState.warningPopUpVisibleForDeleteFavourite;
 
 export default useStateSlice.reducer;

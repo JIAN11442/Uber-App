@@ -6,12 +6,11 @@ import { ArrowRightCircleIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { selectOrigin } from "../feature/navSlice";
-import { selectGetWhereFormInputText } from "../feature/useStateSlice";
+import { selectGetWhereFromInputText } from "../feature/useStateSlice";
 
 const NavOptions = ({ data }) => {
   const navigation = useNavigation();
   const origin = useSelector(selectOrigin);
-  const whereFormInputText = useSelector(selectGetWhereFormInputText);
 
   return (
     <View style={tw`flex-row`}>
