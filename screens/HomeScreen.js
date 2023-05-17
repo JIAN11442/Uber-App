@@ -85,12 +85,14 @@ const HomeScreen = () => {
   );
   const originIsDuplicated = async () => {
     const inputText = getInputText()._j;
-    const originLocation = origin.description;
     await sanityClient
       .fetch(`*[_type == 'favouriteLocation']{...,}`)
       .then((data) => {
         for (let i = 0; i < data.length; i++) {
-          if (inputText === originLocation && inputText === data[i].address) {
+          if (
+            inputText === origin.description &&
+            inputText === data[i].address
+          ) {
             // console.log(`true`);
             dispatch(setStarIconFillStyle("#ffc400"));
             return dispatch(setCurrentLocationIsAddToSanity(true));
@@ -163,8 +165,6 @@ const HomeScreen = () => {
       originIsDuplicated();
     }
   }, [origin, modalVisible]);
-
-  // console.log(whereFromInputText);
 
   return (
     <>
