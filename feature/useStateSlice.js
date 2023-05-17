@@ -9,9 +9,6 @@ const initialState = {
   tabBarHeight: 0,
   favouritesTypeList: null,
   getWhereFromInputText: null,
-  favouriteTypeCardOnPressStatus: [],
-  currentOnPressStatus: null,
-  currentOnPressFavouriteTypeKey: null,
   favouriteLocationList: null,
   currentLocationIsAddToSanity: null,
   starIconFillStyle: null,
@@ -49,15 +46,6 @@ export const useStateSlice = createSlice({
     setGetWhereFromInputText: (state, action) => {
       state.getWhereFromInputText = action.payload;
     },
-    setFavouriteTypeCardOnPressStatus: (state, action) => {
-      state.favouriteTypeCardOnPressStatus = action.payload;
-    },
-    setCurrentOnPressStatus: (state, action) => {
-      state.currentOnPressStatus = action.payload;
-    },
-    setCurrentOnPressFavouriteTypeKey: (state, action) => {
-      state.currentOnPressFavouriteTypeKey = action.payload;
-    },
     setFavouriteLocationList: (state, action) => {
       state.favouriteLocationList = action.payload;
     },
@@ -89,10 +77,6 @@ export const {
   setTabBarHeight,
   setFavouriteTypeLists,
   setGetWhereFromInputText,
-  setFavouriteTypeCardOnPressStatus,
-  setClearFavouriteTypeCardOnPressStatus,
-  setCurrentOnPressStatus,
-  setCurrentOnPressFavouriteTypeKey,
   setFavouriteLocationList,
   setCurrentLocationIsAddToSanity,
   setStarIconFillStyle,
@@ -111,12 +95,6 @@ export const selectFavouriteTypeLists = (state) =>
   state.useState.favouritesTypeList;
 export const selectGetWhereFromInputText = (state) =>
   state.useState.getWhereFromInputText;
-export const selectFavouriteTypeCardOnPressStatus = (state) =>
-  state.useState.favouriteTypeCardOnPressStatus;
-export const selectCurrentOnPressStatus = (state) =>
-  state.useState.currentOnPressStatus;
-export const selectCurrentOnPressFavouriteTypeKey = (state) =>
-  state.useState.currentOnPressFavouriteTypeKey;
 export const selectFavouriteLocationList = (state) =>
   state.useState.favouriteLocationList;
 export const selectCurrentLoactionIsAddToSanity = (state) =>
