@@ -106,23 +106,22 @@ const FavouriteCard = () => {
       <ScrollView>
         {favouriteTypeLists &&
           favouriteTypeLists.map((type, index) => (
-            <View key={type._id}>
+            <View key={type._id} style={tw`mr-5`}>
+              {/* Main FavouriteType  Menu*/}
               <TouchableOpacity
                 onPress={() => favouriteCardOnPress(type)}
-                style={tw`flex-row items-center p-2 ${
+                style={tw`flex-row items-center py-2 px-3${
                   index != favouriteTypeLists.length - 1
                     ? `border-b border-gray-200`
                     : ``
-                }`}
-              >
+                }`}>
                 {/* FavouriteType Icons */}
                 <View
                   style={tw`p-2 rounded-full mr-10 ${
                     favouriteCardOnPressStatusWithId[type._id]
                       ? `bg-gray-500`
                       : `bg-gray-300`
-                  }`}
-                >
+                  }`}>
                   <DynamicHeroIcons
                     type="solid"
                     icon={type.heroiconsName}
@@ -138,13 +137,12 @@ const FavouriteCard = () => {
                     favouriteCardOnPressStatusWithId[type._id]
                       ? `text-gray-600`
                       : `text-gray-500`
-                  }`}
-                  >
+                  }`}>
                     {type.favouriteTypesName}
                   </Text>
                 </View>
                 {/* ChevronIcon */}
-                <View style={tw`mr-5`}>
+                <View>
                   <DynamicHeroIcons
                     type="outlined"
                     icon={
@@ -157,31 +155,47 @@ const FavouriteCard = () => {
                   />
                 </View>
               </TouchableOpacity>
+              {/* Location of FavouriteType Menu */}
               <View>
                 {favouriteCardOnPressStatusWithId[type._id] &&
                   favouriteCardOnPressLocation[type._id] && (
                     <View style={tw`bg-gray-50`}>
                       {favouriteCardOnPressLocation[type._id].map(
-                        (location) => (
+                        (location, index) => (
                           <TouchableOpacity
                             key={location._id}
-                            style={tw`flex-row py-3 ml-4 mr-10 items-center`}
-                          >
+                            style={tw`flex-row items-center mx-3 ${
+                              index != 0 ||
+                              index !=
+                                favouriteCardOnPressLocation[type._id].length -
+                                  1
+                                ? `border-b border-gray-100`
+                                : ``
+                            }`}>
                             {/* location Icon */}
                             <View style={tw`mr-3`}>
                               <DynamicHeroIcons
                                 type="outlined"
                                 icon="MapPinIcon"
-                                size={25}
+                                size={22}
                                 color="#9ca3af"
                               />
                             </View>
                             {/* location Text */}
-                            <View>
-                              <Text style={tw`text-gray-600`}>
+                            <View style={tw`flex-1 py-3`}>
+                              <Text style={tw`text-gray-500 text-[15px]`}>
                                 {location.address}
                               </Text>
                             </View>
+                            {/* Minus Icons */}
+                            <TouchableOpacity style={tw`ml-5`}>
+                              <DynamicHeroIcons
+                                type="outlined"
+                                icon="EllipsisVerticalIcon"
+                                size={22}
+                                color="#9ca3af"
+                              />
+                            </TouchableOpacity>
                           </TouchableOpacity>
                         )
                       )}
