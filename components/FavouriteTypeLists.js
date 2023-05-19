@@ -54,15 +54,17 @@ const FavouriteTypeLists = () => {
       favourite_type: [favouriteType],
     });
     dispatch(setModalVisible(false));
+    dispatch(setStarIconFillStyle("#ffc400"));
+
     await sanityClient
       .fetch(`*[_type == 'favouriteLocation']{...,}`)
       .then((data) => {
+        console.log(data);
         data.map((dt) => {
           if (dt.address == origin.description) {
             console.log(`already create in sanity`);
           }
         });
-        dispatch(setStarIconFillStyle("#ffc400"));
       });
   };
 
@@ -79,12 +81,14 @@ const FavouriteTypeLists = () => {
             favouriteTypeLists.map((item, index) => (
               <TouchableOpacity
                 key={item._id}
-                onPress={() => UploadDataToSanity(item, origin)}>
+                onPress={() => UploadDataToSanity(item, origin)}
+              >
                 <View
                   style={tw`flex-row py-3 items-center bg-white 
                 ${
                   index == 0 ? `border-t border-b` : `border-b`
-                } border-gray-100`}>
+                } border-gray-100`}
+                >
                   <View style={tw`mx-4`}>
                     <DynamicHeroIcons
                       type="solid"
@@ -104,7 +108,8 @@ const FavouriteTypeLists = () => {
           {/* Add new lists */}
           <View style={tw`py-3 bg-white`}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("addFavouriteType")}>
+              onPress={() => navigation.navigate("addFavouriteType")}
+            >
               <View style={tw`flex-row items-center`}>
                 <View style={tw`mx-4`}>
                   <DynamicHeroIcons

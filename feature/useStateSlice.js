@@ -15,6 +15,7 @@ const initialState = {
   modalVisible: false,
   warningPopUpVisibleForNull: false,
   warningPopUpVisibleForDeleteFavourite: false,
+  currentFavouriteCardOnPressId: null,
 };
 
 export const useStateSlice = createSlice({
@@ -64,6 +65,9 @@ export const useStateSlice = createSlice({
     setWarningPopUpVisibleForDeleteFavourite: (state, action) => {
       state.warningPopUpVisibleForDeleteFavourite = action.payload;
     },
+    setCurrentFavouriteCardOnPressId: (state, action) => {
+      state.currentFavouriteCardOnPressId = action.payload;
+    },
   },
 });
 
@@ -83,6 +87,7 @@ export const {
   setModalVisible,
   setWarningPopUpVisibleForNull,
   setWarningPopUpVisibleForDeleteFavourite,
+  setCurrentFavouriteCardOnPressId,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -106,5 +111,7 @@ export const selectWarningPopUpVisibleForNull = (state) =>
   state.useState.warningPopUpVisibleForNull;
 export const selectWarningPopUpVisibleForDeleteFavourite = (state) =>
   state.useState.warningPopUpVisibleForDeleteFavourite;
+export const selectCurrentFavouriteCardOnPressId = (state) =>
+  state.useState.currentFavouriteCardOnPressId;
 
 export default useStateSlice.reducer;
