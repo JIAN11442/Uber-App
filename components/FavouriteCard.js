@@ -5,11 +5,9 @@ import sanityClient from "../sanity";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectCurrentFavouriteCardOnPressId,
-  selectCurrentFavouriteCardOnPressLocation,
   selectFavouriteTypeLists,
   selectModalVisible,
   setCurrentFavouriteCardOnPressId,
-  setCurrentFavouriteCardOnPressLocation,
   setFavouriteTypeLists,
 } from "../feature/useStateSlice";
 import { TouchableOpacity } from "react-native";
@@ -17,18 +15,19 @@ import tw from "twrnc";
 import DynamicHeroIcons from "../DynamicHeroIcons";
 import { ScrollView } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { useNavigation } from "@react-navigation/native";
+import { selectOrigin, setDestination, setOrigin } from "../feature/navSlice";
 
-const FavouriteCard = () => {
+const FavouriteCard = (props) => {
+  const favouriteCardType = props.type;
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const modalVisible = useSelector(selectModalVisible);
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
   const [
     favouriteCardOnPressStatusWithId,
     setFavouriteCardOnPressStatusWithId,
   ] = useState({});
-  const currentFavouriteCardOnPressId = useSelector(
-    selectCurrentFavouriteCardOnPressId
-  );
   const [favouriteCardOnPressLocation, setFavouriteCardOnPressLocation] =
     useState([]);
   const fetchLocationWithId = (id) => {
@@ -56,6 +55,15 @@ const FavouriteCard = () => {
     setFavouriteCardOnPressStatusWithIdFunction(id);
     fetchLocationWithId(id);
   };
+  const refreshFavouriteCard = () => {
+    for (const type of favouriteTypeLists) {
+      setFavouriteCardOnPressStatusWithId((prevState) => ({
+        ...prevState,
+        [type._id]: false,
+      }));
+      fetchLocationWithId(type._id);
+    }
+  };
 
   useEffect(() => {
     sanityClient
@@ -77,29 +85,8 @@ const FavouriteCard = () => {
     if (!favouriteTypeLists) {
       return;
     }
-    for (const type of favouriteTypeLists) {
-      setFavouriteCardOnPressStatusWithId((prevState) => ({
-        ...prevState,
-        [type._id]: false,
-      }));
-      fetchLocationWithId(type._id);
-    }
+    refreshFavouriteCard();
   }, [modalVisible]);
-
-  // if (Object.keys(favouriteCardOnPressLocation).length > 0) {
-  //   // console.log(favouriteCardOnPressLocation);
-  //   // console.log(`============================`);
-  //   console.log(currentFavouriteCardOnPressId);
-  //   console.log(favouriteCardOnPressLocation[currentFavouriteCardOnPressId]);
-  //   console.log(`------------------`);
-  // }
-
-  // if (Object.keys(favouriteCardOnPressStatusWithId).length > 0) {
-  //   console.log(favouriteCardOnPressStatusWithId);
-  //   // console.log(currentFavouriteCardOnPressId);
-  //   // console.log(currentFavouriteCardOnPressLocation({}));
-  //   console.log(`-----------------------`);
-  // }
 
   return (
     <View style={tw`flex-1 mt-5`}>
@@ -164,8 +151,33 @@ const FavouriteCard = () => {
                         (location, index) => (
                           <TouchableOpacity
                             key={location._id}
+                            onPress={() => {
+                              if (favouriteCardType == "origin") {
+                                dispatch(
+                                  setOrigin({
+                                    location: {
+                                      lat: location.lat,
+                                      lng: location.lng,
+                                    },
+                                    description: location.address,
+                                  })
+                                );
+                              } else if (favouriteCardType == "destination") {
+                                dispatch(
+                                  setDestination({
+                                    location: {
+                                      lat: location.lat,
+                                      lng: location.lng,
+                                    },
+                                    description: location.address,
+                                  })
+                                );
+                              }
+                              refreshFavouriteCard();
+                              navigation.navigate("Map");
+                            }}
                             style={tw`flex-row items-center mx-3 ${
-                              index != 0 ||
+                              index != 0 &&
                               index !=
                                 favouriteCardOnPressLocation[type._id].length -
                                   1

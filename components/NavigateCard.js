@@ -8,6 +8,7 @@ import { GOOGLE_MAPS_APIKEYS } from "@env";
 import { StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { setDestination } from "../feature/navSlice";
+import FavouriteCard from "./FavouriteCard";
 
 const NavigateCard = () => {
   const navigation = useNavigation();
@@ -42,6 +43,10 @@ const NavigateCard = () => {
             navigation.navigate("RideOptions");
           }}
         />
+      </View>
+      {/* FavouritesCard */}
+      <View style={tw`flex-1 mx-3`}>
+        <FavouriteCard type="destination" />
       </View>
     </View>
   );

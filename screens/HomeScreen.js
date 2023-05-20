@@ -1,7 +1,7 @@
 import { View, Image } from "react-native";
 import styles from "../style";
 import sanityClient, { urlFor } from "../sanity";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addData, selectData, selectDataWithName } from "../feature/DataSlice";
 import NavOptions from "../components/NavOptions";
@@ -42,9 +42,8 @@ const HomeScreen = () => {
 
   // Get AutoComplete Text When OnPress the StarIcon
   const inputRef = useRef(null);
-  const getInputText = async () => {
-    const InputText = inputRef.current.getAddressText();
-    return InputText;
+  const getInputText = () => {
+    return inputRef.current.getAddressText();
   };
   const WarningAddFavourite = ({ type }) => {
     useEffect(() => {
@@ -84,7 +83,10 @@ const HomeScreen = () => {
     selectWarningPopUpVisibleForDeleteFavourite
   );
   const originIsDuplicated = async () => {
-    const inputText = getInputText()._j;
+    if (!origin) {
+      return;
+    }
+    const inputText = await getInputText();
     await sanityClient
       .fetch(`*[_type == 'favouriteLocation']{...,}`)
       .then((data) => {
@@ -124,7 +126,6 @@ const HomeScreen = () => {
   };
   const switchAddFavourites = async () => {
     const inputText = getInputText()._j;
-
     if (starIconFillStyle == "transparent") {
       if (inputText != origin.description) {
         dispatch(setWarningPopUpVisibleForNull(true));
@@ -138,6 +139,10 @@ const HomeScreen = () => {
       dispatch(setWarningPopUpVisibleForDeleteFavourite(true));
     }
   };
+  const [
+    isPressOnGooglePlacesAutoComplete,
+    setIsPressOnGooglePlacesAutoComplete,
+  ] = useState(false);
 
   // const favouriteLocationList = useSelector(selectFavouriteLocationList);
 
@@ -211,6 +216,7 @@ const HomeScreen = () => {
                       description: data.description,
                     })
                   );
+                  setIsPressOnGooglePlacesAutoComplete(true);
                 }}
                 GooglePlacesSearchQuery={{
                   rankby: "distance",
@@ -218,7 +224,7 @@ const HomeScreen = () => {
               />
               {/* {origin && originIsDuplicated()} */}
               {/* Favourites Star Icon */}
-              {origin && (
+              {origin && isPressOnGooglePlacesAutoComplete && (
                 <View style={tw`absolute right-0 top-3 z-50`}>
                   <TouchableOpacity onPress={switchAddFavourites}>
                     <StarIcon
@@ -237,7 +243,7 @@ const HomeScreen = () => {
           <NavOptions data={NavOptionsData} />
 
           {/* FavouritesCard */}
-          <FavouriteCard />
+          <FavouriteCard type="origin" />
         </View>
       </View>
       {modalVisible && <FavouriteListModal />}
