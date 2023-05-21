@@ -16,7 +16,7 @@ const NavigateCard = () => {
   return (
     <View style={tw`flex-1 bg-white`}>
       {/* Welcome Box */}
-      <View style={tw`p-5 bg-white border-b border-gray-200 shadow-sm`}>
+      <View style={tw`p-3 bg-white border-b border-gray-200 shadow-sm`}>
         <Text style={tw`text-lg text-center font-bold`}>Welcome, JIAN</Text>
       </View>
       {/* Search AutoCompleted */}

@@ -64,6 +64,14 @@ const FavouriteCard = (props) => {
       fetchLocationWithId(type._id);
     }
   };
+  const [optionModalVisible, setOptionModalVisible] = useState([]);
+  const optionModalVisibleStatusWidthId = (props) => {
+    const id = props._id;
+    setOptionModalVisible((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id] || false,
+    }));
+  };
 
   useEffect(() => {
     sanityClient
@@ -88,6 +96,11 @@ const FavouriteCard = (props) => {
     refreshFavouriteCard();
   }, [modalVisible]);
 
+  if (Object.keys(optionModalVisible).length > 0) {
+    console.log(optionModalVisible);
+    console.log(`------------------`);
+  }
+
   return (
     <View style={tw`flex-1 mt-5`}>
       <ScrollView>
@@ -97,18 +110,20 @@ const FavouriteCard = (props) => {
               {/* Main FavouriteType  Menu*/}
               <TouchableOpacity
                 onPress={() => favouriteCardOnPress(type)}
-                style={tw`flex-row items-center py-2 px-3${
+                style={tw`flex-row items-center py-2 px-3 ${
                   index != favouriteTypeLists.length - 1
                     ? `border-b border-gray-200`
                     : ``
-                }`}>
+                }`}
+              >
                 {/* FavouriteType Icons */}
                 <View
                   style={tw`p-2 rounded-full mr-10 ${
                     favouriteCardOnPressStatusWithId[type._id]
                       ? `bg-gray-500`
                       : `bg-gray-300`
-                  }`}>
+                  }`}
+                >
                   <DynamicHeroIcons
                     type="solid"
                     icon={type.heroiconsName}
@@ -124,7 +139,8 @@ const FavouriteCard = (props) => {
                     favouriteCardOnPressStatusWithId[type._id]
                       ? `text-gray-600`
                       : `text-gray-500`
-                  }`}>
+                  }`}
+                  >
                     {type.favouriteTypesName}
                   </Text>
                 </View>
@@ -151,6 +167,9 @@ const FavouriteCard = (props) => {
                         (location, index) => (
                           <TouchableOpacity
                             key={location._id}
+                            disabled={
+                              optionModalVisible[location._id] ? true : false
+                            }
                             onPress={() => {
                               if (favouriteCardType == "origin") {
                                 dispatch(
@@ -177,37 +196,85 @@ const FavouriteCard = (props) => {
                               navigation.navigate("Map");
                             }}
                             style={tw`flex-row items-center mx-3 ${
-                              index != 0 &&
                               index !=
-                                favouriteCardOnPressLocation[type._id].length -
-                                  1
+                              favouriteCardOnPressLocation[type._id].length - 1
                                 ? `border-b border-gray-100`
                                 : ``
-                            }`}>
+                            }`}
+                          >
+                            {optionModalVisible[location._id] && (
+                              <Animatable.View
+                                animation={"fadeIn"}
+                                duration={200}
+                                style={tw`px-3 bg-white rounded-md
+                                absolute right-5 bottom-5 z-99 border border-gray-200 shadow-sm`}
+                              >
+                                {/* Edit */}
+                                <View
+                                  style={tw`px-6 py-1.5 ${
+                                    index !=
+                                    favouriteCardOnPressLocation[type._id]
+                                      .length -
+                                      1
+                                      ? `border-b border-gray-200`
+                                      : ``
+                                  }`}
+                                >
+                                  <TouchableOpacity>
+                                    <Text style={tw`text-base`}>Edit</Text>
+                                  </TouchableOpacity>
+                                </View>
+                                {/* Delete */}
+                                <View
+                                  style={tw`px-6 py-1.5 ${
+                                    index !=
+                                    favouriteCardOnPressLocation[type._id]
+                                      .length -
+                                      1
+                                      ? `border-b border-gray-200`
+                                      : ``
+                                  }`}
+                                >
+                                  <TouchableOpacity>
+                                    <Text style={tw`text-base`}>Delete</Text>
+                                  </TouchableOpacity>
+                                </View>
+                              </Animatable.View>
+                            )}
                             {/* location Icon */}
-                            <View style={tw`mr-3`}>
+                            <View style={tw`ml-1 mr-3`}>
                               <DynamicHeroIcons
-                                type="outlined"
+                                type="solid"
                                 icon="MapPinIcon"
                                 size={22}
-                                color="#9ca3af"
+                                color={
+                                  favouriteCardType == "origin"
+                                    ? "#EA3535"
+                                    : "#3949AB"
+                                }
                               />
                             </View>
                             {/* location Text */}
-                            <View style={tw`flex-1 py-3`}>
+                            <View style={tw`flex-1 py-4`}>
                               <Text style={tw`text-gray-500 text-[15px]`}>
                                 {location.address}
                               </Text>
                             </View>
-                            {/* Minus Icons */}
-                            <TouchableOpacity style={tw`ml-5`}>
-                              <DynamicHeroIcons
-                                type="outlined"
-                                icon="EllipsisVerticalIcon"
-                                size={22}
-                                color="#9ca3af"
-                              />
-                            </TouchableOpacity>
+                            {/* EllipsisVerticalIcon Icons */}
+                            <View style={tw`pl-5 py-4`}>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  optionModalVisibleStatusWidthId(location)
+                                }
+                              >
+                                <DynamicHeroIcons
+                                  type="outlined"
+                                  icon="EllipsisVerticalIcon"
+                                  size={22}
+                                  color="#9ca3af"
+                                />
+                              </TouchableOpacity>
+                            </View>
                           </TouchableOpacity>
                         )
                       )}

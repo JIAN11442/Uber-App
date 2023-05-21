@@ -54,7 +54,8 @@ const Map = () => {
           //   longitude: 103.1799611,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
-        }}>
+        }}
+      >
         {origin?.location && (
           <Marker
             coordinate={{
@@ -62,6 +63,7 @@ const Map = () => {
               longitude: origin.location.lng,
             }}
             description={origin.description}
+            pinColor="#EA3535"
           />
         )}
         {destination?.location && (
@@ -71,6 +73,7 @@ const Map = () => {
               longitude: destination.location.lng,
             }}
             description={destination.description}
+            pinColor="#3949AB"
           />
         )}
 
