@@ -125,7 +125,7 @@ const HomeScreen = () => {
     });
   };
   const switchAddFavourites = async () => {
-    const inputText = getInputText()._j;
+    const inputText = await getInputText();
     if (starIconFillStyle == "transparent") {
       if (inputText != origin.description) {
         dispatch(setWarningPopUpVisibleForNull(true));
@@ -143,8 +143,6 @@ const HomeScreen = () => {
     isPressOnGooglePlacesAutoComplete,
     setIsPressOnGooglePlacesAutoComplete,
   ] = useState(false);
-
-  // const favouriteLocationList = useSelector(selectFavouriteLocationList);
 
   useEffect(() => {
     sanityClient
@@ -170,6 +168,11 @@ const HomeScreen = () => {
       originIsDuplicated();
     }
   }, [origin, modalVisible]);
+
+  // if (origin) {
+  //   console.log(origin.description);
+  //   console.log(`---------------`);
+  // }
 
   return (
     <>
