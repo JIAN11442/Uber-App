@@ -16,6 +16,8 @@ const initialState = {
   warningPopUpVisibleForNull: false,
   warningPopUpVisibleForDeleteFavourite: false,
   currentFavouriteCardOnPressId: null,
+  isDeleteFavouriteLocationCard: false,
+  isCancelDeleteFavouriteLocationCard: false,
 };
 
 export const useStateSlice = createSlice({
@@ -68,6 +70,12 @@ export const useStateSlice = createSlice({
     setCurrentFavouriteCardOnPressId: (state, action) => {
       state.currentFavouriteCardOnPressId = action.payload;
     },
+    setIsDeleteFavouriteLocationCard: (state, action) => {
+      state.isDeleteFavouriteLocationCard = action.payload;
+    },
+    setIsCancelDeleteFavouriteLocationCard: (state, action) => {
+      state.isCancelDeleteFavouriteLocationCard = action.payload;
+    },
   },
 });
 
@@ -88,6 +96,8 @@ export const {
   setWarningPopUpVisibleForNull,
   setWarningPopUpVisibleForDeleteFavourite,
   setCurrentFavouriteCardOnPressId,
+  setIsDeleteFavouriteLocationCard,
+  setIsCancelDeleteFavouriteLocationCard,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -113,5 +123,9 @@ export const selectWarningPopUpVisibleForDeleteFavourite = (state) =>
   state.useState.warningPopUpVisibleForDeleteFavourite;
 export const selectCurrentFavouriteCardOnPressId = (state) =>
   state.useState.currentFavouriteCardOnPressId;
+export const selectIsDeleteFavouriteLocationCard = (state) =>
+  state.useState.isDeleteFavouriteLocationCard;
+export const selectIsCancelDeleteFavouriteLocationCard = (state) =>
+  state.useState.isCancelDeleteFavouriteLocationCard;
 
 export default useStateSlice.reducer;

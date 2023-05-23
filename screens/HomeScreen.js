@@ -26,8 +26,8 @@ import {
   setWarningPopUpVisibleForDeleteFavourite,
   setWarningPopUpVisibleForNull,
 } from "../feature/useStateSlice";
-import { Alert } from "react-native";
 import FavouriteCard from "../components/FavouriteCard";
+import WarningModal from "../components/WarningModal";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -45,37 +45,7 @@ const HomeScreen = () => {
   const getInputText = () => {
     return inputRef.current.getAddressText();
   };
-  const WarningAddFavourite = ({ type }) => {
-    useEffect(() => {
-      if (type == "null") {
-        Alert.alert(
-          "Warning",
-          "Have not any origin, can't add to Favourite List"
-        );
-      } else if (type == "Incompleted") {
-        Alert.alert("Warning", "Your origin is available place");
-      } else if (type == "removeFavourite") {
-        Alert.alert("Warning", "Sure to remove from favourite list?", [
-          {
-            text: "Cancel",
-            onPress: () => {
-              console.log("Cancel Remove From Favourite");
-            },
-            style: "cancel",
-          },
-          {
-            text: "Sure",
-            onPress: () => {
-              removeFavouriteLocation();
-              dispatch(setStarIconFillStyle("transparent"));
-            },
-          },
-        ]);
-      }
-      dispatch(setWarningPopUpVisibleForNull(false));
-      dispatch(setWarningPopUpVisibleForDeleteFavourite(false));
-    }, []);
-  };
+
   const warningPopUpVisibleForNull = useSelector(
     selectWarningPopUpVisibleForNull
   );
@@ -110,20 +80,7 @@ const HomeScreen = () => {
   );
   const starIconFillStyle = useSelector(selectStarIconFillStyle);
   const modalVisible = useSelector(selectModalVisible);
-  const removeFavouriteLocation = () => {
-    const originLocation = origin.description;
-    sanityClient.fetch(`*[_type == 'favouriteLocation']{...,}`).then((data) => {
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].address == originLocation) {
-          sanityClient.delete(`${data[i]._id}`).then(() => {
-            console.log(`already delete favourite location`);
-            console.log(`id : ${data[i]._id}`);
-            console.log(`location : ${data[i].address}`);
-          });
-        }
-      }
-    });
-  };
+
   const switchAddFavourites = async () => {
     const inputText = await getInputText();
     if (starIconFillStyle == "transparent") {
@@ -250,9 +207,11 @@ const HomeScreen = () => {
         </View>
       </View>
       {modalVisible && <FavouriteListModal />}
-      {warningPopUpVisibleForNull && <WarningAddFavourite type="Incompleted" />}
+      {warningPopUpVisibleForNull && (
+        <WarningModal type="Incompleted" origin={origin} />
+      )}
       {warningPopUpVisibleForDeleteFavourite && (
-        <WarningAddFavourite type="removeFavourite" />
+        <WarningModal type="removeFavourite" origin={origin} />
       )}
     </>
   );
