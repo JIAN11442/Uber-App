@@ -53,8 +53,8 @@ const FavouriteTypeLists = () => {
       lng: origin.location.lng,
       favourite_type: [favouriteType],
     });
-    dispatch(setModalVisible(false));
     dispatch(setStarIconFillStyle("#ffc400"));
+    dispatch(setModalVisible(false));
 
     await sanityClient
       .fetch(`*[_type == 'favouriteLocation']{...,}`)

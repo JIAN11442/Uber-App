@@ -131,6 +131,11 @@ const HomeScreen = () => {
   //   console.log(`---------------`);
   // }
 
+  if (starIconFillStyle) {
+    console.log(starIconFillStyle);
+    console.log(`-----------------------`);
+  }
+
   return (
     <>
       <View style={styles.AndroidSafeAreaStyle}>

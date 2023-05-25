@@ -41,7 +41,7 @@ const WarningModal = ({ type, origin }) => {
           text: "Cancel",
           onPress: () => {
             dispatch(setIsCancelDeleteFavouriteLocationCard(true));
-            // console.log("Cancel Remove From Favourite");
+            console.log("Cancel Remove From Favourite");
           },
           style: "cancel",
         },
