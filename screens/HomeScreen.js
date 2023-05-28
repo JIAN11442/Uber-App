@@ -124,17 +124,18 @@ const HomeScreen = () => {
       getInputText();
       originIsDuplicated();
     }
-  }, [origin, modalVisible]);
+  }, [origin]);
 
   // if (origin) {
   //   console.log(origin.description);
   //   console.log(`---------------`);
   // }
 
-  if (starIconFillStyle) {
-    console.log(starIconFillStyle);
-    console.log(`-----------------------`);
-  }
+  // if (starIconFillStyle) {
+  //   console.log(origin);
+  //   console.log(starIconFillStyle);
+  //   console.log(`-----------------------`);
+  // }
 
   return (
     <>
@@ -159,8 +160,14 @@ const HomeScreen = () => {
             <View style={tw`flex-1`}>
               <GooglePlacesAutocomplete
                 textInputProps={{
-                  onFocus: () => dispatch(setStarIconFillStyle("transparent")),
-                  onBlur: () => originIsDuplicated(),
+                  onFocus: () => {
+                    dispatch(setStarIconFillStyle("transparent"));
+                    console.log("onFocus");
+                  },
+                  onBlur: () => {
+                    originIsDuplicated();
+                    console.log("onBlur");
+                  },
                 }}
                 ref={inputRef}
                 styles={styles.AutoCompletedStyleForForm}

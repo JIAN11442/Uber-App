@@ -18,9 +18,9 @@ const WarningModal = ({ type, origin }) => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].address == originLocation) {
           sanityClient.delete(`${data[i]._id}`).then(() => {
-            console.log(`already delete favourite location`);
-            console.log(`id : ${data[i]._id}`);
-            console.log(`location : ${data[i].address}`);
+            // console.log(`already delete favourite location`);
+            // console.log(`id : ${data[i]._id}`);
+            // console.log(`location : ${data[i].address}`);
           });
         }
       }
@@ -51,6 +51,7 @@ const WarningModal = ({ type, origin }) => {
             removeFavouriteLocation();
             dispatch(setIsDeleteFavouriteLocationCard(true));
             dispatch(setStarIconFillStyle("transparent"));
+            // console.log("Already Remove From Favourite");
           },
         },
       ]);

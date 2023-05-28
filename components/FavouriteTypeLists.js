@@ -11,6 +11,7 @@ import {
   selectTabBarHeight,
   setFavouriteTypeLists,
   setIsAddFavourites,
+  setIsCreateNewLocation,
   setModalVisible,
   setStarIconFillStyle,
 } from "../feature/useStateSlice";
@@ -55,17 +56,19 @@ const FavouriteTypeLists = () => {
     });
     dispatch(setStarIconFillStyle("#ffc400"));
     dispatch(setModalVisible(false));
+    dispatch(setIsCreateNewLocation(true));
+    console.log(`already create in sanity`);
 
-    await sanityClient
-      .fetch(`*[_type == 'favouriteLocation']{...,}`)
-      .then((data) => {
-        console.log(data);
-        data.map((dt) => {
-          if (dt.address == origin.description) {
-            console.log(`already create in sanity`);
-          }
-        });
-      });
+    // await sanityClient
+    //   .fetch(`*[_type == 'favouriteLocation']{...,}`)
+    //   .then((data) => {
+    //     // console.log(data);
+    //     data.map((dt) => {
+    //       if (dt.address == origin.description) {
+    //         console.log(`already create in sanity`);
+    //       }
+    //     });
+    //   });
   };
 
   return (
