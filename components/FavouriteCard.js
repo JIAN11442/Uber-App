@@ -43,7 +43,7 @@ const FavouriteCard = (props) => {
   const [
     favouriteCardOnPressStatusWithId,
     setFavouriteCardOnPressStatusWithId,
-  ] = useState({});
+  ] = useState([]);
   const favouriteCardOnPressStatus = (id) => {
     setFavouriteCardOnPressStatusWithId((prevState) => ({
       ...prevState,
@@ -52,30 +52,22 @@ const FavouriteCard = (props) => {
   };
 
   // Get Each Location After OnPress the FavouriteCard
-  const [getAllFavouriteCardTypeLocation, setGetAllFavouriteCardTypeLocation] =
-    useState([]);
-  const [favouriteCardOnPressLocation, setFavouriteCardOnPressLocation] =
-    useState([]);
-  const fetchLocationWithId = async (id) => {
-    await sanityClient
-      .fetch(
-        `*[_type == 'favouriteLocation' 
-          && references('${id}')]{_id,address,lat,lng}`
-      )
-      .then((data) => {
-        setFavouriteCardOnPressLocation(() => ({
-          [id]: data || {},
-        }));
-      });
+  const [allFavouriteCardOnPressLocation, setAllFavouriteCardOnPressLocation] =
+    useState({});
+  const [
+    favouriteCardOnPressLocationWithId,
+    setFavouriteCardOnPressLocationWithId,
+  ] = useState([]);
+  const getFavouriteCardLocationWidthId = (props) => {
+    const currentFavouriteCardId = props.id;
+    setFavouriteCardOnPressLocationWithId((prevState) => ({
+      ...prevState,
+      [currentFavouriteCardId]:
+        allFavouriteCardOnPressLocation[currentFavouriteCardId],
+    }));
   };
 
   // Get current OnPress FavouriteCard Id
-  const getCurrentFavouriteCardId = (props) => {
-    const id = props._id;
-    dispatch(setCurrentFavouriteCardOnPressId(id));
-    favouriteCardOnPressStatus(id);
-    fetchLocationWithId(id);
-  };
 
   // FavouriteCard Location Optional Modal Settings
   const [optionModalVisible, setOptionModalVisible] = useState([]);
@@ -104,75 +96,71 @@ const FavouriteCard = (props) => {
     );
     dispatch(setWarningPopUpVisibleForDeleteFavourite(true));
   };
-  const [isLoading, setIsLoading] = useState(false);
 
-  const refreshFavouriteCard = (props) => {
-    const refreshType = props.type;
-    const targetLocation = origin.description;
-    const currentOnPressIdLocation =
-      favouriteCardOnPressLocation[currentFavouriteCardOnPressId];
-    // close favouriteCard
-    for (const type of favouriteTypeLists) {
-      setFavouriteCardOnPressStatusWithId((prevState) => ({
-        ...prevState,
-        [type._id]: false,
-      }));
-    }
-    // close favouriteCard Location Optional
-    sanityClient
-      .fetch(`*[_type == 'favouriteLocation']{_id,address,lat,lng}`)
-      .then((location) => {
-        const location_id = location._id;
-        setOptionModalVisible((prevState) => ({
-          prevState,
-          [location_id]: false,
-        }));
-      });
-    //
-    const filteredLocationResult = (data) => {
-      const filterLocation = data.filter(
-        (location) => location.address === targetLocation
-      );
-      if (refreshType === "AfterDeleteLocation") {
-        if (filterLocation.length > 0) {
-          return false;
-        } else {
-          return true;
-        }
-      } else if (refreshType === "AfterCreateNewLocation") {
-        if (filterLocation.length > 0) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    };
+  // const refreshFavouriteCard = (props) => {
+  //   const refreshType = props.type;
+  //   const targetLocation = origin.description;
+  //   const currentOnPressIdLocation =
+  //     favouriteCardOnPressLocation[currentFavouriteCardOnPressId];
+  //   // close favouriteCard
+  //   for (const type of favouriteTypeLists) {
+  //     setFavouriteCardOnPressStatusWithId((prevState) => ({
+  //       ...prevState,
+  //       [type._id]: false,
+  //     }));
+  //   }
+  //   // close favouriteCard Location Optional
+  //   sanityClient
+  //     .fetch(`*[_type == 'favouriteLocation']{_id,address,lat,lng}`)
+  //     .then((location) => {
+  //       const location_id = location._id;
+  //       setOptionModalVisible((prevState) => ({
+  //         prevState,
+  //         [location_id]: false,
+  //       }));
+  //     });
+  //   //
+  //   const filteredLocationResult = (data) => {
+  //     const filterLocation = data.filter(
+  //       (location) => location.address === targetLocation
+  //     );
+  //     if (refreshType === "AfterDeleteLocation") {
+  //       if (filterLocation.length > 0) {
+  //         return false;
+  //       } else {
+  //         return true;
+  //       }
+  //     } else if (refreshType === "AfterCreateNewLocation") {
+  //       if (filterLocation.length > 0) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     }
+  //   };
 
-    setIsLoading(true);
-    let num = 0;
-    const timer = setInterval(async () => {
-      num += 1;
-      await sanityClient
-        .fetch(`*[_type == 'favouriteLocation']{address}`)
-        .then((data) => {
-          if (filteredLocationResult(data) === false) {
-            for (const type of favouriteTypeLists) {
-              fetchLocationWithId(type._id);
-            }
-            console.log(`the ${num} seconds, not refreshed yet`);
-          } else {
-            clearInterval(timer);
-            setIsLoading(false);
-            console.log(`the ${num} seconds, refresh successfully`);
-            console.log(`--------------------------`);
-          }
-        });
-    }, 1000);
+  //   setIsLoading(true);
+  //   let num = 0;
+  //   const timer = setInterval(async () => {
+  //     num += 1;
+  //     await sanityClient
+  //       .fetch(`*[_type == 'favouriteLocation']{address}`)
+  //       .then((data) => {
+  //         if (filteredLocationResult(data) === false) {
+  //           console.log(`the ${num} seconds, not refreshed yet`);
+  //         } else {
+  //           clearInterval(timer);
+  //           setIsLoading(false);
+  //           console.log(`the ${num} seconds, refresh successfully`);
+  //           console.log(`--------------------------`);
+  //         }
+  //       });
+  //   }, 1000);
 
-    return () => {
-      clearInterval(timer);
-    };
-  };
+  //   return () => {
+  //     clearInterval(timer);
+  //   };
+  // };
 
   useEffect(() => {
     sanityClient
@@ -188,30 +176,30 @@ const FavouriteCard = (props) => {
       .then((data) => {
         dispatch(setFavouriteTypeLists(data));
       });
-    sanityClient
-      .fetch(`*[_type == 'favouriteLocation']{_id,address,lat,lng}`)
-      .then((data) => {
-        setGetAllFavouriteCardTypeLocation(data);
-      });
   }, []);
 
   useEffect(() => {
-    if (isDeleteFavouriteLocationCard) {
-      refreshFavouriteCard({ type: "AfterDeleteLocation" });
-      dispatch(setIsDeleteFavouriteLocationCard(false));
+    if (favouriteTypeLists === null) {
+      return;
     }
-  }, [isDeleteFavouriteLocationCard]);
-
-  useEffect(() => {
-    if (isCreateNewLocation) {
-      refreshFavouriteCard({ type: "AfterCreateNewLocation" });
-      dispatch(setIsCreateNewLocation(false));
+    for (const favouriteType of favouriteTypeLists) {
+      sanityClient
+        .fetch(
+          `*[_type == 'favouriteLocation' 
+      && references('${favouriteType._id}')]{_id,address,lat,lng}`
+        )
+        .then((data) => {
+          setAllFavouriteCardOnPressLocation((prevState) => ({
+            ...prevState,
+            [favouriteType._id]: data,
+          }));
+        });
     }
-  }, [isCreateNewLocation]);
+  }, [favouriteTypeLists]);
 
-  // if (isCreateNewLocation) {
-  //   console.log(isCreateNewLocation);
-  // }
+  if (Object.entries(favouriteCardOnPressLocationWithId).length > 0) {
+    console.log(favouriteCardOnPressLocationWithId);
+  }
 
   return (
     <View style={tw`flex-1 mt-5`}>
@@ -221,13 +209,15 @@ const FavouriteCard = (props) => {
             <View key={type._id} style={tw`mr-2`}>
               {/* Main FavouriteType  Menu*/}
               <TouchableOpacity
-                onPress={() => getCurrentFavouriteCardId(type)}
+                onPress={() => {
+                  getFavouriteCardLocationWidthId({ id: type._id });
+                }}
                 style={tw`flex-row items-center py-2 px-3 ${
                   index != favouriteTypeLists.length - 1
                     ? `border-b border-gray-200`
                     : ``
                 }`}
-                disabled={isLoading}
+                // disabled={isLoading}
               >
                 {/* FavouriteType Icons */}
                 <View
@@ -259,20 +249,20 @@ const FavouriteCard = (props) => {
                 </View>
                 {/* ChevronIcon */}
                 <View>
-                  {isLoading ? (
+                  {/* {isLoading ? (
                     <ActivityIndicator />
-                  ) : (
-                    <DynamicHeroIcons
-                      type="outlined"
-                      icon={
-                        favouriteCardOnPressStatusWithId[type._id]
-                          ? `ChevronUpIcon`
-                          : `ChevronDownIcon`
-                      }
-                      size={22}
-                      color="gray"
-                    />
-                  )}
+                  ) : ( */}
+                  <DynamicHeroIcons
+                    type="outlined"
+                    icon={
+                      favouriteCardOnPressStatusWithId[type._id]
+                        ? `ChevronUpIcon`
+                        : `ChevronDownIcon`
+                    }
+                    size={22}
+                    color="gray"
+                  />
+                  {/* )} */}
                 </View>
               </TouchableOpacity>
               {/* Location of FavouriteType Menu */}
