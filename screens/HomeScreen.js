@@ -165,11 +165,11 @@ const HomeScreen = () => {
                 textInputProps={{
                   onFocus: () => {
                     dispatch(setStarIconFillStyle("transparent"));
-                    console.log("onFocus");
+                    // console.log("onFocus");
                   },
                   onBlur: () => {
                     originIsDuplicated();
-                    console.log("onBlur");
+                    // console.log("onBlur");
                   },
                 }}
                 ref={inputRef}

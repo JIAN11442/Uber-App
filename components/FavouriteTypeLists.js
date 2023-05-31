@@ -9,6 +9,7 @@ import {
   selectFavouriteTypeLists,
   selectIsAddFavourites,
   selectTabBarHeight,
+  setCreateNewLocationInfo,
   setFavouriteTypeLists,
   setIsAddFavourites,
   setIsCreateNewLocation,
@@ -22,6 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 import client from "../sanity";
 import { selectOrigin } from "../feature/navSlice";
 import uuid from "react-native-uuid";
+import { customAlphabet } from "nanoid/non-secure";
 
 const FavouriteTypeLists = () => {
   const dispatch = useDispatch();
@@ -38,22 +40,30 @@ const FavouriteTypeLists = () => {
   }, []);
 
   const UploadDataToSanity = async (item, origin) => {
-    // console.log(item);
+    const allowNanoChars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const nanoId = customAlphabet(allowNanoChars, 22);
     const favouriteType = {
       _type: "reference",
       _ref: item._id,
       _key: uuid.v4(),
     };
-    // console.log(favouriteType);
-    // console.log(favouriteType);
-    // console.log(`------------------`);
     await client.create({
+      _id: nanoId(),
       _type: "favouriteLocation",
       address: origin.description,
       lat: origin.location.lat,
       lng: origin.location.lng,
       favourite_type: [favouriteType],
     });
+    dispatch(
+      setCreateNewLocationInfo({
+        _id: nanoId(),
+        address: origin.description,
+        lat: origin.location.lat,
+        lng: origin.location.lng,
+      })
+    );
     dispatch(setStarIconFillStyle("#ffc400"));
     dispatch(setModalVisible(false));
     dispatch(setIsCreateNewLocation(true));
@@ -64,9 +74,7 @@ const FavouriteTypeLists = () => {
     //   .then((data) => {
     //     // console.log(data);
     //     data.map((dt) => {
-    //       if (dt.address == origin.description) {
-    //         console.log(`already create in sanity`);
-    //       }
+    //       console.log(dt);
     //     });
     //   });
   };
@@ -84,14 +92,12 @@ const FavouriteTypeLists = () => {
             favouriteTypeLists.map((item, index) => (
               <TouchableOpacity
                 key={item._id}
-                onPress={() => UploadDataToSanity(item, origin)}
-              >
+                onPress={() => UploadDataToSanity(item, origin)}>
                 <View
                   style={tw`flex-row py-3 items-center bg-white 
                 ${
                   index == 0 ? `border-t border-b` : `border-b`
-                } border-gray-100`}
-                >
+                } border-gray-100`}>
                   <View style={tw`mx-4`}>
                     <DynamicHeroIcons
                       type="solid"
@@ -111,8 +117,7 @@ const FavouriteTypeLists = () => {
           {/* Add new lists */}
           <View style={tw`py-3 bg-white`}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("addFavouriteType")}
-            >
+              onPress={() => navigation.navigate("addFavouriteType")}>
               <View style={tw`flex-row items-center`}>
                 <View style={tw`mx-4`}>
                   <DynamicHeroIcons

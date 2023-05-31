@@ -20,6 +20,7 @@ const initialState = {
   isCancelDeleteFavouriteLocationCard: false,
   isCreateNewLocation: false,
   currentOnPressLocationInfo: [],
+  createNewLocationInfo: [],
 };
 
 export const useStateSlice = createSlice({
@@ -96,6 +97,9 @@ export const useStateSlice = createSlice({
     setCurrentOnPressLocationInfo: (state, action) => {
       state.currentOnPressLocationInfo = action.payload;
     },
+    setCreateNewLocationInfo: (state, action) => {
+      state.createNewLocationInfo = action.payload;
+    },
   },
 });
 
@@ -120,6 +124,7 @@ export const {
   setIsCancelDeleteFavouriteLocationCard,
   setIsCreateNewLocation,
   setCurrentOnPressLocationInfo,
+  setCreateNewLocationInfo,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -153,5 +158,7 @@ export const selectIsCreateNewLocation = (state) =>
   state.useState.isCreateNewLocation;
 export const selectCurrentOnPressLocationInfo = (state) =>
   state.useState.currentOnPressLocationInfo;
+export const selectCreateNewLocationInfo = (state) =>
+  state.useState.createNewLocationInfo;
 
 export default useStateSlice.reducer;
