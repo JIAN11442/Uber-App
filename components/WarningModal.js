@@ -10,13 +10,13 @@ import {
 } from "../feature/useStateSlice";
 import sanityClient from "../sanity";
 
-const WarningModal = ({ type, origin }) => {
+const WarningModal = ({ type, currentOnPressLocation }) => {
   const dispatch = useDispatch();
   const removeFavouriteLocation = () => {
-    const originLocation = origin.description;
+    const currentLocation = currentOnPressLocation.description;
     sanityClient.fetch(`*[_type == 'favouriteLocation']{...,}`).then((data) => {
       for (let i = 0; i < data.length; i++) {
-        if (data[i].address == originLocation) {
+        if (data[i].address == currentLocation) {
           sanityClient.delete(`${data[i]._id}`).then(() => {
             // console.log(`already delete favourite location`);
             // console.log(`id : ${data[i]._id}`);
@@ -48,7 +48,7 @@ const WarningModal = ({ type, origin }) => {
         {
           text: "Sure",
           onPress: () => {
-            removeFavouriteLocation();
+            // removeFavouriteLocation();
             dispatch(setIsDeleteFavouriteLocationCard(true));
             dispatch(setStarIconFillStyle("transparent"));
             // console.log("Already Remove From Favourite");
@@ -58,7 +58,7 @@ const WarningModal = ({ type, origin }) => {
     }
     dispatch(setWarningPopUpVisibleForNull(false));
     dispatch(setWarningPopUpVisibleForDeleteFavourite(false));
-  }, [origin]);
+  }, [currentOnPressLocation]);
   return null;
 };
 

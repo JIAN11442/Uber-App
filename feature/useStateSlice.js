@@ -9,7 +9,7 @@ const initialState = {
   tabBarHeight: 0,
   favouritesTypeList: null,
   getWhereFromInputText: null,
-  favouriteLocationList: null,
+  favouriteLocationList: [],
   currentLocationIsAddToSanity: null,
   starIconFillStyle: null,
   modalVisible: false,
@@ -19,6 +19,7 @@ const initialState = {
   isDeleteFavouriteLocationCard: false,
   isCancelDeleteFavouriteLocationCard: false,
   isCreateNewLocation: false,
+  currentOnPressLocationInfo: [],
 };
 
 export const useStateSlice = createSlice({
@@ -51,7 +52,19 @@ export const useStateSlice = createSlice({
       state.getWhereFromInputText = action.payload;
     },
     setFavouriteLocationList: (state, action) => {
-      state.favouriteLocationList = action.payload;
+      state.favouriteLocationList = [
+        ...state.favouriteLocationList,
+        action.payload,
+      ];
+      if (
+        state.favouriteLocationList.length > state.favouritesTypeList.length
+      ) {
+        state.favouriteLocationList = [];
+        state.favouriteLocationList = [
+          ...state.favouriteLocationList,
+          action.payload,
+        ];
+      }
     },
     setCurrentLocationIsAddToSanity: (state, action) => {
       state.currentLocationIsAddToSanity = action.payload;
@@ -80,6 +93,9 @@ export const useStateSlice = createSlice({
     setIsCreateNewLocation: (state, action) => {
       state.isCreateNewLocation = action.payload;
     },
+    setCurrentOnPressLocationInfo: (state, action) => {
+      state.currentOnPressLocationInfo = action.payload;
+    },
   },
 });
 
@@ -103,6 +119,7 @@ export const {
   setIsDeleteFavouriteLocationCard,
   setIsCancelDeleteFavouriteLocationCard,
   setIsCreateNewLocation,
+  setCurrentOnPressLocationInfo,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -134,5 +151,7 @@ export const selectIsCancelDeleteFavouriteLocationCard = (state) =>
   state.useState.isCancelDeleteFavouriteLocationCard;
 export const selectIsCreateNewLocation = (state) =>
   state.useState.isCreateNewLocation;
+export const selectCurrentOnPressLocationInfo = (state) =>
+  state.useState.currentOnPressLocationInfo;
 
 export default useStateSlice.reducer;

@@ -14,6 +14,7 @@ import { TouchableOpacity } from "react-native";
 import FavouriteListModal from "../components/FavouriteListModal";
 import {
   selectCurrentLoactionIsAddToSanity,
+  selectCurrentOnPressLocationInfo,
   selectFavouriteLocationList,
   selectIsAddFavourites,
   selectModalVisible,
@@ -100,6 +101,8 @@ const HomeScreen = () => {
     isPressOnGooglePlacesAutoComplete,
     setIsPressOnGooglePlacesAutoComplete,
   ] = useState(false);
+
+  const currentOnPressLocation = useSelector(selectCurrentOnPressLocationInfo);
 
   useEffect(() => {
     sanityClient
@@ -220,10 +223,16 @@ const HomeScreen = () => {
       </View>
       {modalVisible && <FavouriteListModal />}
       {warningPopUpVisibleForNull && (
-        <WarningModal type="Incompleted" origin={origin} />
+        <WarningModal
+          type="Incompleted"
+          currentOnPressLocation={currentOnPressLocation}
+        />
       )}
       {warningPopUpVisibleForDeleteFavourite && (
-        <WarningModal type="removeFavourite" origin={origin} />
+        <WarningModal
+          type="removeFavourite"
+          currentOnPressLocation={currentOnPressLocation}
+        />
       )}
     </>
   );

@@ -5,6 +5,8 @@ import sanityClient from "../sanity";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectCurrentFavouriteCardOnPressId,
+  selectCurrentOnPressLocationInfo,
+  selectFavouriteLocationList,
   selectFavouriteTypeLists,
   selectIsCancelDeleteFavouriteLocationCard,
   selectIsCreateNewLocation,
@@ -13,6 +15,8 @@ import {
   selectWarningPopUpVisibleForDeleteFavourite,
   selectWarningPopUpVisibleForNull,
   setCurrentFavouriteCardOnPressId,
+  setCurrentOnPressLocationInfo,
+  setFavouriteLocationList,
   setFavouriteTypeLists,
   setIsCancelDeleteFavouriteLocationCard,
   setIsCreateNewLocation,
@@ -34,9 +38,8 @@ const FavouriteCard = (props) => {
   const navigation = useNavigation();
   const modalVisible = useSelector(selectModalVisible);
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
-  const currentFavouriteCardOnPressId = useSelector(
-    selectCurrentFavouriteCardOnPressId
-  );
+  const [currentFavouriteCardOnPressId, setCurrentFavouriteCardOnPressId] =
+    useState([]);
   const isCreateNewLocation = useSelector(selectIsCreateNewLocation);
 
   // current OnPress FavouriteCard Type Status Settings
@@ -44,10 +47,11 @@ const FavouriteCard = (props) => {
     favouriteCardOnPressStatusWithId,
     setFavouriteCardOnPressStatusWithId,
   ] = useState([]);
-  const favouriteCardOnPressStatus = (id) => {
+  const favouriteCardOnPressStatus = (props) => {
+    const favouriteTypeId = props.id;
     setFavouriteCardOnPressStatusWithId((prevState) => ({
       ...prevState,
-      [id]: !prevState[id] || false,
+      [favouriteTypeId]: !prevState[favouriteTypeId] || false,
     }));
   };
 
@@ -70,6 +74,9 @@ const FavouriteCard = (props) => {
   // Get current OnPress FavouriteCard Id
 
   // FavouriteCard Location Optional Modal Settings
+  const currentOnPressLocationInfo = useSelector(
+    selectCurrentOnPressLocationInfo
+  );
   const [optionModalVisible, setOptionModalVisible] = useState([]);
   const favouriteCardLocationOptionalOnPressStatus = (props) => {
     const id = props._id;
@@ -86,7 +93,8 @@ const FavouriteCard = (props) => {
   );
   const removeFavouriteLocationFromFavouriteCard = (location) => {
     dispatch(
-      setOrigin({
+      setCurrentOnPressLocationInfo({
+        id: location._id,
         description: location.address,
         location: {
           lat: location.lat,
@@ -197,9 +205,34 @@ const FavouriteCard = (props) => {
     }
   }, [favouriteTypeLists]);
 
-  if (Object.entries(favouriteCardOnPressLocationWithId).length > 0) {
-    console.log(favouriteCardOnPressLocationWithId);
-  }
+  useEffect(() => {
+    const locationList =
+      allFavouriteCardOnPressLocation[currentFavouriteCardOnPressId];
+    console.log(
+      `isDeleteFavouriteLocationCard : ${isDeleteFavouriteLocationCard}`
+    );
+    console.log(
+      `isCancelDeleteFavouriteLocationCard : ${isCancelDeleteFavouriteLocationCard}`
+    );
+    console.log(`----------------------------`);
+    if (isDeleteFavouriteLocationCard) {
+      const removeLocationIndex = locationList.findIndex(
+        (locationObj) => locationObj._id === currentOnPressLocationInfo.id
+      );
+      dispatch(setIsDeleteFavouriteLocationCard(false));
+      if (removeLocationIndex !== -1) {
+        locationList.splice(removeLocationIndex, 1);
+      }
+    } else if (isCancelDeleteFavouriteLocationCard) {
+      dispatch(setIsCancelDeleteFavouriteLocationCard(false));
+      locationList.push({
+        _id: "testestestetstets",
+        address: "testes",
+        lat: 123,
+        lng: 321,
+      });
+    }
+  }, [isDeleteFavouriteLocationCard, isCancelDeleteFavouriteLocationCard]);
 
   return (
     <View style={tw`flex-1 mt-5`}>
@@ -210,6 +243,8 @@ const FavouriteCard = (props) => {
               {/* Main FavouriteType  Menu*/}
               <TouchableOpacity
                 onPress={() => {
+                  setCurrentFavouriteCardOnPressId(type._id);
+                  favouriteCardOnPressStatus({ id: type._id });
                   getFavouriteCardLocationWidthId({ id: type._id });
                 }}
                 style={tw`flex-row items-center py-2 px-3 ${
@@ -268,15 +303,17 @@ const FavouriteCard = (props) => {
               {/* Location of FavouriteType Menu */}
               <View>
                 {favouriteCardOnPressStatusWithId[type._id] &&
-                  favouriteCardOnPressLocation[type._id] && (
+                  favouriteCardOnPressLocationWithId[type._id] && (
                     <View style={tw`bg-gray-100`}>
-                      {favouriteCardOnPressLocation[type._id].map(
+                      {favouriteCardOnPressLocationWithId[type._id].map(
                         (location, index) => (
                           <View
                             key={location._id}
                             style={tw`flex-row ${
                               index !=
-                              favouriteCardOnPressLocation[type._id].length - 1
+                              favouriteCardOnPressLocationWithId[type._id]
+                                .length -
+                                1
                                 ? `border-b border-gray-50`
                                 : ``
                             }`}
