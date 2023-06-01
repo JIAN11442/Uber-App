@@ -141,3 +141,70 @@ const AddFavouritesModal = ({ addFavourites, setAddFavourites, visible }) => {
                 />
               </Stack.Navigator>
             </View>
+
+// ----------------------------------------------------------------------
+
+  const refreshFavouriteCard = (props) => {
+    const refreshType = props.type;
+    const targetLocation = origin.description;
+    const currentOnPressIdLocation =
+      favouriteCardOnPressLocation[currentFavouriteCardOnPressId];
+    // close favouriteCard
+    for (const type of favouriteTypeLists) {
+      setFavouriteCardOnPressStatusWithId((prevState) => ({
+        ...prevState,
+        [type._id]: false,
+      }));
+    }
+    // close favouriteCard Location Optional
+    sanityClient
+      .fetch(`*[_type == 'favouriteLocation']{_id,address,lat,lng}`)
+      .then((location) => {
+        const location_id = location._id;
+        setOptionModalVisible((prevState) => ({
+          prevState,
+          [location_id]: false,
+        }));
+      });
+    //
+    const filteredLocationResult = (data) => {
+      const filterLocation = data.filter(
+        (location) => location.address === targetLocation
+      );
+      if (refreshType === "AfterDeleteLocation") {
+        if (filterLocation.length > 0) {
+          return false;
+        } else {
+          return true;
+        }
+      } else if (refreshType === "AfterCreateNewLocation") {
+        if (filterLocation.length > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    };
+
+    setIsLoading(true);
+    let num = 0;
+    const timer = setInterval(async () => {
+      num += 1;
+      await sanityClient
+        .fetch(`*[_type == 'favouriteLocation']{address}`)
+        .then((data) => {
+          if (filteredLocationResult(data) === false) {
+            console.log(`the ${num} seconds, not refreshed yet`);
+          } else {
+            clearInterval(timer);
+            setIsLoading(false);
+            console.log(`the ${num} seconds, refresh successfully`);
+            console.log(`--------------------------`);
+          }
+        });
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  };
