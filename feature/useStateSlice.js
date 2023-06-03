@@ -21,6 +21,7 @@ const initialState = {
   isCreateNewLocation: false,
   currentOnPressLocationInfo: [],
   createNewLocationInfo: [],
+  allLocation: [],
 };
 
 export const useStateSlice = createSlice({
@@ -100,6 +101,44 @@ export const useStateSlice = createSlice({
     setCreateNewLocationInfo: (state, action) => {
       state.createNewLocationInfo = action.payload;
     },
+    setGetAllLocation: (state, action) => {
+      state.allLocation = [...state.allLocation, action.payload];
+    },
+    deleteLocationFromList: (state, action) => {
+      // console.log(`Before Delete`);
+      // console.log(state.allLocation);
+      // console.log(`----------------------------------`);
+
+      const currentFavouriteCardOnPressId =
+        action.payload.currentFavouriteCardOnPressId;
+      const removeIndex = action.payload.favouriteCardOnPressLocationWithId[
+        currentFavouriteCardOnPressId
+      ].findIndex(
+        (locationObj) =>
+          locationObj._id === action.payload.currentOnPressLocationInfo.id
+      );
+
+      let newLocationList = [...state.allLocation];
+
+      if (removeIndex !== -1) {
+        newLocationList = newLocationList.map((locationObj) => {
+          if (locationObj[currentFavouriteCardOnPressId]) {
+            const updatedLocationObj = { ...locationObj };
+            updatedLocationObj[currentFavouriteCardOnPressId] =
+              updatedLocationObj[currentFavouriteCardOnPressId].filter(
+                (_, index) => index !== removeIndex
+              );
+            return updatedLocationObj;
+          }
+          return locationObj;
+        });
+      }
+
+      // state.allLocation = newLocationList;
+      console.log(`After Delete In Redux`);
+      console.log(state.allLocation);
+      console.log(`-----------------------------`);
+    },
   },
 });
 
@@ -125,6 +164,8 @@ export const {
   setIsCreateNewLocation,
   setCurrentOnPressLocationInfo,
   setCreateNewLocationInfo,
+  setGetAllLocation,
+  deleteLocationFromList,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -160,5 +201,6 @@ export const selectCurrentOnPressLocationInfo = (state) =>
   state.useState.currentOnPressLocationInfo;
 export const selectCreateNewLocationInfo = (state) =>
   state.useState.createNewLocationInfo;
+export const selectGetAllLocation = (state) => state.useState.allLocation;
 
 export default useStateSlice.reducer;
