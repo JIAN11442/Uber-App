@@ -4,11 +4,13 @@ import { useEffect } from "react";
 import sanityClient from "../sanity";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteLocationFromList,
   selectCreateNewLocationInfo,
   selectCurrentFavouriteCardOnPressId,
   selectCurrentOnPressLocationInfo,
   selectFavouriteLocationList,
   selectFavouriteTypeLists,
+  selectGetAllLocation,
   selectIsCancelDeleteFavouriteLocationCard,
   selectIsCreateNewLocation,
   selectIsDeleteFavouriteLocationCard,
@@ -19,6 +21,7 @@ import {
   setCurrentOnPressLocationInfo,
   setFavouriteLocationList,
   setFavouriteTypeLists,
+  setGetAllLocation,
   setIsCancelDeleteFavouriteLocationCard,
   setIsCreateNewLocation,
   setIsDeleteFavouriteLocationCard,
@@ -58,18 +61,19 @@ const FavouriteCard = (props) => {
   };
 
   // Get Each Location After OnPress the FavouriteCard
-  const [allFavouriteCardOnPressLocation, setAllFavouriteCardOnPressLocation] =
-    useState({});
+  const getAllLocation = useSelector(selectGetAllLocation);
   const [
     favouriteCardOnPressLocationWithId,
     setFavouriteCardOnPressLocationWithId,
   ] = useState([]);
   const getFavouriteCardLocationWidthId = (props) => {
     const currentFavouriteCardId = props.id;
+    const currentLocation = getAllLocation.filter(
+      (favouriteTypeObj) => favouriteTypeObj[currentFavouriteCardId]
+    )[0][currentFavouriteCardId];
     setFavouriteCardOnPressLocationWithId((prevState) => ({
       ...prevState,
-      [currentFavouriteCardId]:
-        allFavouriteCardOnPressLocation[currentFavouriteCardId],
+      [currentFavouriteCardId]: currentLocation,
     }));
   };
 
@@ -155,52 +159,43 @@ const FavouriteCard = (props) => {
       && references('${favouriteType._id}')]{_id,address,lat,lng}`
         )
         .then((data) => {
-          setAllFavouriteCardOnPressLocation((prevState) => ({
+          const AllLocation = (prevState) => ({
             ...prevState,
             [favouriteType._id]: data,
-          }));
+          });
+          dispatch(setGetAllLocation(AllLocation()));
         });
     }
   }, [favouriteTypeLists]);
 
   // When isDeleteFavouriteLocationCard is true, delete location from allFavouriteLocation Object
-  // When isCreateNewLocation is true, push the new location into allFavouriteLocation Object
   useEffect(() => {
     if (isDeleteFavouriteLocationCard) {
-      const removeLocationIndex = allFavouriteCardOnPressLocation[
-        currentFavouriteCardOnPressId
-      ].findIndex(
-        (locationObj) => locationObj._id === currentOnPressLocationInfo.id
+      dispatch(
+        deleteLocationFromList({
+          favouriteCardOnPressLocationWithId:
+            favouriteCardOnPressLocationWithId,
+          currentFavouriteCardOnPressId: currentFavouriteCardOnPressId,
+          currentOnPressLocationInfo: currentOnPressLocationInfo,
+        })
       );
       dispatch(setIsDeleteFavouriteLocationCard(false));
-      if (removeLocationIndex !== -1) {
-        allFavouriteCardOnPressLocation[currentFavouriteCardOnPressId].splice(
-          removeLocationIndex,
-          1
-        );
-        if (
-          allFavouriteCardOnPressLocation[currentFavouriteCardOnPressId]
-            .length === 0
-        ) {
-          setFavouriteCardOnPressStatusWithId((prevState) => ({
-            ...prevState,
-            [currentFavouriteCardOnPressId]: false,
-          }));
-        }
-      }
-      console.log(`After Deleting`);
-      console.log(
-        allFavouriteCardOnPressLocation[currentFavouriteCardOnPressId]
-      );
-      console.log(`-------------------------`);
-    } else if (isCreateNewLocation) {
-      allFavouriteCardOnPressLocation[createNewLocationInfo.favouriteType].push(
-        createNewLocationInfo
-      );
-      dispatch(setIsCreateNewLocation(false));
-      refreshFavouriteCard();
+      console.log(`After Delete In FavouriteCard`);
+      console.log(getAllLocation);
+      console.log(`----------------------------`);
     }
-  }, [isDeleteFavouriteLocationCard, isCreateNewLocation]);
+  }, [isDeleteFavouriteLocationCard]);
+
+  // When isCreateNewLocation is true, push the new location into allFavouriteLocation Object
+  // useEffect(() => {
+  //   if (isCreateNewLocation) {
+  //     allFavouriteCardOnPressLocation[createNewLocationInfo.favouriteType].push(
+  //       createNewLocationInfo
+  //     );
+  //     dispatch(setIsCreateNewLocation(false));
+  //     refreshFavouriteCard();
+  //   }
+  // }, [isCreateNewLocation]);
 
   return (
     <View style={tw`flex-1 mt-5`}>

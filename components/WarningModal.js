@@ -48,7 +48,7 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
         {
           text: "Sure",
           onPress: () => {
-            removeFavouriteLocation();
+            // removeFavouriteLocation();
             dispatch(setIsDeleteFavouriteLocationCard(true));
             dispatch(setStarIconFillStyle("transparent"));
             // console.log("Already Remove From Favourite");
