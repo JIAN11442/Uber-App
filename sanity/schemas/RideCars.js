@@ -1,25 +1,25 @@
 import {defineField, defineType, validation} from 'sanity'
 
 export default defineType({
-  name: 'favouriteTypes',
-  title: 'Favourite Types',
+  name: 'rideCars',
+  title: 'RideCar Types',
   type: 'document',
   fields: [
     defineField({
-      name: 'favouriteTypesName',
+      name: 'rideCarsType',
       type: 'string',
-      title: 'Favourites Type',
+      title: 'Type',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'heroiconsName',
+      name: 'multiplier',
       type: 'string',
-      title: 'Heroicons Name',
+      title: 'Multiplier',
     }),
     defineField({
-      name: 'status',
-      type: 'boolean',
-      title: 'Status',
+      name: 'rideImage',
+      type: 'image',
+      title: 'Image',
     }),
   ],
 })
