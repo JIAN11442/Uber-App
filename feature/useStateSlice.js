@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { CheckBadgeIcon } from "react-native-heroicons/solid";
 
 const initialState = {
   isAddFavourites: false,
@@ -105,23 +106,25 @@ export const useStateSlice = createSlice({
       state.allLocation = [...state.allLocation, action.payload];
     },
     deleteLocationFromList: (state, action) => {
-      // console.log(`Before Delete`);
-      // console.log(state.allLocation);
-      // console.log(`----------------------------------`);
+      const favouriteCardOnPressLocationWithId =
+        action.payload.favouriteCardOnPressLocationWithId;
+
+      const currentOnPressLocationInfo =
+        action.payload.currentOnPressLocationInfo;
 
       const currentFavouriteCardOnPressId =
-        action.payload.currentFavouriteCardOnPressId;
-      const removeIndex = action.payload.favouriteCardOnPressLocationWithId[
+        currentOnPressLocationInfo.favouriteTypeId;
+
+      const removeIndex = favouriteCardOnPressLocationWithId[
         currentFavouriteCardOnPressId
       ].findIndex(
-        (locationObj) =>
-          locationObj._id === action.payload.currentOnPressLocationInfo.id
+        (locationObj) => locationObj._id === currentOnPressLocationInfo.id
       );
 
       let newLocationList = [...state.allLocation];
 
       if (removeIndex !== -1) {
-        newLocationList = newLocationList.map((locationObj) => {
+        const updatedLocationList = newLocationList.map((locationObj) => {
           if (locationObj[currentFavouriteCardOnPressId]) {
             const updatedLocationObj = { ...locationObj };
             updatedLocationObj[currentFavouriteCardOnPressId] =
@@ -132,12 +135,37 @@ export const useStateSlice = createSlice({
           }
           return locationObj;
         });
-      }
 
-      // state.allLocation = newLocationList;
-      console.log(`After Delete In Redux`);
-      console.log(state.allLocation);
-      console.log(`-----------------------------`);
+        // console.log(`After Delete`);
+        // console.log(updatedLocationList);
+        // console.log(`------------------`);
+
+        return {
+          ...state,
+          allLocation: updatedLocationList,
+        };
+      }
+    },
+    createNewLocationFromList: (state, action) => {
+      const createNewLocationInfo = action.payload.createNewLocationInfo;
+      const currentCreateInFavouriteTypeId =
+        createNewLocationInfo.favouriteTypeId;
+
+      let newLocationList = [...state.allLocation.splice(0, 3)];
+
+      const updatedLocationList = newLocationList.map((locationObj) => {
+        if (locationObj[currentCreateInFavouriteTypeId]) {
+          const updatedLocationObj = { ...locationObj };
+          updatedLocationObj[currentCreateInFavouriteTypeId] = [
+            ...updatedLocationObj[currentCreateInFavouriteTypeId],
+            createNewLocationInfo,
+          ];
+          return updatedLocationObj;
+        }
+        return locationObj;
+      });
+
+      state.allLocation = updatedLocationList;
     },
   },
 });
@@ -166,6 +194,7 @@ export const {
   setCreateNewLocationInfo,
   setGetAllLocation,
   deleteLocationFromList,
+  createNewLocationFromList,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;

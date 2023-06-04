@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import sanityClient from "../sanity";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  createNewLocationFromList,
   deleteLocationFromList,
   selectCreateNewLocationInfo,
   selectCurrentFavouriteCardOnPressId,
@@ -47,6 +48,7 @@ const FavouriteCard = (props) => {
     useState([]);
   const isCreateNewLocation = useSelector(selectIsCreateNewLocation);
   const createNewLocationInfo = useSelector(selectCreateNewLocationInfo);
+
   // current OnPress FavouriteCard Type Status Settings
   const [
     favouriteCardOnPressStatusWithId,
@@ -54,6 +56,7 @@ const FavouriteCard = (props) => {
   ] = useState([]);
   const favouriteCardOnPressStatus = (props) => {
     const favouriteTypeId = props.id;
+    CloseAllLocationOptional();
     setFavouriteCardOnPressStatusWithId((prevState) => ({
       ...prevState,
       [favouriteTypeId]: !prevState[favouriteTypeId] || false,
@@ -61,11 +64,13 @@ const FavouriteCard = (props) => {
   };
 
   // Get Each Location After OnPress the FavouriteCard
-  const getAllLocation = useSelector(selectGetAllLocation);
   const [
     favouriteCardOnPressLocationWithId,
     setFavouriteCardOnPressLocationWithId,
   ] = useState([]);
+
+  const getAllLocation = useSelector(selectGetAllLocation);
+
   const getFavouriteCardLocationWidthId = (props) => {
     const currentFavouriteCardId = props.id;
     const currentLocation = getAllLocation.filter(
@@ -97,10 +102,13 @@ const FavouriteCard = (props) => {
   const isCancelDeleteFavouriteLocationCard = useSelector(
     selectIsCancelDeleteFavouriteLocationCard
   );
-  const removeFavouriteLocationFromFavouriteCard = (location) => {
+  const removeFavouriteLocationFromFavouriteCard = (props) => {
+    const type = props.type;
+    const location = props.location;
     dispatch(
       setCurrentOnPressLocationInfo({
         id: location._id,
+        favouriteTypeId: type._id,
         description: location.address,
         location: {
           lat: location.lat,
@@ -110,15 +118,15 @@ const FavouriteCard = (props) => {
     );
     dispatch(setWarningPopUpVisibleForDeleteFavourite(true));
   };
-  const refreshFavouriteCard = () => {
-    // close favouriteCard
+  const CloseAllFavouriteCard = () => {
     for (const type of favouriteTypeLists) {
       setFavouriteCardOnPressStatusWithId((prevState) => ({
         ...prevState,
         [type._id]: false,
       }));
     }
-    // close favouriteCard Location Optional
+  };
+  const CloseAllLocationOptional = () => {
     sanityClient
       .fetch(`*[_type == 'favouriteLocation']{_id,address,lat,lng}`)
       .then((location) => {
@@ -128,6 +136,20 @@ const FavouriteCard = (props) => {
           [location_id]: false,
         }));
       });
+  };
+  const refreshFavouriteCard = (props) => {
+    const refreshType = props.type;
+    // console.log(refreshType);
+    if (refreshType == "CloseFavouriteCard") {
+      // close favouriteCard
+      CloseAllFavouriteCard();
+      // close favouriteCard Location Optional
+      CloseAllLocationOptional();
+    } else if (refreshType == "WithoutCloseFavouriteCard") {
+      for (const favouriteType of favouriteTypeLists) {
+        getFavouriteCardLocationWidthId({ id: favouriteType._id });
+      }
+    }
   };
 
   // Get All FavouriteType From Sanity.io
@@ -179,23 +201,55 @@ const FavouriteCard = (props) => {
           currentOnPressLocationInfo: currentOnPressLocationInfo,
         })
       );
+
       dispatch(setIsDeleteFavouriteLocationCard(false));
-      console.log(`After Delete In FavouriteCard`);
-      console.log(getAllLocation);
-      console.log(`----------------------------`);
+
+      // console.log(currentFavouriteTypeLocationList());
+      // console.log(`------------------------------`);
+      // if (currentFavouriteTyprLocationList().length === 0) {
+      //   setOptionModalVisible((prevState) => ({
+      //     ...prevState,
+      //     [currentOnPressLocationInfo.id]: false,
+      //   }));
     }
   }, [isDeleteFavouriteLocationCard]);
 
   // When isCreateNewLocation is true, push the new location into allFavouriteLocation Object
-  // useEffect(() => {
-  //   if (isCreateNewLocation) {
-  //     allFavouriteCardOnPressLocation[createNewLocationInfo.favouriteType].push(
-  //       createNewLocationInfo
-  //     );
-  //     dispatch(setIsCreateNewLocation(false));
-  //     refreshFavouriteCard();
-  //   }
-  // }, [isCreateNewLocation]);
+  useEffect(() => {
+    if (isCreateNewLocation) {
+      dispatch(
+        createNewLocationFromList({
+          createNewLocationInfo: createNewLocationInfo,
+        })
+      );
+      dispatch(setIsCreateNewLocation(false));
+    }
+  }, [isCreateNewLocation]);
+
+  // when getAllLocation change, refresh and getFavouriteCardLocationWidthId
+  useEffect(() => {
+    if (favouriteTypeLists === null) {
+      return;
+    }
+    if (
+      getAllLocation.length !== 0 &&
+      getAllLocation.length === favouriteTypeLists.length
+    ) {
+      // refreshFavouriteCard({ type: "WithoutCloseFavouriteCard" });
+      const currentFavouriteTypeLocationList = () => {
+        const locationList = getAllLocation
+          .slice(0, 3)
+          .filter(
+            (locationObj) =>
+              Object.keys(locationObj)[0] ===
+              currentOnPressLocationInfo.favouriteTypeId
+          );
+        return locationList;
+      };
+      console.log(currentFavouriteTypeLocationList());
+      console.log(`-------------------------------------`);
+    }
+  }, [favouriteTypeLists, getAllLocation]);
 
   return (
     <View style={tw`flex-1 mt-5`}>
@@ -223,8 +277,7 @@ const FavouriteCard = (props) => {
                     favouriteCardOnPressStatusWithId[type._id]
                       ? `bg-gray-400`
                       : `bg-gray-300`
-                  }`}
-                >
+                  }`}>
                   <DynamicHeroIcons
                     type="solid"
                     icon={type.heroiconsName}
@@ -240,8 +293,7 @@ const FavouriteCard = (props) => {
                     favouriteCardOnPressStatusWithId[type._id]
                       ? `text-gray-600`
                       : `text-gray-500`
-                  }`}
-                  >
+                  }`}>
                     {type.favouriteTypesName}
                   </Text>
                 </View>
@@ -279,8 +331,7 @@ const FavouriteCard = (props) => {
                                 1
                                 ? `border-b border-gray-50`
                                 : ``
-                            }`}
-                          >
+                            }`}>
                             <TouchableOpacity
                               disabled={
                                 optionModalVisible[location._id] ? true : false
@@ -314,8 +365,7 @@ const FavouriteCard = (props) => {
                                 optionModalVisible[location._id]
                                   ? `ml-3 mr-8`
                                   : `mx-3`
-                              }`}
-                            >
+                              }`}>
                               {/* location Icon */}
                               <View style={tw`ml-1 mr-3`}>
                                 <DynamicHeroIcons
@@ -339,15 +389,13 @@ const FavouriteCard = (props) => {
                             {/* EllipsisVerticalIcon Icons */}
                             {!optionModalVisible[location._id] ? (
                               <View
-                                style={tw`px-4 py-4 items-center justify-center`}
-                              >
+                                style={tw`px-4 py-4 items-center justify-center`}>
                                 <TouchableOpacity
                                   onPress={() =>
                                     favouriteCardLocationOptionalOnPressStatus(
                                       location
                                     )
-                                  }
-                                >
+                                  }>
                                   <View>
                                     <DynamicHeroIcons
                                       type="outlined"
@@ -362,8 +410,7 @@ const FavouriteCard = (props) => {
                               <Animatable.View
                                 animation={`fadeIn`}
                                 duration={200}
-                                style={tw`flex-row items-center justify-center gap-2 mr-2`}
-                              >
+                                style={tw`flex-row items-center justify-center gap-2 mr-2`}>
                                 {/* PencilSquareIcon */}
                                 <TouchableOpacity
                                   style={tw`items-center justify-center`}
@@ -371,8 +418,7 @@ const FavouriteCard = (props) => {
                                     favouriteCardLocationOptionalOnPressStatus(
                                       location
                                     )
-                                  }
-                                >
+                                  }>
                                   <DynamicHeroIcons
                                     type="solid"
                                     icon="PencilSquareIcon"
@@ -384,11 +430,11 @@ const FavouriteCard = (props) => {
                                 <TouchableOpacity
                                   style={tw`py-4 items-center justify-center`}
                                   onPress={() =>
-                                    removeFavouriteLocationFromFavouriteCard(
-                                      location
-                                    )
-                                  }
-                                >
+                                    removeFavouriteLocationFromFavouriteCard({
+                                      type: type,
+                                      location: location,
+                                    })
+                                  }>
                                   <DynamicHeroIcons
                                     type="solid"
                                     icon="TrashIcon"
