@@ -235,19 +235,29 @@ const FavouriteCard = (props) => {
       getAllLocation.length !== 0 &&
       getAllLocation.length === favouriteTypeLists.length
     ) {
-      // refreshFavouriteCard({ type: "WithoutCloseFavouriteCard" });
-      const currentFavouriteTypeLocationList = () => {
-        const locationList = getAllLocation
-          .slice(0, 3)
-          .filter(
-            (locationObj) =>
-              Object.keys(locationObj)[0] ===
-              currentOnPressLocationInfo.favouriteTypeId
-          );
-        return locationList;
-      };
-      console.log(currentFavouriteTypeLocationList());
-      console.log(`-------------------------------------`);
+      refreshFavouriteCard({ type: "WithoutCloseFavouriteCard" });
+      if (Object.entries(currentOnPressLocationInfo).length > 0) {
+        const currentFavouriteTypeLocationList = () => {
+          const locationList = getAllLocation
+            .slice(0, 3)
+            .filter(
+              (locationObj) =>
+                Object.keys(locationObj)[0] ===
+                currentOnPressLocationInfo.favouriteTypeId
+            );
+          return locationList;
+        };
+        if (
+          currentFavouriteTypeLocationList()[0][
+            currentOnPressLocationInfo.favouriteTypeId
+          ].length === 0
+        ) {
+          setFavouriteCardOnPressStatusWithId((prevState) => ({
+            ...prevState,
+            [currentOnPressLocationInfo.favouriteTypeId]: false,
+          }));
+        }
+      }
     }
   }, [favouriteTypeLists, getAllLocation]);
 
@@ -277,7 +287,8 @@ const FavouriteCard = (props) => {
                     favouriteCardOnPressStatusWithId[type._id]
                       ? `bg-gray-400`
                       : `bg-gray-300`
-                  }`}>
+                  }`}
+                >
                   <DynamicHeroIcons
                     type="solid"
                     icon={type.heroiconsName}
@@ -293,7 +304,8 @@ const FavouriteCard = (props) => {
                     favouriteCardOnPressStatusWithId[type._id]
                       ? `text-gray-600`
                       : `text-gray-500`
-                  }`}>
+                  }`}
+                  >
                     {type.favouriteTypesName}
                   </Text>
                 </View>
@@ -331,7 +343,8 @@ const FavouriteCard = (props) => {
                                 1
                                 ? `border-b border-gray-50`
                                 : ``
-                            }`}>
+                            }`}
+                          >
                             <TouchableOpacity
                               disabled={
                                 optionModalVisible[location._id] ? true : false
@@ -365,7 +378,8 @@ const FavouriteCard = (props) => {
                                 optionModalVisible[location._id]
                                   ? `ml-3 mr-8`
                                   : `mx-3`
-                              }`}>
+                              }`}
+                            >
                               {/* location Icon */}
                               <View style={tw`ml-1 mr-3`}>
                                 <DynamicHeroIcons
@@ -389,13 +403,15 @@ const FavouriteCard = (props) => {
                             {/* EllipsisVerticalIcon Icons */}
                             {!optionModalVisible[location._id] ? (
                               <View
-                                style={tw`px-4 py-4 items-center justify-center`}>
+                                style={tw`px-4 py-4 items-center justify-center`}
+                              >
                                 <TouchableOpacity
                                   onPress={() =>
                                     favouriteCardLocationOptionalOnPressStatus(
                                       location
                                     )
-                                  }>
+                                  }
+                                >
                                   <View>
                                     <DynamicHeroIcons
                                       type="outlined"
@@ -410,7 +426,8 @@ const FavouriteCard = (props) => {
                               <Animatable.View
                                 animation={`fadeIn`}
                                 duration={200}
-                                style={tw`flex-row items-center justify-center gap-2 mr-2`}>
+                                style={tw`flex-row items-center justify-center gap-2 mr-2`}
+                              >
                                 {/* PencilSquareIcon */}
                                 <TouchableOpacity
                                   style={tw`items-center justify-center`}
@@ -418,7 +435,8 @@ const FavouriteCard = (props) => {
                                     favouriteCardLocationOptionalOnPressStatus(
                                       location
                                     )
-                                  }>
+                                  }
+                                >
                                   <DynamicHeroIcons
                                     type="solid"
                                     icon="PencilSquareIcon"
@@ -434,7 +452,8 @@ const FavouriteCard = (props) => {
                                       type: type,
                                       location: location,
                                     })
-                                  }>
+                                  }
+                                >
                                   <DynamicHeroIcons
                                     type="solid"
                                     icon="TrashIcon"
