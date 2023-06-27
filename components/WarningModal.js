@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
+  selectCurrentOnPressLocationInfo,
   setIsCancelDeleteFavouriteLocationCard,
   setIsDeleteFavouriteLocationCard,
   setStarIconFillStyle,
@@ -14,11 +15,14 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
   const dispatch = useDispatch();
   const removeFavouriteLocation = () => {
     const currentLocation = currentOnPressLocation.description;
+    // console.log("[currentOnPressLocationInfo]");
+    // console.log(`----------------------`);
+
     sanityClient.fetch(`*[_type == 'favouriteLocation']{...,}`).then((data) => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].address == currentLocation) {
           sanityClient.delete(`${data[i]._id}`).then(() => {
-            // console.log(`already delete favourite location`);
+            console.log(`already delete favourite location`);
             // console.log(`id : ${data[i]._id}`);
             // console.log(`location : ${data[i].address}`);
           });
@@ -26,7 +30,11 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
       }
     });
   };
-  // console.log(origin);
+
+  useEffect(() => {
+    console.log(currentOnPressLocation);
+  }, [currentOnPressLocation]);
+
   useEffect(() => {
     if (type == "null") {
       Alert.alert(
@@ -41,7 +49,7 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
           text: "Cancel",
           onPress: () => {
             dispatch(setIsCancelDeleteFavouriteLocationCard(true));
-            console.log("Cancel Remove From Favourite");
+            // console.log("Cancel Remove From Favourite");
           },
           style: "cancel",
         },

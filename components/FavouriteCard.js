@@ -174,6 +174,9 @@ const FavouriteCard = (props) => {
     if (favouriteTypeLists === null) {
       return;
     }
+    console.log(
+      `\n [FavouriteCard.js : Get Location With FavouriteTypeList] \n`
+    );
     for (const favouriteType of favouriteTypeLists) {
       sanityClient
         .fetch(
@@ -181,6 +184,11 @@ const FavouriteCard = (props) => {
       && references('${favouriteType._id}')]{_id,address,lat,lng}`
         )
         .then((data) => {
+          console.log(
+            `favouriteTypesName : ${favouriteType.favouriteTypesName} \n`
+          );
+          console.log(data);
+          console.log(`------------------------------`);
           const AllLocation = (prevState) => ({
             ...prevState,
             [favouriteType._id]: data,

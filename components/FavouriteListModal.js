@@ -1,12 +1,10 @@
-import { View, Text, StatusBar, TouchableWithoutFeedback } from "react-native";
+import { View, StatusBar, TouchableWithoutFeedback } from "react-native";
 import tw from "twrnc";
 import { useDispatch, useSelector } from "react-redux";
 import * as Animatable from "react-native-animatable";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import styles from "../style";
 import {
   selectTabBarHeight,
-  setIsAddFavourites,
   setModalVisible,
   setStarIconFillStyle,
   setTabBarHeight,

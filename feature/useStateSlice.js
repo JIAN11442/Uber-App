@@ -23,6 +23,10 @@ const initialState = {
   currentOnPressLocationInfo: [],
   createNewLocationInfo: [],
   allLocation: [],
+  iconsModalVisible: false,
+  isChosenIcon: false,
+  isChosenIconName: "",
+  iconInputTextIsFocus: false,
 };
 
 export const useStateSlice = createSlice({
@@ -49,7 +53,17 @@ export const useStateSlice = createSlice({
       state.tabBarHeight = action.payload;
     },
     setFavouriteTypeLists: (state, action) => {
-      state.favouritesTypeList = action.payload;
+      if (state.favouritesTypeList === null) {
+        state.favouritesTypeList = action.payload;
+      } else {
+        state.favouritesTypeList = [
+          ...state.favouritesTypeList,
+          action.payload,
+        ];
+      }
+      console.log(`[useStateSlice.js] \n`);
+      console.log(state.favouritesTypeList);
+      console.log(`------------------`);
     },
     setGetWhereFromInputText: (state, action) => {
       state.getWhereFromInputText = action.payload;
@@ -167,6 +181,18 @@ export const useStateSlice = createSlice({
 
       state.allLocation = updatedLocationList;
     },
+    setIconsModalVisible: (state, action) => {
+      state.iconsModalVisible = action.payload;
+    },
+    setIsChosenIcon: (state, action) => {
+      state.isChosenIcon = action.payload;
+    },
+    setIsChosenIconName: (state, action) => {
+      state.isChosenIconName = action.payload;
+    },
+    setIconInputTextIsFocus: (state, action) => {
+      state.iconInputTextIsFocus = action.payload;
+    },
   },
 });
 
@@ -195,6 +221,10 @@ export const {
   setGetAllLocation,
   deleteLocationFromList,
   createNewLocationFromList,
+  setIconsModalVisible,
+  setIsChosenIcon,
+  setIsChosenIconName,
+  setIconInputTextIsFocus,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -231,5 +261,12 @@ export const selectCurrentOnPressLocationInfo = (state) =>
 export const selectCreateNewLocationInfo = (state) =>
   state.useState.createNewLocationInfo;
 export const selectGetAllLocation = (state) => state.useState.allLocation;
+export const selectIconsModalVisible = (state) =>
+  state.useState.iconsModalVisible;
+export const selectIsChosenIcon = (state) => state.useState.isChosenIcon;
+export const selectIsChosenIconName = (state) =>
+  state.useState.isChosenIconName;
+export const selectIconInputTextIsFocus = (state) =>
+  state.useState.iconInputTextIsFocus;
 
 export default useStateSlice.reducer;

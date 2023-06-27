@@ -22,6 +22,8 @@ import {
   selectWarningPopUpVisibleForDeleteFavourite,
   selectWarningPopUpVisibleForNull,
   setCurrentLocationIsAddToSanity,
+  setCurrentOnPressLocationInfo,
+  setFavouriteLocationList,
   setModalVisible,
   setStarIconFillStyle,
   setWarningPopUpVisibleForDeleteFavourite,
@@ -36,6 +38,7 @@ const HomeScreen = () => {
   const data = useSelector(selectData);
   const UberLogo = selectDataWithName("HomeScreen UberLogo")?.image[0]?.image;
   const NavOptionsData = selectDataWithName("NavOption")?.image;
+  const favouriteTypeLocationList = useSelector(selectFavouriteLocationList);
   // const requestUrl = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_APIKEYS}&libraries=places`;
 
   /* starIcon situation useState reducer */
@@ -81,7 +84,35 @@ const HomeScreen = () => {
   );
   const starIconFillStyle = useSelector(selectStarIconFillStyle);
   const modalVisible = useSelector(selectModalVisible);
-
+  const UploadCurrentLocationInfoToRedux = async () => {
+    if (starIconFillStyle !== "transparent") {
+      await sanityClient
+        .fetch(`*[_type == 'favouriteLocation']{...,favourite_type[]->{...,}}`)
+        .then((data) => {
+          console.log(data);
+          console.log(`-------------------------`);
+          const currentLocationFromSanity = data.filter(
+            (dt) =>
+              dt.address === origin.description &&
+              dt.lat === origin.location.lat &&
+              dt.lng === origin.location.lng
+          );
+          dispatch(
+            setCurrentOnPressLocationInfo({
+              description: currentLocationFromSanity[0].address,
+              favouriteTypeId:
+                currentLocationFromSanity[0].favourite_type[0]._id,
+              id: currentLocationFromSanity[0]._id,
+              location: {
+                lat: currentLocationFromSanity[0].lat,
+                lng: currentLocationFromSanity[0].lng,
+              },
+            })
+          );
+        });
+    }
+    return null;
+  };
   const switchAddFavourites = async () => {
     const inputText = await getInputText();
     if (starIconFillStyle == "transparent") {
@@ -124,21 +155,11 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (origin) {
+      UploadCurrentLocationInfoToRedux();
       getInputText();
       originIsDuplicated();
     }
   }, [origin]);
-
-  // if (origin) {
-  //   console.log(origin.description);
-  //   console.log(`---------------`);
-  // }
-
-  // if (starIconFillStyle) {
-  //   console.log(origin);
-  //   console.log(starIconFillStyle);
-  //   console.log(`-----------------------`);
-  // }
 
   return (
     <>

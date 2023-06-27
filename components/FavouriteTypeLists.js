@@ -33,11 +33,11 @@ const FavouriteTypeLists = () => {
   const navigation = useNavigation();
   const origin = useSelector(selectOrigin);
 
-  useEffect(() => {
-    sanityClient.fetch(`*[_type == 'favouriteTypes']{...,}`).then((data) => {
-      dispatch(setFavouriteTypeLists(data));
-    });
-  }, []);
+  // useEffect(() => {
+  //   sanityClient.fetch(`*[_type == 'favouriteTypes']{...,}`).then((data) => {
+  //     dispatch(setFavouriteTypeLists(data));
+  //   });
+  // }, []);
 
   const UploadDataToSanity = async (item, origin) => {
     const allowNanoChars =
