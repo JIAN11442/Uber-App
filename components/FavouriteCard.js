@@ -35,7 +35,6 @@ import { ScrollView } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useNavigation } from "@react-navigation/native";
 import { selectOrigin, setDestination, setOrigin } from "../feature/navSlice";
-import { customAlphabet } from "nanoid/non-secure";
 
 const FavouriteCard = (props) => {
   const favouriteCardType = props.type;
@@ -81,8 +80,6 @@ const FavouriteCard = (props) => {
       [currentFavouriteCardId]: currentLocation,
     }));
   };
-
-  // Get current OnPress FavouriteCard Id
 
   // FavouriteCard Location Optional Modal Settings
   const currentOnPressLocationInfo = useSelector(
@@ -174,9 +171,13 @@ const FavouriteCard = (props) => {
     if (favouriteTypeLists === null) {
       return;
     }
-    console.log(
-      `\n [FavouriteCard.js : Get Location With FavouriteTypeList] \n`
-    );
+    // console.log(
+    //   `\n [FavouriteCard.js : Get Location With FavouriteTypeList] \n`
+    // );
+    // favouriteTypeLists.map((favouriteType) => {
+    //   console.log(favouriteType);
+    // });
+    // console.log(`-----------------------`);
     for (const favouriteType of favouriteTypeLists) {
       sanityClient
         .fetch(
@@ -184,11 +185,6 @@ const FavouriteCard = (props) => {
       && references('${favouriteType._id}')]{_id,address,lat,lng}`
         )
         .then((data) => {
-          console.log(
-            `favouriteTypesName : ${favouriteType.favouriteTypesName} \n`
-          );
-          console.log(data);
-          console.log(`------------------------------`);
           const AllLocation = (prevState) => ({
             ...prevState,
             [favouriteType._id]: data,
@@ -269,13 +265,23 @@ const FavouriteCard = (props) => {
     }
   }, [favouriteTypeLists, getAllLocation]);
 
+  const CurrentFavouriteType = (props) => {
+    console.log(`${props.type.heroiconsName} : ${props.index}`);
+  };
+
+  const EndLine = () => {
+    console.log(`--------------------`);
+  };
+
   return (
     <View style={tw`flex-1 mt-5`}>
       <ScrollView>
         {favouriteTypeLists &&
           favouriteTypeLists.map((type, index) => (
-            <View key={type._id} style={tw`mr-2`}>
-              {/* Main FavouriteType  Menu*/}
+            <View key={index} style={tw`mr-2`}>
+              {/* Check Debug */}
+              <CurrentFavouriteType type={type} index={index} />
+              {/* Main FavouriteType Menu*/}
               <TouchableOpacity
                 onPress={() => {
                   setCurrentFavouriteCardOnPressId(type._id);
@@ -308,11 +314,11 @@ const FavouriteCard = (props) => {
                 <View style={tw`flex-1`}>
                   <Text
                     style={tw`text-lg
-                  ${
-                    favouriteCardOnPressStatusWithId[type._id]
-                      ? `text-gray-600`
-                      : `text-gray-500`
-                  }`}
+          ${
+            favouriteCardOnPressStatusWithId[type._id]
+              ? `text-gray-600`
+              : `text-gray-500`
+          }`}
                   >
                     {type.favouriteTypesName}
                   </Text>
@@ -320,8 +326,8 @@ const FavouriteCard = (props) => {
                 {/* ChevronIcon */}
                 <View>
                   {/* {isLoading ? (
-                    <ActivityIndicator />
-                  ) : ( */}
+            <ActivityIndicator />
+          ) : ( */}
                   <DynamicHeroIcons
                     type="outlined"
                     icon={
@@ -479,6 +485,7 @@ const FavouriteCard = (props) => {
               </View>
             </View>
           ))}
+        <EndLine />
       </ScrollView>
     </View>
   );

@@ -161,6 +161,8 @@ const HomeScreen = () => {
     }
   }, [origin]);
 
+  console.log(`[HomeScreen.js]`);
+
   return (
     <>
       <View style={styles.AndroidSafeAreaStyle}>

@@ -53,17 +53,18 @@ export const useStateSlice = createSlice({
       state.tabBarHeight = action.payload;
     },
     setFavouriteTypeLists: (state, action) => {
-      if (state.favouritesTypeList === null) {
-        state.favouritesTypeList = action.payload;
-      } else {
-        state.favouritesTypeList = [
-          ...state.favouritesTypeList,
-          action.payload,
-        ];
-      }
-      console.log(`[useStateSlice.js] \n`);
-      console.log(state.favouritesTypeList);
-      console.log(`------------------`);
+      // if (state.favouritesTypeList === null) {
+      //   state.favouritesTypeList = action.payload;
+      // } else {
+      //   state.favouritesTypeList = [
+      //     ...state.favouritesTypeList,
+      //     action.payload,
+      //   ];
+      // }
+      state.favouritesTypeList = action.payload;
+      // console.log(`[useStateSlice.js] \n`);
+      // console.log(state.favouritesTypeList);
+      // console.log(`------------------`);
     },
     setGetWhereFromInputText: (state, action) => {
       state.getWhereFromInputText = action.payload;

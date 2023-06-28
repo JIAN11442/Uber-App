@@ -189,12 +189,15 @@ const AddFavouriteType = () => {
   // Dispatch New Object To [favouriteTypeList] when button is submitted
   useEffect(() => {
     if (isSubmitted) {
-      const submitFavouriteType = {
-        _id: uuid.v4(),
-        _type: "favouriteTypes",
-        favouriteTypesName: favouriteTypeNameInputValue,
-        heroiconsName: currentIconInputValue,
-      };
+      const submitFavouriteType = [
+        ...new Set(favouriteTypeLists),
+        {
+          _id: uuid.v4(),
+          _type: "favouriteTypes",
+          favouriteTypesName: favouriteTypeNameInputValue,
+          heroiconsName: currentIconInputValue,
+        },
+      ];
 
       // console.log(`[Before Dispatch] \n`);
       // console.log(favouriteTypeLists);
@@ -205,9 +208,9 @@ const AddFavouriteType = () => {
       dispatch(setFavouriteTypeLists(submitFavouriteType));
       setIsSubmitted(false);
 
-      console.log(`\n [After Dispatch]\n`);
-      console.log(favouriteTypeLists);
-      console.log(`-----------------------`);
+      // console.log(`\n [After Dispatch]\n`);
+      // console.log(favouriteTypeLists);
+      // console.log(`-----------------------`);
     }
   }, [isSubmitted]);
 
