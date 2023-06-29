@@ -171,13 +171,9 @@ const FavouriteCard = (props) => {
     if (favouriteTypeLists === null) {
       return;
     }
-    // console.log(
-    //   `\n [FavouriteCard.js : Get Location With FavouriteTypeList] \n`
-    // );
-    // favouriteTypeLists.map((favouriteType) => {
-    //   console.log(favouriteType);
-    // });
-    // console.log(`-----------------------`);
+
+    // console.log(`[getLocation when favouriteTypeLists is changes] \n`);
+
     for (const favouriteType of favouriteTypeLists) {
       sanityClient
         .fetch(
@@ -189,6 +185,12 @@ const FavouriteCard = (props) => {
             ...prevState,
             [favouriteType._id]: data,
           });
+
+          // console.log(`${favouriteType.favouriteTypesName} : `);
+          // AllLocation()[`${favouriteType._id}`].map((location) => {
+          //   console.log(location.address);
+          // });
+          // console.log(`------------------`);
           dispatch(setGetAllLocation(AllLocation()));
         });
     }
@@ -280,7 +282,7 @@ const FavouriteCard = (props) => {
           favouriteTypeLists.map((type, index) => (
             <View key={index} style={tw`mr-2`}>
               {/* Check Debug */}
-              <CurrentFavouriteType type={type} index={index} />
+              {/* <CurrentFavouriteType type={type} index={index} /> */}
               {/* Main FavouriteType Menu*/}
               <TouchableOpacity
                 onPress={() => {
@@ -485,7 +487,7 @@ const FavouriteCard = (props) => {
               </View>
             </View>
           ))}
-        <EndLine />
+        {/* <EndLine /> */}
       </ScrollView>
     </View>
   );

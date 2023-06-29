@@ -85,32 +85,27 @@ const HomeScreen = () => {
   const starIconFillStyle = useSelector(selectStarIconFillStyle);
   const modalVisible = useSelector(selectModalVisible);
   const UploadCurrentLocationInfoToRedux = async () => {
-    if (starIconFillStyle !== "transparent") {
-      await sanityClient
-        .fetch(`*[_type == 'favouriteLocation']{...,favourite_type[]->{...,}}`)
-        .then((data) => {
-          console.log(data);
-          console.log(`-------------------------`);
-          const currentLocationFromSanity = data.filter(
-            (dt) =>
-              dt.address === origin.description &&
-              dt.lat === origin.location.lat &&
-              dt.lng === origin.location.lng
-          );
-          dispatch(
-            setCurrentOnPressLocationInfo({
-              description: currentLocationFromSanity[0].address,
-              favouriteTypeId:
-                currentLocationFromSanity[0].favourite_type[0]._id,
-              id: currentLocationFromSanity[0]._id,
-              location: {
-                lat: currentLocationFromSanity[0].lat,
-                lng: currentLocationFromSanity[0].lng,
-              },
-            })
-          );
-        });
-    }
+    await sanityClient
+      .fetch(`*[_type == 'favouriteLocation']{...,favourite_type[]->{...,}}`)
+      .then((data) => {
+        const currentLocationFromSanity = data.filter(
+          (dt) =>
+            dt.address === origin.description &&
+            dt.lat === origin.location.lat &&
+            dt.lng === origin.location.lng
+        );
+        dispatch(
+          setCurrentOnPressLocationInfo({
+            description: currentLocationFromSanity[0].address,
+            favouriteTypeId: currentLocationFromSanity[0].favourite_type[0]._id,
+            id: currentLocationFromSanity[0]._id,
+            location: {
+              lat: currentLocationFromSanity[0].lat,
+              lng: currentLocationFromSanity[0].lng,
+            },
+          })
+        );
+      });
     return null;
   };
   const switchAddFavourites = async () => {
@@ -155,13 +150,27 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (origin) {
-      UploadCurrentLocationInfoToRedux();
       getInputText();
       originIsDuplicated();
     }
   }, [origin]);
 
-  console.log(`[HomeScreen.js]`);
+  useEffect(() => {
+    console.log(`starIconFillStyle : ${starIconFillStyle}`);
+    console.log(
+      `warningPopUpVisibleForDeleteFavourite : ${warningPopUpVisibleForDeleteFavourite}`
+    );
+
+    if (
+      starIconFillStyle === "#ffc400" &&
+      warningPopUpVisibleForDeleteFavourite === true &&
+      origin
+    ) {
+      console.log(`UploadCurrentLocationInfoToRedux is running`);
+      UploadCurrentLocationInfoToRedux();
+    }
+    console.log(`--------------------------`);
+  }, [warningPopUpVisibleForDeleteFavourite, starIconFillStyle]);
 
   return (
     <>

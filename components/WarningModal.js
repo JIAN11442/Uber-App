@@ -15,9 +15,9 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
   const dispatch = useDispatch();
   const removeFavouriteLocation = () => {
     const currentLocation = currentOnPressLocation.description;
-    // console.log("[currentOnPressLocationInfo]");
-    // console.log(`----------------------`);
-
+    console.log(`[WarningModal.js]`);
+    console.log(currentLocation);
+    console.log(`------------------`);
     sanityClient.fetch(`*[_type == 'favouriteLocation']{...,}`).then((data) => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].address == currentLocation) {
@@ -30,10 +30,6 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
       }
     });
   };
-
-  useEffect(() => {
-    console.log(currentOnPressLocation);
-  }, [currentOnPressLocation]);
 
   useEffect(() => {
     if (type == "null") {
@@ -50,6 +46,7 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
           onPress: () => {
             dispatch(setIsCancelDeleteFavouriteLocationCard(true));
             // console.log("Cancel Remove From Favourite");
+            dispatch(setWarningPopUpVisibleForDeleteFavourite(false));
           },
           style: "cancel",
         },
@@ -59,13 +56,14 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
             removeFavouriteLocation();
             dispatch(setIsDeleteFavouriteLocationCard(true));
             dispatch(setStarIconFillStyle("transparent"));
+            dispatch(setWarningPopUpVisibleForDeleteFavourite(false));
+
             // console.log("Already Remove From Favourite");
           },
         },
       ]);
     }
     dispatch(setWarningPopUpVisibleForNull(false));
-    dispatch(setWarningPopUpVisibleForDeleteFavourite(false));
   }, [currentOnPressLocation]);
   return null;
 };
