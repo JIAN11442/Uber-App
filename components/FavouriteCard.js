@@ -75,10 +75,20 @@ const FavouriteCard = (props) => {
     const currentLocation = getAllLocation.filter(
       (favouriteTypeObj) => favouriteTypeObj[currentFavouriteCardId]
     )[0][currentFavouriteCardId];
-    setFavouriteCardOnPressLocationWithId((prevState) => ({
-      ...prevState,
-      [currentFavouriteCardId]: currentLocation,
-    }));
+
+    try {
+      console.log(`currentLocation : ${currentLocation}`);
+      setFavouriteCardOnPressLocationWithId((prevState) => ({
+        ...prevState,
+        [currentFavouriteCardId]: currentLocation,
+      }));
+    } catch (error) {
+      console.log(`Before console currentLocation`);
+      console.log(`currentLocation : ${currentLocation}`);
+      console.log(`After console currentLocation`);
+
+      console.log(error);
+    }
   };
 
   // FavouriteCard Location Optional Modal Settings
@@ -143,9 +153,15 @@ const FavouriteCard = (props) => {
       // close favouriteCard Location Optional
       CloseAllLocationOptional();
     } else if (refreshType == "WithoutCloseFavouriteCard") {
+      console.log(`\n[getFavouriteCardLocationWithId]\n`);
       for (const favouriteType of favouriteTypeLists) {
-        getFavouriteCardLocationWidthId({ id: favouriteType._id });
+        try {
+          getFavouriteCardLocationWidthId({ id: favouriteType._id });
+        } catch (error) {
+          console.log(error);
+        }
       }
+      console.log(`--------------------------------`);
     }
   };
 
@@ -171,9 +187,6 @@ const FavouriteCard = (props) => {
     if (favouriteTypeLists === null) {
       return;
     }
-
-    // console.log(`[getLocation when favouriteTypeLists is changes] \n`);
-
     for (const favouriteType of favouriteTypeLists) {
       sanityClient
         .fetch(
@@ -186,11 +199,6 @@ const FavouriteCard = (props) => {
             [favouriteType._id]: data,
           });
 
-          // console.log(`${favouriteType.favouriteTypesName} : `);
-          // AllLocation()[`${favouriteType._id}`].map((location) => {
-          //   console.log(location.address);
-          // });
-          // console.log(`------------------`);
           dispatch(setGetAllLocation(AllLocation()));
         });
     }
@@ -209,14 +217,6 @@ const FavouriteCard = (props) => {
       );
 
       dispatch(setIsDeleteFavouriteLocationCard(false));
-
-      // console.log(currentFavouriteTypeLocationList());
-      // console.log(`------------------------------`);
-      // if (currentFavouriteTyprLocationList().length === 0) {
-      //   setOptionModalVisible((prevState) => ({
-      //     ...prevState,
-      //     [currentOnPressLocationInfo.id]: false,
-      //   }));
     }
   }, [isDeleteFavouriteLocationCard]);
 
@@ -274,6 +274,8 @@ const FavouriteCard = (props) => {
   const EndLine = () => {
     console.log(`--------------------`);
   };
+
+  useEffect(() => {}, []);
 
   return (
     <View style={tw`flex-1 mt-5`}>

@@ -156,20 +156,13 @@ const HomeScreen = () => {
   }, [origin]);
 
   useEffect(() => {
-    console.log(`starIconFillStyle : ${starIconFillStyle}`);
-    console.log(
-      `warningPopUpVisibleForDeleteFavourite : ${warningPopUpVisibleForDeleteFavourite}`
-    );
-
     if (
       starIconFillStyle === "#ffc400" &&
       warningPopUpVisibleForDeleteFavourite === true &&
       origin
     ) {
-      console.log(`UploadCurrentLocationInfoToRedux is running`);
       UploadCurrentLocationInfoToRedux();
     }
-    console.log(`--------------------------`);
   }, [warningPopUpVisibleForDeleteFavourite, starIconFillStyle]);
 
   return (
