@@ -4,7 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Animatable from "react-native-animatable";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
+  selectComponentHeight,
   selectTabBarHeight,
+  setComponentHeight,
   setModalVisible,
   setStarIconFillStyle,
   setTabBarHeight,
@@ -18,6 +20,7 @@ import DynamicHeroIcons from "../DynamicHeroIcons";
 const FavouriteListModal = () => {
   const dispatch = useDispatch();
   const tabBarHeight = useSelector(selectTabBarHeight);
+  const maxComponentHeight = useSelector(selectComponentHeight);
 
   const tabArr = [
     {
@@ -61,6 +64,7 @@ const FavouriteListModal = () => {
 
   useEffect(() => {
     dispatch(setTabBarHeight(50));
+    dispatch(setComponentHeight(344));
   }, []);
 
   const TabBarBottom = createBottomTabNavigator();
@@ -76,7 +80,7 @@ const FavouriteListModal = () => {
       >
         <TouchableWithoutFeedback>
           <Animatable.View
-            style={tw`absolute w-80 h-90 bg-white rounded-lg shadow-lg shadow-black p-2 pb-0
+            style={tw`absolute w-80 h-[${maxComponentHeight}px] bg-white rounded-lg shadow-lg shadow-black p-2 pb-0
       `}
             animation={"bounceInUp"}
             duration={1000}

@@ -130,6 +130,7 @@ const HomeScreen = () => {
 
   const currentOnPressLocation = useSelector(selectCurrentOnPressLocationInfo);
 
+  // Get Uber Image
   useEffect(() => {
     sanityClient
       .fetch(

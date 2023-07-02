@@ -15,9 +15,6 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
   const dispatch = useDispatch();
   const removeFavouriteLocation = () => {
     const currentLocation = currentOnPressLocation.description;
-    console.log(`[WarningModal.js]`);
-    console.log(currentLocation);
-    console.log(`------------------`);
     sanityClient.fetch(`*[_type == 'favouriteLocation']{...,}`).then((data) => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].address == currentLocation) {

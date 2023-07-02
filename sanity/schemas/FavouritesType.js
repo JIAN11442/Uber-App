@@ -16,11 +16,10 @@ export default defineType({
       type: 'string',
       title: 'Heroicons Name',
     }),
-    //     defineField({
-    //       name: 'favouriteLocation',
-    //       type: 'array',
-    //       title: 'Favourite Location',
-    //       of: [{type: 'reference', to: [{type: 'favouriteLocation'}]}],
-    //     }),
+    defineField({
+      name: 'status',
+      type: 'boolean',
+      title: 'Status',
+    }),
   ],
 })

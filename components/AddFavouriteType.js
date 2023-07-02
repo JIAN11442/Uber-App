@@ -10,7 +10,7 @@ import tw from "twrnc";
 import IconsOptionalModal from "./IconsOptionalModal";
 import { Icons } from "./IconsOptionalModal";
 import DynamicHeroIcons from "../DynamicHeroIcons";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -24,9 +24,17 @@ import {
   setIconsModalVisible,
   setIsChosenIcon,
   setIsChosenIconName,
+  setModalVisible,
 } from "../feature/useStateSlice";
 import uuid from "react-native-uuid";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  validatePathConfig,
+} from "@react-navigation/native";
+import client from "../sanity";
+import { CheckBadgeIcon } from "react-native-heroicons/solid";
+import { current } from "@reduxjs/toolkit";
 
 const AddFavouriteType = () => {
   const dispatch = useDispatch();
@@ -85,6 +93,7 @@ const AddFavouriteType = () => {
             title="submit"
             onPress={() => {
               setIsSubmitted(true);
+              navigation.navigate("favouriteTypeList");
             }}
           ></Button>
         </View>
@@ -140,8 +149,11 @@ const AddFavouriteType = () => {
   };
   const IconsListModal = () => {
     let result;
+    const capitalCurrentIconInputValue =
+      currentIconInputValue.charAt(0).toUpperCase() +
+      currentIconInputValue.slice(1, currentIconInputValue.length);
     const similarIconsList = Object.keys(Icons).filter((icon) =>
-      icon.includes(currentIconInputValue)
+      icon.includes(capitalCurrentIconInputValue)
     );
     if (iconsModalVisible && similarIconsList.length > 0) {
       result = (
@@ -186,31 +198,47 @@ const AddFavouriteType = () => {
     return result;
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // setModalVisible(false);
+      dispatch(setIsChosenIcon(false));
+      dispatch(setIconInputTextIsFocus(false));
+      setIsSubmitted(false);
+
+      setFavouriteTypeNameInputValue("");
+      setCurrentIconInputValue("");
+      dispatch(setIsChosenIconName(""));
+    }, [])
+  );
+
   // Dispatch New Object To [favouriteTypeList] when button is submitted
   useEffect(() => {
     if (isSubmitted) {
+      // capital favouriteTypesName
+      const capitalFavouriteTypesName =
+        favouriteTypeNameInputValue.charAt(0).toUpperCase() +
+        favouriteTypeNameInputValue.slice(
+          1,
+          favouriteTypeNameInputValue.length
+        );
+      // capital IconInputName
+      const capitalCurrentIconInputValue =
+        currentIconInputValue.charAt(0).toUpperCase() +
+        currentIconInputValue.slice(1, currentIconInputValue.length);
+
+      const uploadFavouriteTypeToSanity = {
+        _id: uuid.v4(),
+        _type: "favouriteTypes",
+        favouriteTypesName: capitalFavouriteTypesName,
+        heroiconsName: capitalCurrentIconInputValue,
+        status: true,
+      };
       const submitFavouriteType = [
         ...new Set(favouriteTypeLists),
-        {
-          _id: uuid.v4(),
-          _type: "favouriteTypes",
-          favouriteTypesName: favouriteTypeNameInputValue,
-          heroiconsName: currentIconInputValue,
-        },
+        uploadFavouriteTypeToSanity,
       ];
-
-      // console.log(`[Before Dispatch] \n`);
-      // console.log(favouriteTypeLists);
-      // console.log(`\n [SubmitFavouriteType] \n`);
-      // console.log(submitFavouriteType);
-
-      // navigation.navigate("favouriteTypeList");
+      client.create(uploadFavouriteTypeToSanity);
       dispatch(setFavouriteTypeLists(submitFavouriteType));
-      setIsSubmitted(false);
-
-      // console.log(`\n [After Dispatch]\n`);
-      // console.log(favouriteTypeLists);
-      // console.log(`-----------------------`);
     }
   }, [isSubmitted]);
 
@@ -229,13 +257,16 @@ const AddFavouriteType = () => {
 
       {/* Create PlatForm */}
       <View
-        style={tw`bg-white h-66 ${
+        style={tw`bg-white h-[250px] ${
           iconsModalVisible ? "gap-y-3" : "justify-center gap-y-5"
         } `}
       >
         {/* FavouriteType Name */}
         <View style={tw`mx-4 ${iconsModalVisible ? "flex-0" : ""}`}>
           <TextInput
+            onFocus={() => {
+              setIsSubmitted(false);
+            }}
             onChangeText={(inputText) => {
               setFavouriteTypeNameInputValue(inputText);
             }}
@@ -294,9 +325,11 @@ const AddFavouriteType = () => {
         </View>
 
         {/* Submit Button And Warning Text */}
-        <View style={tw`mx-4`}>
-          <SubmitAndWarning />
-        </View>
+        {!isSubmitted && (
+          <View style={tw`mx-4`}>
+            <SubmitAndWarning />
+          </View>
+        )}
       </View>
     </View>
   );

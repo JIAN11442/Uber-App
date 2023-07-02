@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CheckBadgeIcon } from "react-native-heroicons/solid";
 
 const initialState = {
   isAddFavourites: false,
@@ -27,6 +26,7 @@ const initialState = {
   isChosenIcon: false,
   isChosenIconName: "",
   iconInputTextIsFocus: false,
+  currentOnPressFavouriteType: [],
 };
 
 export const useStateSlice = createSlice({
@@ -53,18 +53,7 @@ export const useStateSlice = createSlice({
       state.tabBarHeight = action.payload;
     },
     setFavouriteTypeLists: (state, action) => {
-      // if (state.favouritesTypeList === null) {
-      //   state.favouritesTypeList = action.payload;
-      // } else {
-      //   state.favouritesTypeList = [
-      //     ...state.favouritesTypeList,
-      //     action.payload,
-      //   ];
-      // }
       state.favouritesTypeList = action.payload;
-      // console.log(`[useStateSlice.js] \n`);
-      // console.log(state.favouritesTypeList);
-      // console.log(`------------------`);
     },
     setGetWhereFromInputText: (state, action) => {
       state.getWhereFromInputText = action.payload;
@@ -194,6 +183,9 @@ export const useStateSlice = createSlice({
     setIconInputTextIsFocus: (state, action) => {
       state.iconInputTextIsFocus = action.payload;
     },
+    setCurrentOnPressFavouriteType: (state, action) => {
+      state.currentOnPressFavouriteType = action.payload;
+    },
   },
 });
 
@@ -226,6 +218,7 @@ export const {
   setIsChosenIcon,
   setIsChosenIconName,
   setIconInputTextIsFocus,
+  setCurrentOnPressFavouriteType,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -269,5 +262,7 @@ export const selectIsChosenIconName = (state) =>
   state.useState.isChosenIconName;
 export const selectIconInputTextIsFocus = (state) =>
   state.useState.iconInputTextIsFocus;
+export const selectCurrentOnPressFavouriteType = (state) =>
+  state.useState.currentOnPressFavouriteType;
 
 export default useStateSlice.reducer;
