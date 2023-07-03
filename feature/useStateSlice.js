@@ -26,7 +26,10 @@ const initialState = {
   isChosenIcon: false,
   isChosenIconName: "",
   iconInputTextIsFocus: false,
-  currentOnPressFavouriteType: [],
+  isEditFavouriteType: false,
+  currentOnPressOptionalFavouriteType: "",
+  favouriteTypeNameInputValue: "",
+  currentIconInputValue: "",
 };
 
 export const useStateSlice = createSlice({
@@ -116,8 +119,7 @@ export const useStateSlice = createSlice({
       const currentOnPressLocationInfo =
         action.payload.currentOnPressLocationInfo;
 
-      const currentFavouriteCardOnPressId =
-        currentOnPressLocationInfo.favouriteTypeId;
+      const currentFavouriteCardOnPressId = sLocationInfo.favouriteTypeId;
 
       const removeIndex = favouriteCardOnPressLocationWithId[
         currentFavouriteCardOnPressId
@@ -139,10 +141,6 @@ export const useStateSlice = createSlice({
           }
           return locationObj;
         });
-
-        // console.log(`After Delete`);
-        // console.log(updatedLocationList);
-        // console.log(`------------------`);
 
         return {
           ...state,
@@ -183,8 +181,17 @@ export const useStateSlice = createSlice({
     setIconInputTextIsFocus: (state, action) => {
       state.iconInputTextIsFocus = action.payload;
     },
-    setCurrentOnPressFavouriteType: (state, action) => {
-      state.currentOnPressFavouriteType = action.payload;
+    setIsEditFavouriteType: (state, action) => {
+      state.isEditFavouriteType = action.payload;
+    },
+    setCurrentOnPressOptionalFavouriteType: (state, action) => {
+      state.currentOnPressOptionalFavouriteType = action.payload;
+    },
+    setFavouriteTypeNameInputValue: (state, action) => {
+      state.favouriteTypeNameInputValue = action.payload;
+    },
+    setCurrentIconInputValue: (state, action) => {
+      state.currentIconInputValue = action.payload;
     },
   },
 });
@@ -218,7 +225,10 @@ export const {
   setIsChosenIcon,
   setIsChosenIconName,
   setIconInputTextIsFocus,
-  setCurrentOnPressFavouriteType,
+  setIsEditFavouriteType,
+  setCurrentOnPressOptionalFavouriteType,
+  setFavouriteTypeNameInputValue,
+  setCurrentIconInputValue,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -262,7 +272,13 @@ export const selectIsChosenIconName = (state) =>
   state.useState.isChosenIconName;
 export const selectIconInputTextIsFocus = (state) =>
   state.useState.iconInputTextIsFocus;
-export const selectCurrentOnPressFavouriteType = (state) =>
-  state.useState.currentOnPressFavouriteType;
+export const selectIsEditFavouriteType = (state) =>
+  state.useState.isEditFavouriteType;
+export const selectCurrentOnPressOptionalFavouriteType = (state) =>
+  state.useState.currentOnPressOptionalFavouriteType;
+export const selectFavouriteTypeNameInputValue = (state) =>
+  state.useState.favouriteTypeNameInputValue;
+export const selectCurrentIconInputValue = (state) =>
+  state.useState.currentIconInputValue;
 
 export default useStateSlice.reducer;

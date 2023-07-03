@@ -14,11 +14,13 @@ import React, { useEffect, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  selectCurrentOnPressOptionalFavouriteType,
   selectFavouriteTypeLists,
   selectIconInputTextIsFocus,
   selectIconsModalVisible,
   selectIsChosenIcon,
   selectIsChosenIconName,
+  selectIsEditFavouriteType,
   setFavouriteTypeLists,
   setIconInputTextIsFocus,
   setIconsModalVisible,
@@ -40,9 +42,10 @@ const AddFavouriteType = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
-  const [favouriteTypeNameInputValue, setFavouriteTypeNameInputValue] =
-    useState("");
-  const [currentIconInputValue, setCurrentIconInputValue] = useState("");
+
+  // const [favouriteTypeNameInputValue, setFavouriteTypeNameInputValue] =
+  //   useState("");
+  // const [currentIconInputValue, setCurrentIconInputValue] = useState("");
 
   const iconsModalVisible = useSelector(selectIconsModalVisible);
   const isChosenIcon = useSelector(selectIsChosenIcon);
@@ -211,6 +214,11 @@ const AddFavouriteType = () => {
     }, [])
   );
 
+  const isEditFavouriteType = useSelector(selectIsEditFavouriteType);
+  const currentOnPressOptionalFavouriteType = useSelector(
+    selectCurrentOnPressOptionalFavouriteType
+  );
+
   // Dispatch New Object To [favouriteTypeList] when button is submitted
   useEffect(() => {
     if (isSubmitted) {
@@ -246,13 +254,33 @@ const AddFavouriteType = () => {
     setCurrentIconInputValue(isChosenIconName);
   }, [isChosenIconName]);
 
+  useEffect(() => {
+    if (isEditFavouriteType) {
+      console.log(currentOnPressOptionalFavouriteType);
+      console.log(`-----------------------------`);
+
+      // setFavouriteTypeNameInputValue(
+      //   currentOnPressOptionalFavouriteType.favouriteTypesName
+      // );
+      // setCurrentIconInputValue(
+      //   currentOnPressOptionalFavouriteType.heroiconsName
+      // );
+    }
+  }, [isEditFavouriteType]);
+
   return (
     <View>
       {/* Title */}
       <View style={tw`pt-1 pb-2 bg-white border-b border-gray-50`}>
-        <Text style={tw`text-center text-base font-semibold`}>
-          Create New Favourite Type
-        </Text>
+        {!isEditFavouriteType ? (
+          <Text style={tw`text-center text-base font-semibold`}>
+            Create New Favourite Type
+          </Text>
+        ) : (
+          <Text style={tw`text-center text-base font-semibold`}>
+            Change your Favourite Type
+          </Text>
+        )}
       </View>
 
       {/* Create PlatForm */}

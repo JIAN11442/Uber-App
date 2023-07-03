@@ -1,7 +1,4 @@
-import { TouchableOpacity } from "react-native";
-import { ScrollView } from "react-native";
-import { Text } from "react-native";
-import { View } from "react-native";
+import { TouchableOpacity, ScrollView, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import tw from "twrnc";
 import {
@@ -12,16 +9,18 @@ import {
   selectTabBarHeight,
   setCreateNewLocationInfo,
   setCurrentOnPressFavouriteType,
+  setCurrentOnPressOptionalFavouriteType,
   setFavouriteTypeLists,
   setIsAddFavourites,
   setIsCreateNewLocation,
+  setIsEditFavouriteType,
   setModalVisible,
   setStarIconFillStyle,
 } from "../feature/useStateSlice";
 import sanityClient from "../sanity";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import DynamicHeroIcons from "../DynamicHeroIcons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import client from "../sanity";
 import { selectOrigin } from "../feature/navSlice";
 import uuid from "react-native-uuid";
@@ -36,10 +35,6 @@ const FavouriteTypeLists = () => {
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
   const navigation = useNavigation();
   const origin = useSelector(selectOrigin);
-
-  // const currentOnPressFavouriteType = useSelector(
-  //   selectCurrentOnPressFavouriteType
-  // );
   const [optionalVisible, setOptionalVisible] = useState("");
   const favouriteTypeListOptional = (props) => {
     const id = props.id;
@@ -80,10 +75,12 @@ const FavouriteTypeLists = () => {
     console.log(`already create in sanity`);
   };
 
-  useEffect(() => {
-    console.log(optionalVisible);
-    console.log(`---------------------`);
-  }, [optionalVisible]);
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(setIsEditFavouriteType(false));
+      setOptionalVisible("");
+    }, [])
+  );
 
   return (
     <View>
@@ -126,10 +123,12 @@ const FavouriteTypeLists = () => {
                   </View>
                 </TouchableOpacity>
                 {/* Optional */}
-                <View style={tw`absolute right-4`}>
+                <View style={tw`absolute right-0 h-[50px] justify-center`}>
                   <TouchableOpacity
+                    style={tw`px-4`}
                     onPress={() => {
                       favouriteTypeListOptional({ id: item._id });
+                      dispatch(setCurrentOnPressOptionalFavouriteType(item));
                     }}
                   >
                     {!optionalVisible[item._id] ? (
@@ -148,9 +147,13 @@ const FavouriteTypeLists = () => {
                         {/* PencilSquareIcon */}
                         <TouchableOpacity
                           style={tw`items-center justify-center`}
-                          onPress={() =>
-                            favouriteTypeListOptional({ id: item._id })
-                          }
+                          onPress={() => {
+                            dispatch(
+                              setCurrentOnPressOptionalFavouriteType(item)
+                            );
+                            dispatch(setIsEditFavouriteType(true));
+                            navigation.navigate("addFavouriteType");
+                          }}
                         >
                           <DynamicHeroIcons
                             type="solid"
