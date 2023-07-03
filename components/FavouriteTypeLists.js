@@ -3,9 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import tw from "twrnc";
 import {
   selectComponentHeight,
+  selectCurrentIconInputValue,
   selectCurrentOnPressFavouriteType,
   selectFavouriteTypeLists,
+  selectFavouriteTypeNameInputValue,
   selectIsAddFavourites,
+  selectIsEditFavouriteType,
   selectTabBarHeight,
   setCreateNewLocationInfo,
   setCurrentOnPressFavouriteType,
@@ -74,6 +77,11 @@ const FavouriteTypeLists = () => {
     dispatch(setIsCreateNewLocation(true));
     console.log(`already create in sanity`);
   };
+  const isEditFavouriteType = useSelector(selectIsEditFavouriteType);
+  // const favouriteTypeNameInputValue = useSelector(
+  //   selectFavouriteTypeNameInputValue
+  // );
+  // const currentIconInputValue = useSelector(selectCurrentIconInputValue);
 
   useFocusEffect(
     React.useCallback(() => {

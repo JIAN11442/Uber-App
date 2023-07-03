@@ -14,18 +14,23 @@ import React, { useEffect, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  selectCurrentIconInputValue,
   selectCurrentOnPressOptionalFavouriteType,
   selectFavouriteTypeLists,
+  selectFavouriteTypeNameInputValue,
   selectIconInputTextIsFocus,
   selectIconsModalVisible,
   selectIsChosenIcon,
   selectIsChosenIconName,
   selectIsEditFavouriteType,
+  setCurrentIconInputValue,
   setFavouriteTypeLists,
+  setFavouriteTypeNameInputValue,
   setIconInputTextIsFocus,
   setIconsModalVisible,
   setIsChosenIcon,
   setIsChosenIconName,
+  setIsEditFavouriteType,
   setModalVisible,
 } from "../feature/useStateSlice";
 import uuid from "react-native-uuid";
@@ -35,18 +40,16 @@ import {
   validatePathConfig,
 } from "@react-navigation/native";
 import client from "../sanity";
-import { CheckBadgeIcon } from "react-native-heroicons/solid";
-import { current } from "@reduxjs/toolkit";
 
 const AddFavouriteType = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
 
-  // const [favouriteTypeNameInputValue, setFavouriteTypeNameInputValue] =
-  //   useState("");
-  // const [currentIconInputValue, setCurrentIconInputValue] = useState("");
-
+  const favouriteTypeNameInputValue = useSelector(
+    selectFavouriteTypeNameInputValue
+  );
+  const currentIconInputValue = useSelector(selectCurrentIconInputValue);
   const iconsModalVisible = useSelector(selectIconsModalVisible);
   const isChosenIcon = useSelector(selectIsChosenIcon);
   const isChosenIconName = useSelector(selectIsChosenIconName);
@@ -158,6 +161,7 @@ const AddFavouriteType = () => {
     const similarIconsList = Object.keys(Icons).filter((icon) =>
       icon.includes(capitalCurrentIconInputValue)
     );
+
     if (iconsModalVisible && similarIconsList.length > 0) {
       result = (
         <Animatable.View animation={"fadeIn"} duration={1000}>
@@ -200,24 +204,23 @@ const AddFavouriteType = () => {
     }
     return result;
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // setModalVisible(false);
-      dispatch(setIsChosenIcon(false));
-      dispatch(setIconInputTextIsFocus(false));
-      setIsSubmitted(false);
-
-      setFavouriteTypeNameInputValue("");
-      setCurrentIconInputValue("");
-      dispatch(setIsChosenIconName(""));
-    }, [])
-  );
-
   const isEditFavouriteType = useSelector(selectIsEditFavouriteType);
   const currentOnPressOptionalFavouriteType = useSelector(
     selectCurrentOnPressOptionalFavouriteType
   );
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // setModalVisible(false);
+  //     dispatch(setIsChosenIcon(false));
+  //     dispatch(setIconInputTextIsFocus(false));
+  //     setIsSubmitted(false);
+
+  //     dispatch(setFavouriteTypeNameInputValue(""));
+  //     dispatch(setCurrentIconInputValue(""));
+  //     dispatch(setIsChosenIconName(""));
+  //   }, [])
+  // );
 
   // Dispatch New Object To [favouriteTypeList] when button is submitted
   useEffect(() => {
@@ -251,20 +254,18 @@ const AddFavouriteType = () => {
   }, [isSubmitted]);
 
   useEffect(() => {
-    setCurrentIconInputValue(isChosenIconName);
+    dispatch(setCurrentIconInputValue(isChosenIconName));
   }, [isChosenIconName]);
 
   useEffect(() => {
-    if (isEditFavouriteType) {
-      console.log(currentOnPressOptionalFavouriteType);
-      console.log(`-----------------------------`);
+    const currentFavouriteTypesName =
+      currentOnPressOptionalFavouriteType.favouriteTypesName;
+    const currentHeroIconsName =
+      currentOnPressOptionalFavouriteType.heroiconsName;
 
-      // setFavouriteTypeNameInputValue(
-      //   currentOnPressOptionalFavouriteType.favouriteTypesName
-      // );
-      // setCurrentIconInputValue(
-      //   currentOnPressOptionalFavouriteType.heroiconsName
-      // );
+    if (isEditFavouriteType) {
+      dispatch(setFavouriteTypeNameInputValue(currentFavouriteTypesName));
+      dispatch(setCurrentIconInputValue(currentHeroIconsName));
     }
   }, [isEditFavouriteType]);
 
@@ -296,7 +297,7 @@ const AddFavouriteType = () => {
               setIsSubmitted(false);
             }}
             onChangeText={(inputText) => {
-              setFavouriteTypeNameInputValue(inputText);
+              dispatch(setFavouriteTypeNameInputValue(inputText));
             }}
             value={favouriteTypeNameInputValue}
             placeholder="Name"
@@ -325,7 +326,7 @@ const AddFavouriteType = () => {
                   // dispatch(setIsChosenIcon(""));
                 }}
                 onChangeText={(inputText) => {
-                  setCurrentIconInputValue(inputText);
+                  dispatch(setCurrentIconInputValue(inputText));
                 }}
                 style={tw`${
                   isChosenIcon ? "pl-4 pr-12" : "pl-4"
