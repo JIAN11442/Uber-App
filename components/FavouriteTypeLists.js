@@ -93,95 +93,104 @@ const FavouriteTypeLists = () => {
           Choose your favourite lists
         </Text>
       </View>
+
       <View style={tw`h-[250px]`}>
         <ScrollView>
           {favouriteTypeLists &&
             favouriteTypeLists.map((item, index) => (
               // FavouriteType
-              <View key={item._id} style={tw`flex-row relative items-center`}>
-                {/* FavouriteType Icon & Text */}
-                <TouchableOpacity
-                  onPress={() => UploadDataToSanity(item, origin)}
-                  style={tw`flex-1`}
-                >
+              <View key={item._id}>
+                {item.status && (
                   <View
-                    style={tw`flex-row py-3 items-center bg-white ${
-                      index == 0 ? `border-t border-b` : `border-b`
-                    } border-gray-100`}
+                    style={tw`flex-row relative items-center justify-center`}
                   >
-                    {/* FavouriteType Icon */}
-                    <View style={tw`mx-4`}>
-                      <DynamicHeroIcons
-                        type="solid"
-                        icon={item.heroiconsName}
-                        size={25}
-                        color="gray"
-                      />
-                    </View>
-                    {/* FavouriteType Text */}
-                    <View>
-                      <Text style={tw`text-base text-gray-500`}>
-                        {item.favouriteTypesName}
-                      </Text>
+                    {/* FavouriteType Icon & Text */}
+                    <TouchableOpacity
+                      onPress={() => UploadDataToSanity(item, origin)}
+                      style={tw`flex-1`}
+                    >
+                      <View
+                        style={tw`flex-row py-3 items-center bg-white ${
+                          index == 0 ? `border-t border-b` : `border-b`
+                        } border-gray-100`}
+                      >
+                        {/* FavouriteType Icon */}
+                        <View style={tw`mx-4`}>
+                          <DynamicHeroIcons
+                            type="solid"
+                            icon={item.heroiconsName}
+                            size={25}
+                            color="gray"
+                          />
+                        </View>
+                        {/* FavouriteType Text */}
+                        <View>
+                          <Text style={tw`text-base text-gray-500`}>
+                            {item.favouriteTypesName}
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                    {/* Optional */}
+                    <View style={tw`absolute right-0 h-[50px] justify-center`}>
+                      <TouchableOpacity
+                        style={tw`px-4`}
+                        onPress={() => {
+                          favouriteTypeListOptional({ id: item._id });
+                          dispatch(
+                            setCurrentOnPressOptionalFavouriteType(item)
+                          );
+                        }}
+                      >
+                        {!optionalVisible[item._id] ? (
+                          <DynamicHeroIcons
+                            type="outlined"
+                            icon="EllipsisVerticalIcon"
+                            size={22}
+                            color="#9ca3af"
+                          />
+                        ) : (
+                          <Animatable.View
+                            animation={`fadeIn`}
+                            duration={200}
+                            style={tw`flex-row items-center justify-center gap-2 mr-2`}
+                          >
+                            {/* PencilSquareIcon */}
+                            <TouchableOpacity
+                              style={tw`items-center justify-center`}
+                              onPress={() => {
+                                dispatch(
+                                  setCurrentOnPressOptionalFavouriteType(item)
+                                );
+                                dispatch(setIsEditFavouriteType(true));
+                                navigation.navigate("addFavouriteType");
+                              }}
+                            >
+                              <DynamicHeroIcons
+                                type="solid"
+                                icon="PencilSquareIcon"
+                                size={22}
+                                color="gray"
+                              />
+                            </TouchableOpacity>
+                            {/* TrashIcon */}
+                            <TouchableOpacity
+                              // Delete FavouriteType
+                              style={tw`py-4 items-center justify-center`}
+                            >
+                              <DynamicHeroIcons
+                                type="solid"
+                                icon="TrashIcon"
+                                size={22}
+                                color="gray"
+                              />
+                            </TouchableOpacity>
+                          </Animatable.View>
+                        )}
+                      </TouchableOpacity>
                     </View>
                   </View>
-                </TouchableOpacity>
-                {/* Optional */}
-                <View style={tw`absolute right-0 h-[50px] justify-center`}>
-                  <TouchableOpacity
-                    style={tw`px-4`}
-                    onPress={() => {
-                      favouriteTypeListOptional({ id: item._id });
-                      dispatch(setCurrentOnPressOptionalFavouriteType(item));
-                    }}
-                  >
-                    {!optionalVisible[item._id] ? (
-                      <DynamicHeroIcons
-                        type="outlined"
-                        icon="EllipsisVerticalIcon"
-                        size={22}
-                        color="#9ca3af"
-                      />
-                    ) : (
-                      <Animatable.View
-                        animation={`fadeIn`}
-                        duration={200}
-                        style={tw`flex-row items-center justify-center gap-2 mr-2`}
-                      >
-                        {/* PencilSquareIcon */}
-                        <TouchableOpacity
-                          style={tw`items-center justify-center`}
-                          onPress={() => {
-                            dispatch(
-                              setCurrentOnPressOptionalFavouriteType(item)
-                            );
-                            dispatch(setIsEditFavouriteType(true));
-                            navigation.navigate("addFavouriteType");
-                          }}
-                        >
-                          <DynamicHeroIcons
-                            type="solid"
-                            icon="PencilSquareIcon"
-                            size={22}
-                            color="gray"
-                          />
-                        </TouchableOpacity>
-                        {/* TrashIcon */}
-                        <TouchableOpacity
-                          // Delete FavouriteType
-                          style={tw`py-4 items-center justify-center`}
-                        >
-                          <DynamicHeroIcons
-                            type="solid"
-                            icon="TrashIcon"
-                            size={22}
-                            color="gray"
-                          />
-                        </TouchableOpacity>
-                      </Animatable.View>
-                    )}
-                  </TouchableOpacity>
-                </View>
+                )}
               </View>
             ))}
           {/* Add new lists */}

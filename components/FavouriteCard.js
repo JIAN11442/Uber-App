@@ -273,7 +273,8 @@ const FavouriteCard = (props) => {
 
   return (
     <View style={tw`flex-1 mt-5`}>
-      <View style={tw`mb-3 items-center`}>
+      {/* TEST TouchableOpacity */}
+      <View style={tw`items-center pb-3`}>
         <TouchableOpacity onPress={RemoveFavouriteType}>
           <Text style={tw`text-blue-400`}>
             Test Changing Status Of Travel FavouriteType

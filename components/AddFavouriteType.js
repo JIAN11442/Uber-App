@@ -55,58 +55,88 @@ const AddFavouriteType = () => {
     const warningMessages = [];
     let result;
 
-    favouriteTypeLists.map((favouriteType) => {
-      // 儅檢測到Name與資料庫的重複時，給予警告
+    if (!isEditFavouriteType) {
+      favouriteTypeLists.map((favouriteType) => {
+        // 儅檢測到Name與資料庫的重複時，給予警告
+        if (
+          !iconsModalVisible &&
+          favouriteTypeNameInputValue === favouriteType.favouriteTypesName
+        ) {
+          warningMessages.push("The name already exists");
+        }
+        // 儅檢測到輸入框中的icon不存在于選單裏時，給與警告
+        if (
+          !iconsModalVisible &&
+          currentIconInputValue !== "" &&
+          Object.keys(Icons).filter((icon) => icon === currentIconInputValue)
+            .length === 0
+        ) {
+          warningMessages.push("The icon does not exist");
+        }
+        // 儅Name與icon類型都與資料庫一樣時，給予警告
+        if (
+          !iconsModalVisible &&
+          favouriteTypeNameInputValue === favouriteType.favouriteTypesName &&
+          currentIconInputValue === favouriteType.heroiconsName
+        ) {
+          warningMessages.push("This favouriteType already exists");
+        }
+      });
+      // 儅一切都沒問題時，跳出submit按鈕，否則跳出警告類型
       if (
         !iconsModalVisible &&
-        favouriteTypeNameInputValue === favouriteType.favouriteTypesName
+        favouriteTypeNameInputValue !== "" &&
+        isChosenIcon &&
+        warningMessages.length === 0 &&
+        favouriteTypeLists.length > 0
       ) {
-        warningMessages.push("The name already exists");
+        result = (
+          <View>
+            <Button
+              title="submit"
+              onPress={() => {
+                setIsSubmitted(true);
+                navigation.navigate("favouriteTypeList");
+              }}
+            ></Button>
+          </View>
+        );
+      } else {
+        result = [...new Set(warningMessages)].map((warningMessage, index) => (
+          <View key={index} style={tw`flex-row items-center gap-x-2`}>
+            <View style={tw`h-1 w-1 bg-red-400 rounded-full`}></View>
+            <Text style={tw`text-sm text-red-400`}>{warningMessage}</Text>
+          </View>
+        ));
       }
-      // 儅檢測到輸入框中的icon不存在于選單裏時，給與警告
-      if (
-        !iconsModalVisible &&
-        currentIconInputValue !== "" &&
-        Object.keys(Icons).filter((icon) => icon === currentIconInputValue)
-          .length === 0
-      ) {
-        warningMessages.push("The icon does not exist");
-      }
-      // 儅Name與icon類型都與資料庫一樣時，給予警告
-      if (
-        !iconsModalVisible &&
-        favouriteTypeNameInputValue === favouriteType.favouriteTypesName &&
-        currentIconInputValue === favouriteType.heroiconsName
-      ) {
-        warningMessages.push("This favouriteType already exists");
-      }
-    });
-    // 儅一切都沒問題時，跳出submit按鈕，否則跳出警告類型
-    if (
-      !iconsModalVisible &&
-      favouriteTypeNameInputValue !== "" &&
-      isChosenIcon &&
-      warningMessages.length === 0 &&
-      favouriteTypeLists.length > 0
-    ) {
-      result = (
-        <View>
-          <Button
-            title="submit"
-            onPress={() => {
-              setIsSubmitted(true);
-              navigation.navigate("favouriteTypeList");
-            }}
-          ></Button>
-        </View>
-      );
     } else {
-      result = [...new Set(warningMessages)].map((warningMessage, index) => (
-        <View key={index} style={tw`flex-row items-center gap-x-2`}>
-          <View style={tw`h-1 w-1 bg-red-400 rounded-full`}></View>
-          <Text style={tw`text-sm text-red-400`}>{warningMessage}</Text>
-        </View>
-      ));
+      if (
+        favouriteTypeNameInputValue ===
+          currentOnPressOptionalFavouriteType.favouriteTypesName &&
+        currentIconInputValue ===
+          currentOnPressOptionalFavouriteType.heroiconsName
+      ) {
+        result = (
+          <View style={tw`flex-row items-center gap-x-2`}>
+            <View style={tw`h-1 w-1 bg-red-400 rounded-full`}></View>
+            <Text style={tw`text-sm text-red-400`}>
+              Please Change the favouriteType Info
+            </Text>
+          </View>
+        );
+      } else {
+        result = (
+          <View>
+            <Button
+              title="submit changes"
+              onPress={() => {
+                // setIsSubmitted(true);
+                navigation.navigate("favouriteTypeList");
+              }}
+            ></Button>
+          </View>
+        );
+      }
     }
 
     return result;
