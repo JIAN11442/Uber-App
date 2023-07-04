@@ -10,7 +10,7 @@ import tw from "twrnc";
 import IconsOptionalModal from "./IconsOptionalModal";
 import { Icons } from "./IconsOptionalModal";
 import DynamicHeroIcons from "../DynamicHeroIcons";
-import React, { useEffect, useState } from "react";
+import React, { useDebugValue, useEffect, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -34,11 +34,7 @@ import {
   setModalVisible,
 } from "../feature/useStateSlice";
 import uuid from "react-native-uuid";
-import {
-  useFocusEffect,
-  useNavigation,
-  validatePathConfig,
-} from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import client from "../sanity";
 
 const AddFavouriteType = () => {
@@ -209,18 +205,22 @@ const AddFavouriteType = () => {
     selectCurrentOnPressOptionalFavouriteType
   );
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     // setModalVisible(false);
-  //     dispatch(setIsChosenIcon(false));
-  //     dispatch(setIconInputTextIsFocus(false));
-  //     setIsSubmitted(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      // console.log(`isEditFavouriteType : ${isEditFavouriteType}`);
+      if (isEditFavouriteType) {
+        return undefined;
+      } else {
+        dispatch(setIsChosenIcon(false));
+        dispatch(setIconInputTextIsFocus(false));
+        setIsSubmitted(false);
 
-  //     dispatch(setFavouriteTypeNameInputValue(""));
-  //     dispatch(setCurrentIconInputValue(""));
-  //     dispatch(setIsChosenIconName(""));
-  //   }, [])
-  // );
+        dispatch(setFavouriteTypeNameInputValue(""));
+        dispatch(setCurrentIconInputValue(""));
+        dispatch(setIsChosenIconName(""));
+      }
+    }, [isEditFavouriteType])
+  );
 
   // Dispatch New Object To [favouriteTypeList] when button is submitted
   useEffect(() => {

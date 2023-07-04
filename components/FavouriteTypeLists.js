@@ -78,10 +78,6 @@ const FavouriteTypeLists = () => {
     console.log(`already create in sanity`);
   };
   const isEditFavouriteType = useSelector(selectIsEditFavouriteType);
-  // const favouriteTypeNameInputValue = useSelector(
-  //   selectFavouriteTypeNameInputValue
-  // );
-  // const currentIconInputValue = useSelector(selectCurrentIconInputValue);
 
   useFocusEffect(
     React.useCallback(() => {
