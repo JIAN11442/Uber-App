@@ -198,13 +198,6 @@ const FavouriteCard = (props) => {
     }
   }, [favouriteTypeLists]);
 
-  // useEffect(() => {
-  //   if (getAllLocation.length >= 3) {
-  //     console.log(getAllLocation);
-  //     console.log(`-------------------`);
-  //   }
-  // }, [getAllLocation]);
-
   // When isDeleteFavouriteLocationCard is true, delete location from allFavouriteLocation Object
   useEffect(() => {
     if (isDeleteFavouriteLocationCard) {
@@ -281,13 +274,6 @@ const FavouriteCard = (props) => {
     updatedFavouriteTypeList[targetIndex].status = false;
     dispatch(setFavouriteTypeLists(updatedFavouriteTypeList));
   };
-
-  // useEffect(() => {
-  //   if (getAllLocation) {
-  //     console.log(getAllLocation);
-  //     console.log(`---------------------`);
-  //   }
-  // }, [getAllLocation]);
 
   return (
     <View style={tw`flex-1 mt-5`}>

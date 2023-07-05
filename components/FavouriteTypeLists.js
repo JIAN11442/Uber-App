@@ -49,14 +49,14 @@ const FavouriteTypeLists = () => {
       _ref: item._id,
       _key: uuid.v4(),
     };
-    // await client.create({
-    //   _id: nanoId(),
-    //   _type: "favouriteLocation",
-    //   address: origin.description,
-    //   lat: origin.location.lat,
-    //   lng: origin.location.lng,
-    //   favourite_type: [favouriteType],
-    // });
+    await client.create({
+      _id: nanoId(),
+      _type: "favouriteLocation",
+      address: origin.description,
+      lat: origin.location.lat,
+      lng: origin.location.lng,
+      favourite_type: [favouriteType],
+    });
     dispatch(
       setCreateNewLocationInfo({
         _id: nanoId(),

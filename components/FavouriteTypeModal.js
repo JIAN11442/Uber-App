@@ -25,6 +25,7 @@ import { customAlphabet } from "nanoid/non-secure";
 import { useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { SanityClient } from "@sanity/client";
+import { TouchableHighlightBase } from "react-native";
 
 const FavouriteTypeModal = () => {
   const dispatch = useDispatch();
@@ -94,40 +95,38 @@ const FavouriteTypeModal = () => {
             favouriteTypeLists.map((item, index) => (
               // FavouriteType
               <View key={item._id}>
-                {item.status && (
-                  <View
-                    style={tw`flex-row relative items-center justify-center bg-white ${
-                      index == 0 ? `border-t border-b` : `border-b`
-                    } border-gray-100`}
+                <View
+                  style={tw`flex-row relative items-center justify-center bg-white ${
+                    index == 0 ? `border-t border-b` : `border-b`
+                  } border-gray-100`}
+                >
+                  {/* FavouriteType Icon & Text */}
+                  <TouchableOpacity
+                    onPress={() => UploadDataToSanity(item, origin)}
+                    style={tw`flex-1`}
                   >
-                    {/* FavouriteType Icon & Text */}
-                    <TouchableOpacity
-                      onPress={() => UploadDataToSanity(item, origin)}
-                      style={tw`flex-1`}
-                    >
-                      <View style={tw`flex-row py-3 items-center`}>
-                        {/* FavouriteType Icon */}
-                        <View style={tw`mx-4`}>
-                          <DynamicHeroIcons
-                            type="solid"
-                            icon={item.heroiconsName}
-                            size={25}
-                            color="gray"
-                          />
-                        </View>
-                        {/* FavouriteType Text */}
-                        <View>
-                          <Text style={tw`text-base text-gray-500`}>
-                            {item.favouriteTypesName}
-                          </Text>
-                        </View>
+                    <View style={tw`flex-row py-3 items-center`}>
+                      {/* FavouriteType Icon */}
+                      <View style={tw`mx-4`}>
+                        <DynamicHeroIcons
+                          type="solid"
+                          icon={item.heroiconsName}
+                          size={25}
+                          color="gray"
+                        />
                       </View>
-                    </TouchableOpacity>
-                    <View>
-                      <SwitchButton width="12" height="6" styles="mr-4" />
+                      {/* FavouriteType Text */}
+                      <View>
+                        <Text style={tw`text-base text-gray-500`}>
+                          {item.favouriteTypesName}
+                        </Text>
+                      </View>
                     </View>
+                  </TouchableOpacity>
+                  <View style={tw`px-4 h-[50px] justify-center items-center`}>
+                    <SwitchButton width="12" height="6" item={item} />
                   </View>
-                )}
+                </View>
               </View>
             ))}
         </ScrollView>
