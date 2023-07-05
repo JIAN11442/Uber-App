@@ -16,6 +16,7 @@ import FavouriteTypeLists from "./FavouriteTypeLists";
 import AddFavouriteType from "./AddFavouriteType";
 import { TouchableOpacity } from "react-native";
 import DynamicHeroIcons from "../DynamicHeroIcons";
+import FavouriteTypeModal from "./FavouriteTypeModal";
 
 const FavouriteListModal = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const FavouriteListModal = () => {
     {
       name: "favouriteTypeList",
       label: "Lists",
-      icon: "ListBulletIcon",
+      icon: "HeartIcon",
       component: FavouriteTypeLists,
     },
     {
@@ -34,6 +35,12 @@ const FavouriteListModal = () => {
       label: "Create New List",
       icon: "PencilSquareIcon",
       component: AddFavouriteType,
+    },
+    {
+      name: "allFavouriteTypeLIst",
+      label: "FavouriteType List",
+      icon: "ListBulletIcon",
+      component: FavouriteTypeModal,
     },
   ];
   const TabBarButton = (props) => {
@@ -45,7 +52,7 @@ const FavouriteListModal = () => {
     return (
       <View
         style={tw`flex-1 my-2
-        ${index != tabArr.length - 1 ? `border-r border-gray-300` : ``}`}
+        ${index != tabArr.length - 1 ? `border-r border-gray-100` : ``}`}
       >
         <TouchableOpacity
           style={tw`items-center justify-center flex-1`}

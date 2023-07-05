@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text } from "react-native";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import sanityClient from "../sanity";
@@ -198,6 +198,13 @@ const FavouriteCard = (props) => {
     }
   }, [favouriteTypeLists]);
 
+  // useEffect(() => {
+  //   if (getAllLocation.length >= 3) {
+  //     console.log(getAllLocation);
+  //     console.log(`-------------------`);
+  //   }
+  // }, [getAllLocation]);
+
   // When isDeleteFavouriteLocationCard is true, delete location from allFavouriteLocation Object
   useEffect(() => {
     if (isDeleteFavouriteLocationCard) {
@@ -261,8 +268,12 @@ const FavouriteCard = (props) => {
     }
   }, [favouriteTypeLists, getAllLocation]);
 
+  const warningPopUpVisibleForDeleteFavourite = useSelector(
+    selectWarningPopUpVisibleForDeleteFavourite
+  );
+
   const RemoveFavouriteType = () => {
-    const targetRemoveId = "3c954dca-a610-418f-a309-d309af9ec3e4";
+    const targetRemoveId = "20a1fe5a-5064-40b2-8703-71821e64840a";
     const targetIndex = favouriteTypeLists.findIndex(
       (favouriteType) => favouriteType._id === targetRemoveId
     );
@@ -270,6 +281,13 @@ const FavouriteCard = (props) => {
     updatedFavouriteTypeList[targetIndex].status = false;
     dispatch(setFavouriteTypeLists(updatedFavouriteTypeList));
   };
+
+  // useEffect(() => {
+  //   if (getAllLocation) {
+  //     console.log(getAllLocation);
+  //     console.log(`---------------------`);
+  //   }
+  // }, [getAllLocation]);
 
   return (
     <View style={tw`flex-1 mt-5`}>
@@ -465,14 +483,14 @@ const FavouriteCard = (props) => {
                                     {/* TrashIcon */}
                                     <TouchableOpacity
                                       style={tw`py-4 items-center justify-center`}
-                                      onPress={() =>
+                                      onPress={() => {
                                         removeFavouriteLocationFromFavouriteCard(
                                           {
                                             type: type,
                                             location: location,
                                           }
-                                        )
-                                      }
+                                        );
+                                      }}
                                     >
                                       <DynamicHeroIcons
                                         type="solid"

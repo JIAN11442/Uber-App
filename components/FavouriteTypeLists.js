@@ -3,18 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import tw from "twrnc";
 import {
   selectComponentHeight,
-  selectCurrentIconInputValue,
-  selectCurrentOnPressFavouriteType,
+  selectCurrentOnPressOptionalFavouriteType,
   selectFavouriteTypeLists,
-  selectFavouriteTypeNameInputValue,
-  selectIsAddFavourites,
-  selectIsEditFavouriteType,
   selectTabBarHeight,
   setCreateNewLocationInfo,
-  setCurrentOnPressFavouriteType,
   setCurrentOnPressOptionalFavouriteType,
-  setFavouriteTypeLists,
-  setIsAddFavourites,
   setIsCreateNewLocation,
   setIsEditFavouriteType,
   setModalVisible,
@@ -30,6 +23,7 @@ import uuid from "react-native-uuid";
 import { customAlphabet } from "nanoid/non-secure";
 import { useState } from "react";
 import * as Animatable from "react-native-animatable";
+import { SanityClient } from "@sanity/client";
 
 const FavouriteTypeLists = () => {
   const dispatch = useDispatch();
@@ -55,14 +49,14 @@ const FavouriteTypeLists = () => {
       _ref: item._id,
       _key: uuid.v4(),
     };
-    await client.create({
-      _id: nanoId(),
-      _type: "favouriteLocation",
-      address: origin.description,
-      lat: origin.location.lat,
-      lng: origin.location.lng,
-      favourite_type: [favouriteType],
-    });
+    // await client.create({
+    //   _id: nanoId(),
+    //   _type: "favouriteLocation",
+    //   address: origin.description,
+    //   lat: origin.location.lat,
+    //   lng: origin.location.lng,
+    //   favourite_type: [favouriteType],
+    // });
     dispatch(
       setCreateNewLocationInfo({
         _id: nanoId(),
@@ -77,7 +71,9 @@ const FavouriteTypeLists = () => {
     dispatch(setIsCreateNewLocation(true));
     console.log(`already create in sanity`);
   };
-  const isEditFavouriteType = useSelector(selectIsEditFavouriteType);
+  const currentOnPressOptionalFavouriteTypeInfo = useSelector(
+    selectCurrentOnPressOptionalFavouriteType
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -86,12 +82,25 @@ const FavouriteTypeLists = () => {
     }, [])
   );
 
+  // const updateFavouriteTypeInfo = async () => {
+  //   if (currentOnPressOptionalFavouriteTypeInfo._id) {
+  //     SanityClient.
+  //   }
+  // };
+
   return (
     <View>
-      <View style={tw`pt-1 pb-2 bg-white`}>
-        <Text style={tw`text-center text-base font-semibold`}>
-          Choose your favourite lists
+      <View style={tw`pt-1 pb-2 bg-white relative`}>
+        <Text style={tw`text-center text-base font-semibold `}>
+          Save Location In...
         </Text>
+        {/* <TouchableOpacity style={tw`absolute top-1 right-2`}>
+          <DynamicHeroIcons
+            icon="AdjustmentsVerticalIcon"
+            type="solid"
+            color="black"
+          />
+        </TouchableOpacity> */}
       </View>
 
       <View style={tw`h-[250px]`}>

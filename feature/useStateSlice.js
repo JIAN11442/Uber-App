@@ -119,7 +119,8 @@ export const useStateSlice = createSlice({
       const currentOnPressLocationInfo =
         action.payload.currentOnPressLocationInfo;
 
-      const currentFavouriteCardOnPressId = sLocationInfo.favouriteTypeId;
+      const currentFavouriteCardOnPressId =
+        currentOnPressLocationInfo.favouriteTypeId;
 
       const removeIndex = favouriteCardOnPressLocationWithId[
         currentFavouriteCardOnPressId
@@ -153,7 +154,9 @@ export const useStateSlice = createSlice({
       const currentCreateInFavouriteTypeId =
         createNewLocationInfo.favouriteTypeId;
 
-      let newLocationList = [...state.allLocation.splice(0, 3)];
+      let newLocationList = [
+        ...state.allLocation.splice(0, state.allLocation.length),
+      ];
 
       const updatedLocationList = newLocationList.map((locationObj) => {
         if (locationObj[currentCreateInFavouriteTypeId]) {
