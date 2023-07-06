@@ -1,86 +1,14 @@
 import { TouchableOpacity, ScrollView, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import tw from "twrnc";
-import {
-  selectComponentHeight,
-  selectCurrentOnPressOptionalFavouriteType,
-  selectFavouriteTypeLists,
-  selectTabBarHeight,
-  setCreateNewLocationInfo,
-  setCurrentOnPressOptionalFavouriteType,
-  setIsCreateNewLocation,
-  setIsEditFavouriteType,
-  setModalVisible,
-  setStarIconFillStyle,
-} from "../feature/useStateSlice";
-import sanityClient from "../sanity";
+import { selectFavouriteTypeLists } from "../feature/useStateSlice";
 import React, { useEffect, useRef } from "react";
 import DynamicHeroIcons from "../DynamicHeroIcons";
 import SwitchButton from "./SwitchButton";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import client from "../sanity";
-import { selectOrigin } from "../feature/navSlice";
-import uuid from "react-native-uuid";
-import { customAlphabet } from "nanoid/non-secure";
-import { useState } from "react";
-import * as Animatable from "react-native-animatable";
-import { SanityClient } from "@sanity/client";
-import { TouchableHighlightBase } from "react-native";
 
 const FavouriteTypeModal = () => {
-  const dispatch = useDispatch();
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
-  const navigation = useNavigation();
-  const origin = useSelector(selectOrigin);
-  const [optionalVisible, setOptionalVisible] = useState("");
-  const favouriteTypeListOptional = (props) => {
-    const id = props.id;
-    setOptionalVisible((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id] || false,
-    }));
-  };
-  const UploadDataToSanity = async (item, origin) => {
-    const allowNanoChars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const nanoId = customAlphabet(allowNanoChars, 22);
-    const favouriteType = {
-      _type: "reference",
-      _ref: item._id,
-      _key: uuid.v4(),
-    };
-    await client.create({
-      _id: nanoId(),
-      _type: "favouriteLocation",
-      address: origin.description,
-      lat: origin.location.lat,
-      lng: origin.location.lng,
-      favourite_type: [favouriteType],
-    });
-    dispatch(
-      setCreateNewLocationInfo({
-        _id: nanoId(),
-        favouriteTypeId: item._id,
-        address: origin.description,
-        lat: origin.location.lat,
-        lng: origin.location.lng,
-      })
-    );
-    dispatch(setStarIconFillStyle("#ffc400"));
-    dispatch(setModalVisible(false));
-    dispatch(setIsCreateNewLocation(true));
-    console.log(`already create in sanity`);
-  };
-  const currentOnPressOptionalFavouriteTypeInfo = useSelector(
-    selectCurrentOnPressOptionalFavouriteType
-  );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      dispatch(setIsEditFavouriteType(false));
-      setOptionalVisible("");
-    }, [])
-  );
   return (
     <View>
       <View style={tw`pt-1 pb-2 bg-white relative`}>
@@ -101,10 +29,7 @@ const FavouriteTypeModal = () => {
                   } border-gray-100`}
                 >
                   {/* FavouriteType Icon & Text */}
-                  <TouchableOpacity
-                    onPress={() => UploadDataToSanity(item, origin)}
-                    style={tw`flex-1`}
-                  >
+                  <TouchableOpacity style={tw`flex-1`}>
                     <View style={tw`flex-row py-3 items-center`}>
                       {/* FavouriteType Icon */}
                       <View style={tw`mx-4`}>
