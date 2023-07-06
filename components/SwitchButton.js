@@ -5,7 +5,8 @@ import {
   selectFavouriteTypeLists,
   setFavouriteTypeLists,
 } from "../feature/useStateSlice";
-import { useState } from "react";
+import sanityClient from "../sanity";
+
 // import * as Animatable from "react-native-animatable";
 
 const SwitchButton = (props) => {
@@ -23,7 +24,23 @@ const SwitchButton = (props) => {
     const updatedFavouriteTypeList = [...favouriteTypeList];
     updatedFavouriteTypeList[targetIndex].status =
       !updatedFavouriteTypeList[targetIndex].status;
+    const updatedStatusForSanity = {
+      status: updatedFavouriteTypeList[targetIndex].status,
+    };
 
+    // Refresh Target Status In Sanity
+    sanityClient
+      .patch(targetRemoveId)
+      .set(updatedStatusForSanity)
+      .commit()
+      .then((response) => {
+        console.log("Data updated successfully : ", response);
+      })
+      .catch((error) => {
+        console.log(`Error updating data : `, error);
+      });
+
+    // Refresh Target Status In Redux
     dispatch(setFavouriteTypeLists(updatedFavouriteTypeList));
   };
 

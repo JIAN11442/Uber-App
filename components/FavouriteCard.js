@@ -265,21 +265,13 @@ const FavouriteCard = (props) => {
     selectWarningPopUpVisibleForDeleteFavourite
   );
 
-  const RemoveFavouriteType = () => {
-    const targetRemoveId = "20a1fe5a-5064-40b2-8703-71821e64840a";
-    const targetIndex = favouriteTypeLists.findIndex(
-      (favouriteType) => favouriteType._id === targetRemoveId
-    );
-    const updatedFavouriteTypeList = [...favouriteTypeLists];
-    updatedFavouriteTypeList[targetIndex].status = false;
-    dispatch(setFavouriteTypeLists(updatedFavouriteTypeList));
-  };
+  const changeFavouriteTypeInfo = () => {};
 
   return (
     <View style={tw`flex-1 mt-5`}>
       {/* TEST TouchableOpacity */}
       <View style={tw`items-center pb-3`}>
-        <TouchableOpacity onPress={RemoveFavouriteType}>
+        <TouchableOpacity onPress={changeFavouriteTypeInfo}>
           <Text style={tw`text-blue-400`}>
             Test Changing Status Of Travel FavouriteType
           </Text>
