@@ -3,16 +3,22 @@ import { Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectCurrentOnPressLocationInfo,
+  selectFavouriteTypeLists,
+  selectGetAllLocation,
   setIsCancelDeleteFavouriteLocationCard,
   setIsDeleteFavouriteLocationCard,
   setStarIconFillStyle,
   setWarningPopUpVisibleForDeleteFavourite,
+  setWarningPopUpVisibleForDeleteFavouriteType,
   setWarningPopUpVisibleForNull,
 } from "../feature/useStateSlice";
 import sanityClient from "../sanity";
 
 const WarningModal = ({ type, currentOnPressLocation }) => {
   const dispatch = useDispatch();
+  const favouriteTypeList = useSelector(selectFavouriteTypeLists);
+  const allLocationList = useSelector(selectGetAllLocation);
+
   const removeFavouriteLocation = () => {
     const currentLocation = currentOnPressLocation.description;
     sanityClient.fetch(`*[_type == 'favouriteLocation']{...,}`).then((data) => {
@@ -27,6 +33,10 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
       }
     });
   };
+  const removeFavouriteType = () => {
+    console.log(allLocationList);
+    console.log(`---------------------`);
+  };
 
   useEffect(() => {
     if (type == "null") {
@@ -36,8 +46,8 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
       );
     } else if (type == "Incompleted") {
       Alert.alert("Warning", "Your origin is available place");
-    } else if (type == "removeFavourite") {
-      Alert.alert("Warning", "Sure to remove from favourite list?", [
+    } else if (type == "removeFavouriteLocation") {
+      Alert.alert("Warning", "Sure to remove location from favourite list?", [
         {
           text: "Cancel",
           onPress: () => {
@@ -59,6 +69,31 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
           },
         },
       ]);
+    } else if (type == "removeFavouriteType") {
+      Alert.alert(
+        "Warning",
+        "Sure to remove that FavouriteType and related Location?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => {
+              dispatch(setIsCancelDeleteFavouriteLocationCard(true));
+              // console.log("Cancel Remove From Favourite");
+              dispatch(setWarningPopUpVisibleForDeleteFavouriteType(false));
+            },
+            style: "cancel",
+          },
+          {
+            text: "Sure",
+            onPress: () => {
+              removeFavouriteType();
+              dispatch(setWarningPopUpVisibleForDeleteFavouriteType(false));
+
+              // console.log("Already Remove From Favourite");
+            },
+          },
+        ]
+      );
     }
     dispatch(setWarningPopUpVisibleForNull(false));
   }, [currentOnPressLocation]);

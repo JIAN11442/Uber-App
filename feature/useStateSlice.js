@@ -15,6 +15,7 @@ const initialState = {
   modalVisible: false,
   warningPopUpVisibleForNull: false,
   warningPopUpVisibleForDeleteFavourite: false,
+  warningPopUpVisibleForDeleteFavouriteType: false,
   currentFavouriteCardOnPressId: null,
   isDeleteFavouriteLocationCard: false,
   isCancelDeleteFavouriteLocationCard: false,
@@ -90,6 +91,9 @@ export const useStateSlice = createSlice({
     },
     setWarningPopUpVisibleForDeleteFavourite: (state, action) => {
       state.warningPopUpVisibleForDeleteFavourite = action.payload;
+    },
+    setWarningPopUpVisibleForDeleteFavouriteType: (state, action) => {
+      state.warningPopUpVisibleForDeleteFavouriteType = action.payload;
     },
     setCurrentFavouriteCardOnPressId: (state, action) => {
       state.currentFavouriteCardOnPressId = action.payload;
@@ -215,6 +219,7 @@ export const {
   setModalVisible,
   setWarningPopUpVisibleForNull,
   setWarningPopUpVisibleForDeleteFavourite,
+  setWarningPopUpVisibleForDeleteFavouriteType,
   setCurrentFavouriteCardOnPressId,
   setIsDeleteFavouriteLocationCard,
   setIsCancelDeleteFavouriteLocationCard,
@@ -255,6 +260,8 @@ export const selectWarningPopUpVisibleForNull = (state) =>
   state.useState.warningPopUpVisibleForNull;
 export const selectWarningPopUpVisibleForDeleteFavourite = (state) =>
   state.useState.warningPopUpVisibleForDeleteFavourite;
+export const selectWarningPopUpVisibleForDeleteFavouriteType = (state) =>
+  state.useState.warningPopUpVisibleForDeleteFavouriteType;
 export const selectCurrentFavouriteCardOnPressId = (state) =>
   state.useState.currentFavouriteCardOnPressId;
 export const selectIsDeleteFavouriteLocationCard = (state) =>

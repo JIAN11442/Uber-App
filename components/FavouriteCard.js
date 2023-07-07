@@ -161,19 +161,16 @@ const FavouriteCard = (props) => {
 
   // Get All FavouriteType From Sanity.io
   useEffect(() => {
-    sanityClient
-      .fetch(
-        `*[_type == 'favouriteTypes']{
-      ...,}[favouriteTypesName == 'Home'] + 
-      *[_type == 'favouriteTypes']{
-      ...,}[favouriteTypesName == 'Work'] +
-      *[_type == 'favouriteTypes']{
-      ...,}[favouriteTypesName != 'Home' && favouriteTypesName != 'Work']
-    `
-      )
-      .then((data) => {
-        dispatch(setFavouriteTypeLists(data));
-      });
+    // `*[_type == 'favouriteTypes']{
+    //   ...,}[favouriteTypesName == 'Home'] +
+    //   *[_type == 'favouriteTypes']{
+    //   ...,}[favouriteTypesName == 'Work'] +
+    //   *[_type == 'favouriteTypes']{
+    //   ...,}[favouriteTypesName != 'Home' && favouriteTypesName != 'Work']
+    // `
+    sanityClient.fetch(`*[_type == 'favouriteTypes']{...,}`).then((data) => {
+      dispatch(setFavouriteTypeLists(data));
+    });
   }, []);
 
   // When favouriteTypeList has value, get all favouriteLocation Info
@@ -265,18 +262,10 @@ const FavouriteCard = (props) => {
     selectWarningPopUpVisibleForDeleteFavourite
   );
 
-  const changeFavouriteTypeInfo = () => {};
-
   return (
     <View style={tw`flex-1 mt-5`}>
       {/* TEST TouchableOpacity */}
-      <View style={tw`items-center pb-3`}>
-        <TouchableOpacity onPress={changeFavouriteTypeInfo}>
-          <Text style={tw`text-blue-400`}>
-            Test Changing Status Of Travel FavouriteType
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <View style={tw`items-center pb-3`}></View>
       <ScrollView>
         {favouriteTypeLists &&
           favouriteTypeLists.map((type, index) => (

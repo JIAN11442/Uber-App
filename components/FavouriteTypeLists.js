@@ -6,12 +6,15 @@ import {
   selectCurrentOnPressOptionalFavouriteType,
   selectFavouriteTypeLists,
   selectTabBarHeight,
+  selectWarningPopUpVisibleForDeleteFavourite,
   setCreateNewLocationInfo,
   setCurrentOnPressOptionalFavouriteType,
   setIsCreateNewLocation,
   setIsEditFavouriteType,
   setModalVisible,
   setStarIconFillStyle,
+  setWarningPopUpVisibleForDeleteFavourite,
+  setWarningPopUpVisibleForDeleteFavouriteType,
 } from "../feature/useStateSlice";
 import sanityClient from "../sanity";
 import React, { useEffect, useRef } from "react";
@@ -75,6 +78,12 @@ const FavouriteTypeLists = () => {
     selectCurrentOnPressOptionalFavouriteType
   );
 
+  const warning = useSelector(selectWarningPopUpVisibleForDeleteFavourite);
+  useEffect(() => {
+    console.log(warning);
+    console.log(`-----------------`);
+  }, [warning]);
+
   useFocusEffect(
     React.useCallback(() => {
       dispatch(setIsEditFavouriteType(false));
@@ -82,25 +91,12 @@ const FavouriteTypeLists = () => {
     }, [])
   );
 
-  // const updateFavouriteTypeInfo = async () => {
-  //   if (currentOnPressOptionalFavouriteTypeInfo._id) {
-  //     SanityClient.
-  //   }
-  // };
-
   return (
     <View>
       <View style={tw`pt-1 pb-2 bg-white relative`}>
         <Text style={tw`text-center text-base font-semibold `}>
           Save Location In...
         </Text>
-        {/* <TouchableOpacity style={tw`absolute top-1 right-2`}>
-          <DynamicHeroIcons
-            icon="AdjustmentsVerticalIcon"
-            type="solid"
-            color="black"
-          />
-        </TouchableOpacity> */}
       </View>
 
       <View style={tw`h-[250px]`}>
@@ -185,6 +181,13 @@ const FavouriteTypeLists = () => {
                             {/* TrashIcon */}
                             <TouchableOpacity
                               // Delete FavouriteType
+                              onPress={() => {
+                                dispatch(
+                                  setWarningPopUpVisibleForDeleteFavouriteType(
+                                    true
+                                  )
+                                );
+                              }}
                               style={tw`py-4 items-center justify-center`}
                             >
                               <DynamicHeroIcons

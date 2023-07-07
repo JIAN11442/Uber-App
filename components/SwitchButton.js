@@ -34,10 +34,10 @@ const SwitchButton = (props) => {
       .set(updatedStatusForSanity)
       .commit()
       .then((response) => {
-        console.log("Data updated successfully : ", response);
+        console.log("favouriteType is activated : ", response);
       })
       .catch((error) => {
-        console.log(`Error updating data : `, error);
+        console.log(`Error active favouriteType : `, error);
       });
 
     // Refresh Target Status In Redux

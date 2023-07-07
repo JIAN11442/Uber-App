@@ -20,6 +20,7 @@ import {
   selectModalVisible,
   selectStarIconFillStyle,
   selectWarningPopUpVisibleForDeleteFavourite,
+  selectWarningPopUpVisibleForDeleteFavouriteType,
   selectWarningPopUpVisibleForNull,
   setCurrentLocationIsAddToSanity,
   setCurrentOnPressLocationInfo,
@@ -55,6 +56,9 @@ const HomeScreen = () => {
   );
   const warningPopUpVisibleForDeleteFavourite = useSelector(
     selectWarningPopUpVisibleForDeleteFavourite
+  );
+  const warningPopUpVisibleForDeleteFavouriteType = useSelector(
+    selectWarningPopUpVisibleForDeleteFavouriteType
   );
   const originIsDuplicated = async () => {
     if (!origin) {
@@ -256,7 +260,13 @@ const HomeScreen = () => {
       )}
       {warningPopUpVisibleForDeleteFavourite && (
         <WarningModal
-          type="removeFavourite"
+          type="removeFavouriteLocation"
+          currentOnPressLocation={currentOnPressLocation}
+        />
+      )}
+      {warningPopUpVisibleForDeleteFavouriteType && (
+        <WarningModal
+          type="removeFavouriteType"
           currentOnPressLocation={currentOnPressLocation}
         />
       )}

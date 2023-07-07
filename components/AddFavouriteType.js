@@ -10,7 +10,7 @@ import tw from "twrnc";
 import IconsOptionalModal from "./IconsOptionalModal";
 import { Icons } from "./IconsOptionalModal";
 import DynamicHeroIcons from "../DynamicHeroIcons";
-import React, { useDebugValue, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -35,7 +35,7 @@ import {
 } from "../feature/useStateSlice";
 import uuid from "react-native-uuid";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import client from "../sanity";
+import SanityClient from "../sanity";
 
 const AddFavouriteType = () => {
   const dispatch = useDispatch();
@@ -125,17 +125,19 @@ const AddFavouriteType = () => {
           </View>
         );
       } else {
-        result = (
-          <View>
-            <Button
-              title="submit changes"
-              onPress={() => {
-                // setIsSubmitted(true);
-                navigation.navigate("favouriteTypeList");
-              }}
-            ></Button>
-          </View>
-        );
+        if (isChosenIcon) {
+          result = (
+            <View>
+              <Button
+                title="submit changes"
+                onPress={() => {
+                  setIsSubmitted(true);
+                  navigation.navigate("favouriteTypeList");
+                }}
+              ></Button>
+            </View>
+          );
+        }
       }
     }
 
@@ -162,6 +164,10 @@ const AddFavouriteType = () => {
         />
       );
     } else {
+      useEffect(() => {
+        dispatch(setIsChosenIcon(false));
+      }, [currentIconInputValue]);
+
       result = (
         <DynamicHeroIcons
           type="outlined"
@@ -255,33 +261,67 @@ const AddFavouriteType = () => {
   // Dispatch New Object To [favouriteTypeList] when button is submitted
   useEffect(() => {
     if (isSubmitted) {
-      // capital favouriteTypesName
+      // get capital favouriteTypesName
       const capitalFavouriteTypesName =
         favouriteTypeNameInputValue.charAt(0).toUpperCase() +
         favouriteTypeNameInputValue.slice(
           1,
           favouriteTypeNameInputValue.length
         );
-      // capital IconInputName
+      // get capital IconInputName
       const capitalCurrentIconInputValue =
         currentIconInputValue.charAt(0).toUpperCase() +
         currentIconInputValue.slice(1, currentIconInputValue.length);
 
-      const uploadFavouriteTypeToSanity = {
-        _id: uuid.v4(),
-        _type: "favouriteTypes",
-        favouriteTypesName: capitalFavouriteTypesName,
-        heroiconsName: capitalCurrentIconInputValue,
-        status: true,
-      };
-      const submitFavouriteType = [
-        ...new Set(favouriteTypeLists),
-        uploadFavouriteTypeToSanity,
-      ];
-      client.create(uploadFavouriteTypeToSanity);
-      dispatch(setFavouriteTypeLists(submitFavouriteType));
+      if (!isEditFavouriteType) {
+        // Create New FavouriteType To Sanity and Redux After Submitted
+        const uploadFavouriteTypeToSanity = {
+          _id: uuid.v4(),
+          _type: "favouriteTypes",
+          favouriteTypesName: capitalFavouriteTypesName,
+          heroiconsName: capitalCurrentIconInputValue,
+          status: true,
+        };
+        const submitFavouriteType = [
+          ...new Set(favouriteTypeLists),
+          uploadFavouriteTypeToSanity,
+        ];
+        SanityClient.create(uploadFavouriteTypeToSanity);
+        dispatch(setFavouriteTypeLists(submitFavouriteType));
+      } else {
+        // Change FavouriteType To Sanity and Redux After Submitted
+        const targetIndex = favouriteTypeLists.findIndex(
+          (favouriteType) =>
+            favouriteType._id === currentOnPressOptionalFavouriteType._id
+        );
+        // Refresh In Sanity
+        const updatedFavouriteTypeInfoToSanity = {
+          favouriteTypesName: capitalFavouriteTypesName,
+          heroiconsName: capitalCurrentIconInputValue,
+        };
+
+        SanityClient.patch(currentOnPressOptionalFavouriteType._id)
+          .set(updatedFavouriteTypeInfoToSanity)
+          .commit()
+          .then((response) => {
+            console.log("favouriteType updated successfully : ", response);
+          })
+          .catch((error) => {
+            console.log(`Error updating data : `, error);
+          });
+
+        // Refresh In Redux
+        const updatedFavouriteTypeInfo = [...favouriteTypeLists];
+        updatedFavouriteTypeInfo[targetIndex].favouriteTypesName =
+          capitalFavouriteTypesName;
+        updatedFavouriteTypeInfo[targetIndex].heroiconsName =
+          capitalCurrentIconInputValue;
+
+        dispatch(setFavouriteTypeLists(updatedFavouriteTypeInfo));
+      }
+      setIsSubmitted(false);
     }
-  }, [isSubmitted]);
+  }, [isSubmitted, isEditFavouriteType]);
 
   useEffect(() => {
     dispatch(setCurrentIconInputValue(isChosenIconName));
