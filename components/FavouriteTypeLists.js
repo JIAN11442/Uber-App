@@ -2,14 +2,21 @@ import { TouchableOpacity, ScrollView, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import tw from "twrnc";
 import {
+  clearAllLocation,
   selectComponentHeight,
   selectCurrentOnPressOptionalFavouriteType,
   selectFavouriteTypeLists,
+  selectGetAllLocation,
+  selectIsEditFavouriteLocation,
+  selectIsEditFavouriteLocationInfo,
   selectTabBarHeight,
   selectWarningPopUpVisibleForDeleteFavourite,
   setCreateNewLocationInfo,
   setCurrentOnPressOptionalFavouriteType,
+  setGetAllLocation,
   setIsCreateNewLocation,
+  setIsEditFavouriteLocation,
+  setIsEditFavouriteLocationInfo,
   setIsEditFavouriteType,
   setModalVisible,
   setStarIconFillStyle,
@@ -26,7 +33,7 @@ import uuid from "react-native-uuid";
 import { customAlphabet } from "nanoid/non-secure";
 import { useState } from "react";
 import * as Animatable from "react-native-animatable";
-import { SanityClient } from "@sanity/client";
+import SanityClient from "../sanity";
 
 const FavouriteTypeLists = () => {
   const dispatch = useDispatch();
@@ -43,26 +50,28 @@ const FavouriteTypeLists = () => {
       [id]: !prevState[id] || false,
     }));
   };
-  const UploadDataToSanity = async (item, origin) => {
+  const uploadDataToSanity = async (item, origin) => {
     const allowNanoChars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const nanoId = customAlphabet(allowNanoChars, 22);
+    const customId = nanoId();
     const favouriteType = {
       _type: "reference",
       _ref: item._id,
       _key: uuid.v4(),
     };
     await client.create({
-      _id: nanoId(),
+      _id: customId,
       _type: "favouriteLocation",
       address: origin.description,
       lat: origin.location.lat,
       lng: origin.location.lng,
       favourite_type: [favouriteType],
     });
+
     dispatch(
       setCreateNewLocationInfo({
-        _id: nanoId(),
+        _id: customId,
         favouriteTypeId: item._id,
         address: origin.description,
         lat: origin.location.lat,
@@ -78,11 +87,67 @@ const FavouriteTypeLists = () => {
     selectCurrentOnPressOptionalFavouriteType
   );
 
-  const warning = useSelector(selectWarningPopUpVisibleForDeleteFavourite);
-  useEffect(() => {
-    console.log(warning);
-    console.log(`-----------------`);
-  }, [warning]);
+  const isEditFavouriteLocation = useSelector(selectIsEditFavouriteLocation);
+  const isEditFavouriteLocationInfo = useSelector(
+    selectIsEditFavouriteLocationInfo
+  );
+  const allLocation = useSelector(selectGetAllLocation);
+  const changeToSaveLocationIn = async (item) => {
+    const ChangeToSaveFavouriteTypeId = item._id;
+    const changeToSaveFavouriteTypeIndex = allLocation.findIndex(
+      (location) => location[ChangeToSaveFavouriteTypeId]
+    );
+    const targetFavouriteTypeId = isEditFavouriteLocationInfo.favouriteTypeId;
+    const targetLocationId = isEditFavouriteLocationInfo._id;
+    const targetFavouriteTypeIndex = allLocation.findIndex(
+      (location) => location[targetFavouriteTypeId]
+    );
+    const targetFavouriteLocationIndex = allLocation[targetFavouriteTypeIndex][
+      targetFavouriteTypeId
+    ].findIndex((locationObj) => locationObj._id === targetLocationId);
+
+    // Refresh In Sanity
+    SanityClient.patch(targetLocationId)
+      .set({
+        "favourite_type[0]._ref": ChangeToSaveFavouriteTypeId,
+      })
+      .commit()
+      .then((response) => {
+        console.log("location updated successfully : ", response);
+      })
+      .catch((error) => {
+        console.log(`Error updating data : `, error);
+      });
+
+    // Refresh In Redux
+    const updatedAllLocation = JSON.parse(JSON.stringify(allLocation));
+    updatedAllLocation[targetFavouriteTypeIndex][targetFavouriteTypeId].splice(
+      targetFavouriteLocationIndex,
+      1
+    );
+    updatedAllLocation[changeToSaveFavouriteTypeIndex][
+      ChangeToSaveFavouriteTypeId
+    ].push({
+      _id: isEditFavouriteLocationInfo._id,
+      address: isEditFavouriteLocationInfo.address,
+      lat: isEditFavouriteLocationInfo.lat,
+      lng: isEditFavouriteLocationInfo.lng,
+    });
+    // Updated New AllLocation To Redux
+    dispatch(clearAllLocation());
+    updatedAllLocation.map((locationObj) =>
+      dispatch(setGetAllLocation(locationObj))
+    );
+
+    dispatch(setIsEditFavouriteLocation(false));
+    dispatch(setIsEditFavouriteLocationInfo(""));
+    dispatch(setModalVisible(false));
+  };
+
+  // useEffect(() => {
+  //   console.log(allLocation);
+  //   console.log(`----------------------`);
+  // }, [allLocation]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -95,7 +160,11 @@ const FavouriteTypeLists = () => {
     <View>
       <View style={tw`pt-1 pb-2 bg-white relative`}>
         <Text style={tw`text-center text-base font-semibold `}>
-          Save Location In...
+          {isEditFavouriteLocation ? (
+            <Text>Change To Save Location In...</Text>
+          ) : (
+            <Text>Save Location In...</Text>
+          )}
         </Text>
       </View>
 
@@ -111,13 +180,27 @@ const FavouriteTypeLists = () => {
                   >
                     {/* FavouriteType Icon & Text */}
                     <TouchableOpacity
-                      onPress={() => UploadDataToSanity(item, origin)}
+                      onPress={() => {
+                        isEditFavouriteLocation
+                          ? changeToSaveLocationIn(item)
+                          : uploadDataToSanity(item, origin);
+                      }}
                       style={tw`flex-1`}
+                      disabled={
+                        item._id === isEditFavouriteLocationInfo.favouriteTypeId
+                          ? true
+                          : false
+                      }
                     >
                       <View
-                        style={tw`flex-row py-3 items-center bg-white ${
-                          index == 0 ? `border-t border-b` : `border-b`
-                        } border-gray-100`}
+                        style={tw`flex-row py-3 items-center border-gray-100
+                         ${index == 0 ? `border-t border-b` : `border-b`} 
+                         ${
+                           item._id ===
+                           isEditFavouriteLocationInfo.favouriteTypeId
+                             ? `opacity-50 bg-white`
+                             : `bg-white`
+                         }`}
                       >
                         {/* FavouriteType Icon */}
                         <View style={tw`mx-4`}>
@@ -139,13 +222,24 @@ const FavouriteTypeLists = () => {
                     {/* Optional */}
                     <View style={tw`absolute right-0 h-[50px] justify-center`}>
                       <TouchableOpacity
-                        style={tw`px-4`}
+                        style={tw`px-4 ${
+                          item._id ===
+                          isEditFavouriteLocationInfo.favouriteTypeId
+                            ? `opacity-50`
+                            : ``
+                        }`}
                         onPress={() => {
                           favouriteTypeListOptional({ id: item._id });
                           dispatch(
                             setCurrentOnPressOptionalFavouriteType(item)
                           );
                         }}
+                        disabled={
+                          item._id ===
+                          isEditFavouriteLocationInfo.favouriteTypeId
+                            ? true
+                            : false
+                        }
                       >
                         {!optionalVisible[item._id] ? (
                           <DynamicHeroIcons

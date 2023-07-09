@@ -1,13 +1,13 @@
 import { View, Image } from "react-native";
 import styles from "../style";
 import sanityClient, { urlFor } from "../sanity";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addData, selectData, selectDataWithName } from "../feature/DataSlice";
 import NavOptions from "../components/NavOptions";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_APIKEYS } from "@env";
-import { selectOrigin, setOrigin } from "../feature/navSlice";
+import { selectOrigin, setDestination, setOrigin } from "../feature/navSlice";
 import tw from "twrnc";
 import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
@@ -32,6 +32,7 @@ import {
 } from "../feature/useStateSlice";
 import FavouriteCard from "../components/FavouriteCard";
 import WarningModal from "../components/WarningModal";
+import { useFocusEffect } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -98,6 +99,7 @@ const HomeScreen = () => {
             dt.lat === origin.location.lat &&
             dt.lng === origin.location.lng
         );
+
         dispatch(
           setCurrentOnPressLocationInfo({
             description: currentLocationFromSanity[0].address,
@@ -133,6 +135,14 @@ const HomeScreen = () => {
   ] = useState(false);
 
   const currentOnPressLocation = useSelector(selectCurrentOnPressLocationInfo);
+
+  // Initialize
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     dispatch(setOrigin(""));
+  //     dispatch(setDestination(""));
+  //   }, [])
+  // );
 
   // Get Uber Image
   useEffect(() => {

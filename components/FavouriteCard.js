@@ -7,25 +7,21 @@ import {
   createNewLocationFromList,
   deleteLocationFromList,
   selectCreateNewLocationInfo,
-  selectCurrentFavouriteCardOnPressId,
   selectCurrentOnPressLocationInfo,
-  selectFavouriteLocationList,
   selectFavouriteTypeLists,
   selectGetAllLocation,
   selectIsCancelDeleteFavouriteLocationCard,
   selectIsCreateNewLocation,
   selectIsDeleteFavouriteLocationCard,
   selectModalVisible,
-  selectWarningPopUpVisibleForDeleteFavourite,
-  selectWarningPopUpVisibleForNull,
-  setCurrentFavouriteCardOnPressId,
   setCurrentOnPressLocationInfo,
-  setFavouriteLocationList,
   setFavouriteTypeLists,
   setGetAllLocation,
-  setIsCancelDeleteFavouriteLocationCard,
   setIsCreateNewLocation,
   setIsDeleteFavouriteLocationCard,
+  setIsEditFavouriteLocation,
+  setIsEditFavouriteLocationInfo,
+  setModalVisible,
   setWarningPopUpVisibleForDeleteFavourite,
 } from "../feature/useStateSlice";
 import { TouchableOpacity } from "react-native";
@@ -33,7 +29,7 @@ import tw from "twrnc";
 import DynamicHeroIcons from "../DynamicHeroIcons";
 import { ScrollView } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { selectOrigin, setDestination, setOrigin } from "../feature/navSlice";
 
 const FavouriteCard = (props) => {
@@ -123,6 +119,8 @@ const FavouriteCard = (props) => {
         },
       })
     );
+    console.log(currentOnPressLocationInfo);
+    console.log(`------------------------`);
     dispatch(setWarningPopUpVisibleForDeleteFavourite(true));
   };
   const CloseAllFavouriteCard = () => {
@@ -158,6 +156,15 @@ const FavouriteCard = (props) => {
       }
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (favouriteTypeLists) {
+        CloseAllFavouriteCard();
+        CloseAllLocationOptional();
+      }
+    }, [])
+  );
 
   // Get All FavouriteType From Sanity.io
   useEffect(() => {
@@ -258,14 +265,17 @@ const FavouriteCard = (props) => {
     }
   }, [favouriteTypeLists, getAllLocation]);
 
-  const warningPopUpVisibleForDeleteFavourite = useSelector(
-    selectWarningPopUpVisibleForDeleteFavourite
-  );
+  // const warningPopUpVisibleForDeleteFavourite = useSelector(
+  //   selectWarningPopUpVisibleForDeleteFavourite
+  // );
 
   return (
-    <View style={tw`flex-1 mt-5`}>
+    <View
+      style={tw`flex-1 ${
+        favouriteCardType === "destination" ? `mt-2` : `mt-5`
+      }`}
+    >
       {/* TEST TouchableOpacity */}
-      <View style={tw`items-center pb-3`}></View>
       <ScrollView>
         {favouriteTypeLists &&
           favouriteTypeLists.map((type, index) => (
@@ -362,6 +372,7 @@ const FavouriteCard = (props) => {
                                           description: location.address,
                                         })
                                       );
+                                      navigation.navigate("Map");
                                     } else if (
                                       favouriteCardType == "destination"
                                     ) {
@@ -374,8 +385,8 @@ const FavouriteCard = (props) => {
                                           description: location.address,
                                         })
                                       );
+                                      navigation.navigate("RideOptions");
                                     }
-                                    navigation.navigate("Map");
                                   }}
                                   style={tw`flex-row items-center flex-1 ${
                                     optionModalVisible[location._id]
@@ -434,11 +445,18 @@ const FavouriteCard = (props) => {
                                     {/* PencilSquareIcon */}
                                     <TouchableOpacity
                                       style={tw`items-center justify-center`}
-                                      onPress={() =>
-                                        favouriteCardLocationOptionalOnPressStatus(
-                                          location
-                                        )
-                                      }
+                                      onPress={() => {
+                                        dispatch(
+                                          setIsEditFavouriteLocation(true)
+                                        );
+                                        dispatch(
+                                          setIsEditFavouriteLocationInfo({
+                                            ...location,
+                                            favouriteTypeId: type._id,
+                                          })
+                                        );
+                                        dispatch(setModalVisible(true));
+                                      }}
                                     >
                                       <DynamicHeroIcons
                                         type="solid"

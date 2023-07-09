@@ -7,6 +7,9 @@ import {
   selectComponentHeight,
   selectTabBarHeight,
   setComponentHeight,
+  setIsAddFavourites,
+  setIsEditFavouriteLocation,
+  setIsEditFavouriteLocationInfo,
   setModalVisible,
   setStarIconFillStyle,
   setTabBarHeight,
@@ -80,6 +83,9 @@ const FavouriteListModal = () => {
       <View
         onStartShouldSetResponder={() => {
           dispatch(setModalVisible(false));
+          dispatch(setIsEditFavouriteLocation(false));
+          dispatch(setIsEditFavouriteLocationInfo(""));
+          dispatch(setIsAddFavourites(false));
           dispatch(setStarIconFillStyle("transparent"));
         }}
         style={tw`absolute w-full h-full top-[${StatusBar.currentHeight}px]

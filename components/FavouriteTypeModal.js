@@ -49,7 +49,7 @@ const FavouriteTypeModal = () => {
                     </View>
                   </TouchableOpacity>
                   <View style={tw`px-4 h-[50px] justify-center items-center`}>
-                    <SwitchButton width="12" height="6" item={item} />
+                    <SwitchButton width="11" height="6" item={item} />
                   </View>
                 </View>
               </View>
