@@ -260,6 +260,7 @@ export const {
   setCurrentIconInputValue,
   setIsEditFavouriteLocationInfo,
   setNavigateToRideOptionsCard,
+  setRideCarType,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
