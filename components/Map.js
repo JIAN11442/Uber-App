@@ -10,10 +10,14 @@ import MapViewDirections from "react-native-maps-directions";
 import { GOOGLE_MAPS_APIKEYS } from "@env";
 import { useRef } from "react";
 import { useEffect } from "react";
+import { selectNavigateToRideOptionsCard } from "../feature/useStateSlice";
 
 const Map = () => {
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
+  const isNavigateToRideOptionsCard = useSelector(
+    selectNavigateToRideOptionsCard
+  );
   const mapTypes = ["standard", "terrain", "satellite", "hybrid"];
   const [mapTypeIndex, setMapTypeIndex] = useState(0);
   const ref = useRef(null);
@@ -39,7 +43,7 @@ const Map = () => {
         },
       }
     );
-  }, [origin, destination]);
+  }, [origin, destination, isNavigateToRideOptionsCard]);
 
   return (
     <View style={tw`relative flex-1`}>
