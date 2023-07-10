@@ -1,18 +1,31 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import styles from "../style";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_APIKEYS } from "@env";
-import { StyleSheet } from "react-native";
-import { useDispatch } from "react-redux";
-import { setDestination } from "../feature/navSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectDestination,
+  selectOrigin,
+  setDestination,
+} from "../feature/navSlice";
 import FavouriteCard from "./FavouriteCard";
+import { Icon } from "react-native-elements/";
+import {
+  selectNavigateToRideOptionsCard,
+  setNavigateToRideOptionsCard,
+} from "../feature/useStateSlice";
 
 const NavigateCard = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const origin = useSelector(selectOrigin);
+  const destination = useSelector(selectDestination);
+  const isNavigateToRideOptionsCard = useSelector(
+    selectNavigateToRideOptionsCard
+  );
   return (
     <View style={tw`flex-1 bg-white`}>
       {/* Welcome Box */}
@@ -48,6 +61,39 @@ const NavigateCard = () => {
       <View style={tw`flex-1 mx-3`}>
         <FavouriteCard type="destination" />
       </View>
+      {/* Navigation Button */}
+      {origin && destination && (
+        <View style={tw`flex-row bg-white justify-evenly py-3 items-center`}>
+          {/* Rides */}
+          <TouchableOpacity
+            style={tw`bg-black flex flex-row w-26 px-4 py-3 
+            rounded-full items-center gap-3`}
+            onPress={() => {
+              navigation.navigate("RideOptions");
+              dispatch(
+                setNavigateToRideOptionsCard(!isNavigateToRideOptionsCard)
+              );
+            }}
+          >
+            <Icon type="font-awesome" name="car" color="white" size={16} />
+            <Text style={tw`text-white text-center`}>Rides</Text>
+          </TouchableOpacity>
+          {/* Eats */}
+          <TouchableOpacity
+            style={tw`flex flex-row w-26 px-4 py-2 rounded-full 
+          items-center gap-3`}
+            disabled={true}
+          >
+            <Icon
+              type="ionicon"
+              name="fast-food-outline"
+              color="black"
+              size={16}
+            />
+            <Text style={tw`text-center`}>Eats</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };

@@ -15,6 +15,7 @@ const initialState = {
   modalVisible: false,
   warningPopUpVisibleForNull: false,
   warningPopUpVisibleForDeleteFavourite: false,
+  warningPopUpVisibleForDeleteFavouriteType: false,
   currentFavouriteCardOnPressId: null,
   isDeleteFavouriteLocationCard: false,
   isCancelDeleteFavouriteLocationCard: false,
@@ -22,6 +23,18 @@ const initialState = {
   currentOnPressLocationInfo: [],
   createNewLocationInfo: [],
   allLocation: [],
+  iconsModalVisible: false,
+  isChosenIcon: false,
+  isChosenIconName: "",
+  iconInputTextIsFocus: false,
+  isEditFavouriteType: false,
+  isEditFavouriteLocation: false,
+  isEditFavouriteLocationInfo: "",
+  currentOnPressOptionalFavouriteType: "",
+  favouriteTypeNameInputValue: "",
+  currentIconInputValue: "",
+  navigateToRideOptionsCard: false,
+  rideCarTypes: [],
 };
 
 export const useStateSlice = createSlice({
@@ -83,6 +96,9 @@ export const useStateSlice = createSlice({
     setWarningPopUpVisibleForDeleteFavourite: (state, action) => {
       state.warningPopUpVisibleForDeleteFavourite = action.payload;
     },
+    setWarningPopUpVisibleForDeleteFavouriteType: (state, action) => {
+      state.warningPopUpVisibleForDeleteFavouriteType = action.payload;
+    },
     setCurrentFavouriteCardOnPressId: (state, action) => {
       state.currentFavouriteCardOnPressId = action.payload;
     },
@@ -104,24 +120,29 @@ export const useStateSlice = createSlice({
     setGetAllLocation: (state, action) => {
       state.allLocation = [...state.allLocation, action.payload];
     },
+    clearAllLocation: (state, action) => {
+      state.allLocation = "";
+    },
     deleteLocationFromList: (state, action) => {
-      // console.log(`Before Delete`);
-      // console.log(state.allLocation);
-      // console.log(`----------------------------------`);
+      const favouriteCardOnPressLocationWithId =
+        action.payload.favouriteCardOnPressLocationWithId;
+
+      const currentOnPressLocationInfo =
+        action.payload.currentOnPressLocationInfo;
 
       const currentFavouriteCardOnPressId =
-        action.payload.currentFavouriteCardOnPressId;
-      const removeIndex = action.payload.favouriteCardOnPressLocationWithId[
+        currentOnPressLocationInfo.favouriteTypeId;
+
+      const removeIndex = favouriteCardOnPressLocationWithId[
         currentFavouriteCardOnPressId
       ].findIndex(
-        (locationObj) =>
-          locationObj._id === action.payload.currentOnPressLocationInfo.id
+        (locationObj) => locationObj._id === currentOnPressLocationInfo.id
       );
 
       let newLocationList = [...state.allLocation];
 
       if (removeIndex !== -1) {
-        newLocationList = newLocationList.map((locationObj) => {
+        const updatedLocationList = newLocationList.map((locationObj) => {
           if (locationObj[currentFavouriteCardOnPressId]) {
             const updatedLocationObj = { ...locationObj };
             updatedLocationObj[currentFavouriteCardOnPressId] =
@@ -132,12 +153,71 @@ export const useStateSlice = createSlice({
           }
           return locationObj;
         });
-      }
 
-      // state.allLocation = newLocationList;
-      console.log(`After Delete In Redux`);
-      console.log(state.allLocation);
-      console.log(`-----------------------------`);
+        return {
+          ...state,
+          allLocation: updatedLocationList,
+        };
+      }
+    },
+    createNewLocationFromList: (state, action) => {
+      const createNewLocationInfo = action.payload.createNewLocationInfo;
+      const currentCreateInFavouriteTypeId =
+        createNewLocationInfo.favouriteTypeId;
+
+      let newLocationList = [
+        ...state.allLocation.splice(0, state.allLocation.length),
+      ];
+
+      const updatedLocationList = newLocationList.map((locationObj) => {
+        if (locationObj[currentCreateInFavouriteTypeId]) {
+          const updatedLocationObj = { ...locationObj };
+          updatedLocationObj[currentCreateInFavouriteTypeId] = [
+            ...updatedLocationObj[currentCreateInFavouriteTypeId],
+            createNewLocationInfo,
+          ];
+          return updatedLocationObj;
+        }
+        return locationObj;
+      });
+
+      state.allLocation = updatedLocationList;
+    },
+    setIconsModalVisible: (state, action) => {
+      state.iconsModalVisible = action.payload;
+    },
+    setIsChosenIcon: (state, action) => {
+      state.isChosenIcon = action.payload;
+    },
+    setIsChosenIconName: (state, action) => {
+      state.isChosenIconName = action.payload;
+    },
+    setIconInputTextIsFocus: (state, action) => {
+      state.iconInputTextIsFocus = action.payload;
+    },
+    setIsEditFavouriteType: (state, action) => {
+      state.isEditFavouriteType = action.payload;
+    },
+    setIsEditFavouriteLocation: (state, action) => {
+      state.isEditFavouriteLocation = action.payload;
+    },
+    setCurrentOnPressOptionalFavouriteType: (state, action) => {
+      state.currentOnPressOptionalFavouriteType = action.payload;
+    },
+    setFavouriteTypeNameInputValue: (state, action) => {
+      state.favouriteTypeNameInputValue = action.payload;
+    },
+    setCurrentIconInputValue: (state, action) => {
+      state.currentIconInputValue = action.payload;
+    },
+    setIsEditFavouriteLocationInfo: (state, action) => {
+      state.isEditFavouriteLocationInfo = action.payload;
+    },
+    setNavigateToRideOptionsCard: (state, action) => {
+      state.navigateToRideOptionsCard = action.payload;
+    },
+    setRideCarType: (state, action) => {
+      state.rideCarTypes = action.payload;
     },
   },
 });
@@ -158,6 +238,7 @@ export const {
   setModalVisible,
   setWarningPopUpVisibleForNull,
   setWarningPopUpVisibleForDeleteFavourite,
+  setWarningPopUpVisibleForDeleteFavouriteType,
   setCurrentFavouriteCardOnPressId,
   setIsDeleteFavouriteLocationCard,
   setIsCancelDeleteFavouriteLocationCard,
@@ -165,7 +246,20 @@ export const {
   setCurrentOnPressLocationInfo,
   setCreateNewLocationInfo,
   setGetAllLocation,
+  clearAllLocation,
   deleteLocationFromList,
+  createNewLocationFromList,
+  setIconsModalVisible,
+  setIsChosenIcon,
+  setIsChosenIconName,
+  setIconInputTextIsFocus,
+  setIsEditFavouriteType,
+  setIsEditFavouriteLocation,
+  setCurrentOnPressOptionalFavouriteType,
+  setFavouriteTypeNameInputValue,
+  setCurrentIconInputValue,
+  setIsEditFavouriteLocationInfo,
+  setNavigateToRideOptionsCard,
 } = useStateSlice.actions;
 
 export const selectIsAddFavourites = (state) => state.useState.isAddFavourites;
@@ -189,6 +283,8 @@ export const selectWarningPopUpVisibleForNull = (state) =>
   state.useState.warningPopUpVisibleForNull;
 export const selectWarningPopUpVisibleForDeleteFavourite = (state) =>
   state.useState.warningPopUpVisibleForDeleteFavourite;
+export const selectWarningPopUpVisibleForDeleteFavouriteType = (state) =>
+  state.useState.warningPopUpVisibleForDeleteFavouriteType;
 export const selectCurrentFavouriteCardOnPressId = (state) =>
   state.useState.currentFavouriteCardOnPressId;
 export const selectIsDeleteFavouriteLocationCard = (state) =>
@@ -202,5 +298,27 @@ export const selectCurrentOnPressLocationInfo = (state) =>
 export const selectCreateNewLocationInfo = (state) =>
   state.useState.createNewLocationInfo;
 export const selectGetAllLocation = (state) => state.useState.allLocation;
+export const selectIconsModalVisible = (state) =>
+  state.useState.iconsModalVisible;
+export const selectIsChosenIcon = (state) => state.useState.isChosenIcon;
+export const selectIsChosenIconName = (state) =>
+  state.useState.isChosenIconName;
+export const selectIconInputTextIsFocus = (state) =>
+  state.useState.iconInputTextIsFocus;
+export const selectIsEditFavouriteType = (state) =>
+  state.useState.isEditFavouriteType;
+export const selectIsEditFavouriteLocation = (state) =>
+  state.useState.isEditFavouriteLocation;
+export const selectCurrentOnPressOptionalFavouriteType = (state) =>
+  state.useState.currentOnPressOptionalFavouriteType;
+export const selectFavouriteTypeNameInputValue = (state) =>
+  state.useState.favouriteTypeNameInputValue;
+export const selectCurrentIconInputValue = (state) =>
+  state.useState.currentIconInputValue;
+export const selectIsEditFavouriteLocationInfo = (state) =>
+  state.useState.isEditFavouriteLocationInfo;
+export const selectNavigateToRideOptionsCard = (state) =>
+  state.useState.navigateToRideOptionsCard;
+export const selectRideCarTypes = (state) => state.useState.rideCarTypes;
 
 export default useStateSlice.reducer;

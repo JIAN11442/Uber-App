@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     },
     textInput: {
       fontSize: 18,
-      height: 50,
+      height: 45,
       // borderWidth: 1,
       // borderColor: "#DDDDDF",
     },
@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
   AutoCompletedStyleForTo: {
     container: {
       flex: 0,
-      paddingTop: 20,
+      paddingTop: 15,
       backgroundColor: "white",
     },
     textInput: {
       fontSize: 18,
-      height: 50,
+      height: 45,
       backgroundColor: "#DDDDDF",
     },
     textInputContainer: {

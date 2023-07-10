@@ -1,15 +1,12 @@
 import * as SolidIcons from "react-native-heroicons/solid";
 import * as OutlinedIcons from "react-native-heroicons/outline";
 
-const { ...solidIcons } = SolidIcons;
-const { ...outlinedIcons } = OutlinedIcons;
-
 const DynamicHeroIcons = (props) => {
   let TheIcon;
   if (props.type == "solid") {
-    TheIcon = solidIcons[props.icon];
+    TheIcon = SolidIcons[props.icon];
   } else if (props.type == "outlined") {
-    TheIcon = outlinedIcons[props.icon];
+    TheIcon = OutlinedIcons[props.icon];
   }
 
   return (

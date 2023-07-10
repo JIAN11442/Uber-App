@@ -1,13 +1,13 @@
 import { View, Image } from "react-native";
 import styles from "../style";
 import sanityClient, { urlFor } from "../sanity";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addData, selectData, selectDataWithName } from "../feature/DataSlice";
 import NavOptions from "../components/NavOptions";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_APIKEYS } from "@env";
-import { selectOrigin, setOrigin } from "../feature/navSlice";
+import { selectOrigin, setDestination, setOrigin } from "../feature/navSlice";
 import tw from "twrnc";
 import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
@@ -20,8 +20,11 @@ import {
   selectModalVisible,
   selectStarIconFillStyle,
   selectWarningPopUpVisibleForDeleteFavourite,
+  selectWarningPopUpVisibleForDeleteFavouriteType,
   selectWarningPopUpVisibleForNull,
   setCurrentLocationIsAddToSanity,
+  setCurrentOnPressLocationInfo,
+  setFavouriteLocationList,
   setModalVisible,
   setStarIconFillStyle,
   setWarningPopUpVisibleForDeleteFavourite,
@@ -29,6 +32,7 @@ import {
 } from "../feature/useStateSlice";
 import FavouriteCard from "../components/FavouriteCard";
 import WarningModal from "../components/WarningModal";
+import { useFocusEffect } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -36,6 +40,7 @@ const HomeScreen = () => {
   const data = useSelector(selectData);
   const UberLogo = selectDataWithName("HomeScreen UberLogo")?.image[0]?.image;
   const NavOptionsData = selectDataWithName("NavOption")?.image;
+  const favouriteTypeLocationList = useSelector(selectFavouriteLocationList);
   // const requestUrl = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_APIKEYS}&libraries=places`;
 
   /* starIcon situation useState reducer */
@@ -52,6 +57,9 @@ const HomeScreen = () => {
   );
   const warningPopUpVisibleForDeleteFavourite = useSelector(
     selectWarningPopUpVisibleForDeleteFavourite
+  );
+  const warningPopUpVisibleForDeleteFavouriteType = useSelector(
+    selectWarningPopUpVisibleForDeleteFavouriteType
   );
   const originIsDuplicated = async () => {
     if (!origin) {
@@ -81,7 +89,31 @@ const HomeScreen = () => {
   );
   const starIconFillStyle = useSelector(selectStarIconFillStyle);
   const modalVisible = useSelector(selectModalVisible);
+  const UploadCurrentLocationInfoToRedux = async () => {
+    await sanityClient
+      .fetch(`*[_type == 'favouriteLocation']{...,favourite_type[]->{...,}}`)
+      .then((data) => {
+        const currentLocationFromSanity = data.filter(
+          (dt) =>
+            dt.address === origin.description &&
+            dt.lat === origin.location.lat &&
+            dt.lng === origin.location.lng
+        );
 
+        dispatch(
+          setCurrentOnPressLocationInfo({
+            description: currentLocationFromSanity[0].address,
+            favouriteTypeId: currentLocationFromSanity[0].favourite_type[0]._id,
+            id: currentLocationFromSanity[0]._id,
+            location: {
+              lat: currentLocationFromSanity[0].lat,
+              lng: currentLocationFromSanity[0].lng,
+            },
+          })
+        );
+      });
+    return null;
+  };
   const switchAddFavourites = async () => {
     const inputText = await getInputText();
     if (starIconFillStyle == "transparent") {
@@ -104,6 +136,15 @@ const HomeScreen = () => {
 
   const currentOnPressLocation = useSelector(selectCurrentOnPressLocationInfo);
 
+  // Initialize
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     dispatch(setOrigin(""));
+  //     dispatch(setDestination(""));
+  //   }, [])
+  // );
+
+  // Get Uber Image
   useEffect(() => {
     sanityClient
       .fetch(
@@ -129,16 +170,15 @@ const HomeScreen = () => {
     }
   }, [origin]);
 
-  // if (origin) {
-  //   console.log(origin.description);
-  //   console.log(`---------------`);
-  // }
-
-  // if (starIconFillStyle) {
-  //   console.log(origin);
-  //   console.log(starIconFillStyle);
-  //   console.log(`-----------------------`);
-  // }
+  useEffect(() => {
+    if (
+      starIconFillStyle === "#ffc400" &&
+      warningPopUpVisibleForDeleteFavourite === true &&
+      origin
+    ) {
+      UploadCurrentLocationInfoToRedux();
+    }
+  }, [warningPopUpVisibleForDeleteFavourite, starIconFillStyle]);
 
   return (
     <>
@@ -230,7 +270,13 @@ const HomeScreen = () => {
       )}
       {warningPopUpVisibleForDeleteFavourite && (
         <WarningModal
-          type="removeFavourite"
+          type="removeFavouriteLocation"
+          currentOnPressLocation={currentOnPressLocation}
+        />
+      )}
+      {warningPopUpVisibleForDeleteFavouriteType && (
+        <WarningModal
+          type="removeFavouriteType"
           currentOnPressLocation={currentOnPressLocation}
         />
       )}
