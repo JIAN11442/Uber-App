@@ -13,11 +13,18 @@ import {
   setStarIconFillStyle,
   setWarningPopUpVisibleForDeleteFavourite,
   setWarningPopUpVisibleForDeleteFavouriteType,
+  setWarningPopUpVisibleForDirectionError,
   setWarningPopUpVisibleForNull,
 } from "../feature/useStateSlice";
 import sanityClient from "../sanity";
+import { setDestination } from "../feature/navSlice";
 
-const WarningModal = ({ type, currentOnPressLocation }) => {
+const WarningModal = ({
+  type,
+  currentOnPressLocation,
+  origin,
+  destination,
+}) => {
   console.log(currentOnPressLocation);
   console.log(`--------------------`);
 
@@ -121,6 +128,20 @@ const WarningModal = ({ type, currentOnPressLocation }) => {
               dispatch(setWarningPopUpVisibleForDeleteFavouriteType(false));
 
               // console.log("Already Remove From Favourite");
+            },
+          },
+        ]
+      );
+    } else if (type == "DirectionError") {
+      Alert.alert(
+        "Warning",
+        `There are no roads between '${origin?.description}' and '${destination?.description}'\n\nBetter get both place on a plane.`,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              dispatch(setWarningPopUpVisibleForDirectionError(false));
+              dispatch(setDestination(null));
             },
           },
         ]

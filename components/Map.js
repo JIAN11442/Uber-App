@@ -1,8 +1,8 @@
 import { View } from "react-native";
-import React from "react";
+import React, { useCallback } from "react";
 import MapTypeButton from "../components/MapTypeButton";
 import MapView, { Marker } from "react-native-maps";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectDestination, selectOrigin } from "../feature/navSlice";
 import tw from "twrnc";
 import { useState } from "react";
@@ -10,9 +10,15 @@ import MapViewDirections from "react-native-maps-directions";
 import { GOOGLE_MAPS_APIKEYS } from "@env";
 import { useRef } from "react";
 import { useEffect } from "react";
-import { selectNavigateToRideOptionsCard } from "../feature/useStateSlice";
+import {
+  selectNavigateToRideOptionsCard,
+  setWarningPopUpVisibleForDirectionError,
+  setWarningPopUpVisibleForNull,
+} from "../feature/useStateSlice";
+import { useFocusEffect } from "@react-navigation/core";
 
 const Map = () => {
+  const dispatch = useDispatch();
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
   const isNavigateToRideOptionsCard = useSelector(
@@ -21,6 +27,12 @@ const Map = () => {
   const mapTypes = ["standard", "terrain", "satellite", "hybrid"];
   const [mapTypeIndex, setMapTypeIndex] = useState(0);
   const ref = useRef(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setWarningPopUpVisibleForDirectionError(false));
+    }, [destination])
+  );
 
   // fitToCoordinates
   useEffect(() => {
@@ -52,10 +64,8 @@ const Map = () => {
         style={tw`flex-1`}
         mapType={mapTypes[mapTypeIndex]}
         initialRegion={{
-          latitude: origin.location.lat,
-          longitude: origin.location.lng,
-          //   latitude: 1.918339,
-          //   longitude: 103.1799611,
+          latitude: origin?.location?.lat,
+          longitude: origin?.location?.lng,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
@@ -63,20 +73,20 @@ const Map = () => {
         {origin?.location && (
           <Marker
             coordinate={{
-              latitude: origin.location.lat,
-              longitude: origin.location.lng,
+              latitude: origin?.location?.lat,
+              longitude: origin?.location?.lng,
             }}
-            description={origin.description}
+            description={origin?.description}
             pinColor="#EA3535"
           />
         )}
         {destination?.location && (
           <Marker
             coordinate={{
-              latitude: destination.location.lat,
-              longitude: destination.location.lng,
+              latitude: destination?.location?.lat,
+              longitude: destination?.location?.lng,
             }}
-            description={destination.description}
+            description={destination?.description}
             pinColor="#3949AB"
           />
         )}
@@ -84,12 +94,15 @@ const Map = () => {
         {origin?.location && destination?.location && (
           <MapViewDirections
             origin={{
-              latitude: origin.location.lat,
-              longitude: origin.location.lng,
+              latitude: origin?.location?.lat,
+              longitude: origin?.location?.lng,
             }}
             destination={{
-              latitude: destination.location.lat,
-              longitude: destination.location.lng,
+              latitude: destination?.location?.lat,
+              longitude: destination?.location?.lng,
+            }}
+            onError={() => {
+              dispatch(setWarningPopUpVisibleForDirectionError(true));
             }}
             apikey={GOOGLE_MAPS_APIKEYS}
             strokeWidth={5}

@@ -14,6 +14,7 @@ const initialState = {
   starIconFillStyle: null,
   modalVisible: false,
   warningPopUpVisibleForNull: false,
+  warningPopUpVisibleForDirectionError: false,
   warningPopUpVisibleForDeleteFavourite: false,
   warningPopUpVisibleForDeleteFavouriteType: false,
   currentFavouriteCardOnPressId: null,
@@ -92,6 +93,9 @@ export const useStateSlice = createSlice({
     },
     setWarningPopUpVisibleForNull: (state, action) => {
       state.warningPopUpVisibleForNull = action.payload;
+    },
+    setWarningPopUpVisibleForDirectionError: (state, action) => {
+      state.warningPopUpVisibleForDirectionError = action.payload;
     },
     setWarningPopUpVisibleForDeleteFavourite: (state, action) => {
       state.warningPopUpVisibleForDeleteFavourite = action.payload;
@@ -237,6 +241,7 @@ export const {
   setStarIconFillStyle,
   setModalVisible,
   setWarningPopUpVisibleForNull,
+  setWarningPopUpVisibleForDirectionError,
   setWarningPopUpVisibleForDeleteFavourite,
   setWarningPopUpVisibleForDeleteFavouriteType,
   setCurrentFavouriteCardOnPressId,
@@ -282,6 +287,8 @@ export const selectStarIconFillStyle = (state) =>
 export const selectModalVisible = (state) => state.useState.modalVisible;
 export const selectWarningPopUpVisibleForNull = (state) =>
   state.useState.warningPopUpVisibleForNull;
+export const selectWarningPopUpVisibleForDirectionError = (state) =>
+  state.useState.warningPopUpVisibleForDirectionError;
 export const selectWarningPopUpVisibleForDeleteFavourite = (state) =>
   state.useState.warningPopUpVisibleForDeleteFavourite;
 export const selectWarningPopUpVisibleForDeleteFavouriteType = (state) =>

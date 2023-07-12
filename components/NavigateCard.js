@@ -53,7 +53,6 @@ const NavigateCard = () => {
                 description: data.description,
               })
             );
-            navigation.navigate("RideOptions");
           }}
         />
       </View>
