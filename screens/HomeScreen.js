@@ -1,13 +1,18 @@
 import { View, Image } from "react-native";
 import styles from "../style";
 import sanityClient, { urlFor } from "../sanity";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addData, selectData, selectDataWithName } from "../feature/DataSlice";
 import NavOptions from "../components/NavOptions";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_APIKEYS } from "@env";
-import { selectOrigin, setDestination, setOrigin } from "../feature/navSlice";
+import {
+  selectDestination,
+  selectOrigin,
+  setDestination,
+  setOrigin,
+} from "../feature/navSlice";
 import tw from "twrnc";
 import { StarIcon } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
@@ -21,10 +26,10 @@ import {
   selectStarIconFillStyle,
   selectWarningPopUpVisibleForDeleteFavourite,
   selectWarningPopUpVisibleForDeleteFavouriteType,
+  selectWarningPopUpVisibleForDirectionError,
   selectWarningPopUpVisibleForNull,
   setCurrentLocationIsAddToSanity,
   setCurrentOnPressLocationInfo,
-  setFavouriteLocationList,
   setModalVisible,
   setStarIconFillStyle,
   setWarningPopUpVisibleForDeleteFavourite,
@@ -37,6 +42,7 @@ import { useFocusEffect } from "@react-navigation/native";
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const origin = useSelector(selectOrigin);
+  const destination = useSelector(selectDestination);
   const data = useSelector(selectData);
   const UberLogo = selectDataWithName("HomeScreen UberLogo")?.image[0]?.image;
   const NavOptionsData = selectDataWithName("NavOption")?.image;
@@ -60,6 +66,10 @@ const HomeScreen = () => {
   );
   const warningPopUpVisibleForDeleteFavouriteType = useSelector(
     selectWarningPopUpVisibleForDeleteFavouriteType
+  );
+
+  const warningPopUpVisibleForDirectionError = useSelector(
+    selectWarningPopUpVisibleForDirectionError
   );
   const originIsDuplicated = async () => {
     if (!origin) {
@@ -136,13 +146,12 @@ const HomeScreen = () => {
 
   const currentOnPressLocation = useSelector(selectCurrentOnPressLocationInfo);
 
-  // Initialize
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     dispatch(setOrigin(""));
-  //     dispatch(setDestination(""));
-  //   }, [])
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setOrigin(null));
+      dispatch(setDestination(null));
+    }, [])
+  );
 
   // Get Uber Image
   useEffect(() => {
@@ -262,6 +271,13 @@ const HomeScreen = () => {
         </View>
       </View>
       {modalVisible && <FavouriteListModal />}
+      {warningPopUpVisibleForDirectionError && origin && destination && (
+        <WarningModal
+          type="DirectionError"
+          origin={origin}
+          destination={destination}
+        />
+      )}
       {warningPopUpVisibleForNull && (
         <WarningModal
           type="Incompleted"

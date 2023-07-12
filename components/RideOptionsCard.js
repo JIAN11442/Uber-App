@@ -12,9 +12,7 @@ import {
   selectDestination,
   selectOrigin,
   selectTravelTimeInformation,
-  setTravelTimeInformation,
 } from "../feature/navSlice";
-import { GOOGLE_MAPS_APIKEYS } from "@env";
 import Currency from "react-currency-formatter";
 
 const RideOptionsCard = () => {
@@ -26,7 +24,7 @@ const RideOptionsCard = () => {
   const travelTimeInformation = useSelector(selectTravelTimeInformation);
   const [isSelected, setIsSelected] = useState("");
   const SURGE_PRICING_RATE = 1.5;
-  const PRICES_PER_VALUE = 8;
+  const PRICES_PER_VALUE = 10;
 
   useEffect(() => {
     sanityClient
@@ -42,29 +40,10 @@ const RideOptionsCard = () => {
       .then((data) => dispatch(setRideCarType(data)));
   }, []);
 
-  useEffect(() => {
-    if (!origin || !destination) return;
-
-    const getTravelTime = async () => {
-      // https://developers.google.com/maps/documentation/distance-matrix/start#json
-      fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?
-        units=metric&origins=${origin.description}&destinations=
-        ${destination.description}&key=${GOOGLE_MAPS_APIKEYS}`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          dispatch(setTravelTimeInformation(data.rows[0].elements[0]));
-        });
-    };
-
-    getTravelTime();
-  }, [origin, destination, GOOGLE_MAPS_APIKEYS]);
-
-  useEffect(() => {
-    console.log(travelTimeInformation);
-    console.log(`-------------------------`);
-  }, [travelTimeInformation]);
+  // useEffect(() => {
+  //   console.log(travelTimeInformation);
+  //   console.log(`-------------------------`);
+  // }, [travelTimeInformation]);
 
   return (
     <View style={tw`flex-1 bg-white`}>
@@ -96,7 +75,7 @@ const RideOptionsCard = () => {
           >
             <View
               style={tw`flex-row items-center justify-between 
-                  mr-5 ml-2 px-4 border-b border-gray-100`}
+                  mr-3 ml-3 px-4 border-b border-gray-100`}
             >
               {/* Ride Image */}
               <Image
@@ -112,10 +91,10 @@ const RideOptionsCard = () => {
               />
               {/* Ride Name & Travel Time */}
               <View style={tw`w-35`}>
-                <Text style={tw`text-xl font-semibold`}>
+                <Text style={tw`text-lg font-semibold`}>
                   {item.rideCarsType}
                 </Text>
-                <Text>{travelTimeInformation?.duration.text} Travel Time</Text>
+                <Text>{travelTimeInformation?.duration?.text} Travel Time</Text>
               </View>
               {/* Prices */}
               <View>
