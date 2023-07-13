@@ -13,7 +13,7 @@ import {
   selectIsCancelDeleteFavouriteLocationCard,
   selectIsCreateNewLocation,
   selectIsDeleteFavouriteLocationCard,
-  selectModalVisible,
+  selectWarningPopUpVisibleForDirectionError,
   setCurrentOnPressLocationInfo,
   setFavouriteTypeLists,
   setGetAllLocation,
@@ -30,19 +30,29 @@ import DynamicHeroIcons from "../DynamicHeroIcons";
 import { ScrollView } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { selectOrigin, setDestination, setOrigin } from "../feature/navSlice";
+import {
+  selectDestination,
+  selectOrigin,
+  selectTravelTimeInformation,
+  setDestination,
+  setOrigin,
+  setTravelTimeInformation,
+} from "../feature/navSlice";
+import { GOOGLE_MAPS_APIKEYS } from "@env";
+import { async } from "rxjs";
 
 const FavouriteCard = (props) => {
   const favouriteCardType = props.type;
   const dispatch = useDispatch();
   const origin = useSelector(selectOrigin);
+  const destination = useSelector(selectDestination);
   const navigation = useNavigation();
-  const modalVisible = useSelector(selectModalVisible);
   const favouriteTypeLists = useSelector(selectFavouriteTypeLists);
   const [currentFavouriteCardOnPressId, setCurrentFavouriteCardOnPressId] =
     useState([]);
   const isCreateNewLocation = useSelector(selectIsCreateNewLocation);
   const createNewLocationInfo = useSelector(selectCreateNewLocationInfo);
+  const travelTimeInformation = useSelector(selectTravelTimeInformation);
 
   // current OnPress FavouriteCard Type Status Settings
   const [
@@ -265,9 +275,29 @@ const FavouriteCard = (props) => {
     }
   }, [favouriteTypeLists, getAllLocation]);
 
-  // const warningPopUpVisibleForDeleteFavourite = useSelector(
-  //   selectWarningPopUpVisibleForDeleteFavourite
-  // );
+  // Get Travel Distance and Times When Origin and Destination is Exist
+  useEffect(() => {
+    if (!origin || !destination) return;
+
+    const getTravelTime = async () => {
+      // https://developers.google.com/maps/documentation/distance-matrix/start#json
+      try {
+        fetch(
+          `https://maps.googleapis.com/maps/api/distancematrix/json?
+          units=metric&origins=${origin.description}&destinations=
+          ${destination.description}&key=${GOOGLE_MAPS_APIKEYS}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            dispatch(setTravelTimeInformation(data.rows[0].elements[0]));
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getTravelTime();
+  }, [origin, destination, GOOGLE_MAPS_APIKEYS]);
 
   return (
     <View
@@ -372,6 +402,7 @@ const FavouriteCard = (props) => {
                                           description: location.address,
                                         })
                                       );
+                                      CloseAllFavouriteCard();
                                       navigation.navigate("Map");
                                     } else if (
                                       favouriteCardType == "destination"
@@ -385,7 +416,7 @@ const FavouriteCard = (props) => {
                                           description: location.address,
                                         })
                                       );
-                                      navigation.navigate("RideOptions");
+                                      CloseAllFavouriteCard();
                                     }
                                   }}
                                   style={tw`flex-row items-center flex-1 ${
